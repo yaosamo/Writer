@@ -21,6 +21,7 @@ struct ContentView: View {
     //Text string
     
     var emptyText = "Free your mind"
+    var emptyTitle = "Note"
     
     var body: some View {
         
@@ -28,8 +29,8 @@ struct ContentView: View {
             
             List(items) { item in
                 NavigationLink {
-                    //Editor view need 2 variables: note and item
-                        EditorView(note: item.note ?? emptyText, item: item)
+                    //Editor view need 4 variables: note, item, date and title
+                    EditorView(note: item.note ?? emptyText, item: item, date: item.date!, title: item.title ?? emptyText)
                 } label: { Text("\(item.date!)") }
                 
                 // Deleting with right click
@@ -63,6 +64,7 @@ struct ContentView: View {
             let newItem = Item(context: viewContext)
             newItem.date = Date()
             newItem.note = emptyText
+            newItem.title = emptyTitle
             try? viewContext.save()
         }
     }

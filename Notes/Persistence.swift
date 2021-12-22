@@ -16,6 +16,8 @@ struct PersistenceController {
         for _ in 0..<10 {
             let newItem = Item(context: viewContext)
             newItem.date = Date()
+//            newItem.note = "Empty note"
+//            newItem.title = "Empty title"
         }
         do {
             try viewContext.save()

@@ -16,7 +16,6 @@ extension NSTextView {
         insertionPointColor = .orange
 //      textContainerInset = NSSize(width: 72, height: 0)
         textContainer?.lineFragmentPadding = 72
-        NSTextView.scrollableTextView()
     }
   }
 }
@@ -26,19 +25,24 @@ struct EditorView: View {
     @State var note: String
     //Item var for which we perform an update
     @State var item: Item
+    @State var date: Date
+    @State var title: String
 
 
        var body: some View {
            ScrollView {
                HStack {
                    Group {
-                   Text("November 25")
-                   Text("Notes #1")
-                   }   .font(.system(size: 14, design: .monospaced))
-                       .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
+                       Text("\(item.date!, formatter: itemFormatter)")
+                           .padding(/*@START_MENU_TOKEN@*/.trailing, 24.0/*@END_MENU_TOKEN@*/)
+                   
+                       Text("\(item.title!)")
+                   }
+                   .font(.system(size: 14, design: .monospaced))
+                   .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
                    Spacer()
-    
                }
+               
                // Paddings top and bottom for Date and Title
                .padding(.leading, 72.0)
                .padding([.bottom, .top], 88.0)
@@ -61,16 +65,20 @@ struct EditorView: View {
                }
            }, label: {
                Text("Save")
-               
-                  
-                   
            })
                // Padding for save button
                .padding()
-
+           
+           
        }
+    // Date formatter
+    private let itemFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        return formatter
+    }()
 
-  
+    // Updating item funcion
     private func updateItem(item: Item) {
         let newStatus = note
             viewContext.performAndWait {
