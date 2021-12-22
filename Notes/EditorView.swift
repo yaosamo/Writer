@@ -35,7 +35,7 @@ struct EditorView: View {
                    Group {
                        Text("\(item.date!, formatter: itemFormatter)")
                            .padding(/*@START_MENU_TOKEN@*/.trailing, 24.0/*@END_MENU_TOKEN@*/)
-                   
+                       // Update to button with hover
                        Text("\(item.title!)")
                    }
                    .font(.system(size: 14, design: .monospaced))
