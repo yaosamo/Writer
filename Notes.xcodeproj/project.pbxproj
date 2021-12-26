@@ -7,16 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D577D6927736E5400C5AF92 /* EditorHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D577D6827736E5400C5AF92 /* EditorHeader.swift */; };
 		5DA29A2D2766475D006AE014 /* NotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA29A2C2766475D006AE014 /* NotesApp.swift */; };
 		5DA29A2F2766475D006AE014 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA29A2E2766475D006AE014 /* ContentView.swift */; };
 		5DA29A312766475D006AE014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DA29A302766475D006AE014 /* Assets.xcassets */; };
 		5DA29A342766475D006AE014 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DA29A332766475D006AE014 /* Preview Assets.xcassets */; };
 		5DA29A5E27664DD8006AE014 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5DA29A5C27664DD8006AE014 /* Model.xcdatamodeld */; };
+		5DC043CB2774F1A10093A613 /* NotesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CA2774F1A10093A613 /* NotesList.swift */; };
+		5DC043CD2774F3430093A613 /* AddNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CC2774F3430093A613 /* AddNote.swift */; };
 		5DF694A227685C0400782FE1 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF694A127685C0400782FE1 /* Persistence.swift */; };
 		5DF694A427686A2900782FE1 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF694A327686A2900782FE1 /* EditorView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D577D6827736E5400C5AF92 /* EditorHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHeader.swift; sourceTree = "<group>"; };
 		5DA29A292766475D006AE014 /* Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Notes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DA29A2C2766475D006AE014 /* NotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesApp.swift; sourceTree = "<group>"; };
 		5DA29A2E2766475D006AE014 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -24,6 +28,8 @@
 		5DA29A332766475D006AE014 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5DA29A352766475D006AE014 /* Notes.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Notes.entitlements; sourceTree = "<group>"; };
 		5DA29A5D27664DD8006AE014 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		5DC043CA2774F1A10093A613 /* NotesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesList.swift; sourceTree = "<group>"; };
+		5DC043CC2774F3430093A613 /* AddNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNote.swift; sourceTree = "<group>"; };
 		5DF694A127685C0400782FE1 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		5DF694A327686A2900782FE1 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -60,7 +66,10 @@
 			children = (
 				5DA29A2C2766475D006AE014 /* NotesApp.swift */,
 				5DA29A2E2766475D006AE014 /* ContentView.swift */,
+				5DC043CA2774F1A10093A613 /* NotesList.swift */,
 				5DF694A327686A2900782FE1 /* EditorView.swift */,
+				5DC043CC2774F3430093A613 /* AddNote.swift */,
+				5D577D6827736E5400C5AF92 /* EditorHeader.swift */,
 				5DF694A127685C0400782FE1 /* Persistence.swift */,
 				5DA29A302766475D006AE014 /* Assets.xcassets */,
 				5DA29A352766475D006AE014 /* Notes.entitlements */,
@@ -148,7 +157,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DC043CD2774F3430093A613 /* AddNote.swift in Sources */,
 				5DA29A2F2766475D006AE014 /* ContentView.swift in Sources */,
+				5D577D6927736E5400C5AF92 /* EditorHeader.swift in Sources */,
+				5DC043CB2774F1A10093A613 /* NotesList.swift in Sources */,
 				5DA29A2D2766475D006AE014 /* NotesApp.swift in Sources */,
 				5DF694A227685C0400782FE1 /* Persistence.swift in Sources */,
 				5DA29A5E27664DD8006AE014 /* Model.xcdatamodeld in Sources */,

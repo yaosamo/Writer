@@ -7,50 +7,60 @@
 
 import SwiftUI
 
+
 // Making textfields transparent thanks to https://stackoverflow.com/questions/65865182/transparent-background-for-texteditor-in-swiftui
 extension NSTextView {
-  open override var frame: CGRect {
+    open override var frame: CGRect {
     didSet {
         backgroundColor = .clear
-        drawsBackground = true
         insertionPointColor = .orange
-//      textContainerInset = NSSize(width: 72, height: 0)
         textContainer?.lineFragmentPadding = 72
+//        usesFontPanel = true
+//        isRichText = true
+//        usesInspectorBar = true
     }
   }
 }
 
+
 struct EditorView: View {
+    // Coredata for saving / updating viewContext
     @Environment(\.managedObjectContext) var viewContext
-    @State var note: String
+   
+    //Text string
+    var emptyText = "Free your mind"
+    var emptyTitle = "Note"
+    
     //Item var for which we perform an update
     @State var item: Item
+    @State var note: String
     @State var date: Date
     @State var title: String
-
-
+    
+    
        var body: some View {
-           ScrollView {
-               HStack {
-                   Group {
-                       Text("\(item.date!, formatter: itemFormatter)")
-                           .padding(/*@START_MENU_TOKEN@*/.trailing, 24.0/*@END_MENU_TOKEN@*/)
-                       // Update to button with hover
-                       Text("\(item.title!)")
-                   }
-                   .font(.system(size: 14, design: .monospaced))
-                   .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
-                   Spacer()
-               }
-               
-               // Paddings top and bottom for Date and Title
-               .padding(.leading, 72.0)
-               .padding([.bottom, .top], 88.0)
            
-               // Text Editor
-           TextEditor(text: $note)
-                .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
-                .lineSpacing(5.0)
+           ScrollView {
+               VStack {
+                   
+                   HStack {
+                       Group {
+                           Text("\(item.date!, formatter: itemFormatter)")
+                               .padding(.trailing, 24.0)
+                           TextField("Title", text: $title).textFieldStyle(PlainTextFieldStyle())
+
+                       }
+                       .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
+                       .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
+                       Spacer()
+                   }
+                        // Paddings top and bottom for Date and Title
+                       .padding(.leading, 72.0)
+                       .padding([.bottom, .top], 88.0)
+                   
+                   TextEditor(text: $note)
+                    .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
+                    .lineSpacing(5.0)
            }
            
         
@@ -65,27 +75,33 @@ struct EditorView: View {
                }
            }, label: {
                Text("Save")
-           })
-               // Padding for save button
-               .padding()
-           
-           
+           }).padding()
+               
+           }
+        
        }
-    // Date formatter
-    private let itemFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        return formatter
-    }()
-
+    
     // Updating item funcion
     private func updateItem(item: Item) {
-        let newStatus = note
+        let note = note
             viewContext.performAndWait {
-            item.note = newStatus
+            item.note = note
             try? viewContext.save()
             }
+        let title = title
+        viewContext.performAndWait {
+        item.title = title
+        try? viewContext.save()
+        }
         }
 }
 
+
+
+// Date formatter
+private let itemFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .long
+    return formatter
+}()
 
