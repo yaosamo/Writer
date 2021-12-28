@@ -15,6 +15,7 @@ extension NSTextView {
         backgroundColor = .clear
         insertionPointColor = .orange
         textContainer?.lineFragmentPadding = 72
+//        textContainerInset = (CGSize:72)
 //        usesFontPanel = true
 //        isRichText = true
 //        usesInspectorBar = true
@@ -48,7 +49,13 @@ struct EditorView: View {
                            Text("\(item.date!, formatter: itemFormatter)")
                                .padding(.trailing, 24.0)
                            TextField("Title", text: $title).textFieldStyle(PlainTextFieldStyle())
-
+                               .multilineTextAlignment(.trailing)
+                               .padding(.trailing, 72.0)
+                               .onChange(of: title) { newValue in
+                                               updateItem(item: item)
+                                              print("New title: \(title)!")
+                                   
+                                          }
                        }
                        .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
                        .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
@@ -61,21 +68,15 @@ struct EditorView: View {
                    TextEditor(text: $note)
                     .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
                     .lineSpacing(5.0)
+                    .multilineTextAlignment(.trailing)
+                    .onChange(of: note) { newValue in
+                                    updateItem(item: item)
+                                   print("New title: \(note)!")
+                        
+                               }
+                    
            }
-           
-        
-           //Updating button
-           Button(action: {
-               updateItem(item: item)
-               do {
-                   try viewContext.save()
-               } catch {
-                   let nsError = error as NSError
-                   fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-               }
-           }, label: {
-               Text("Save")
-           }).padding()
+    
                
            }
         

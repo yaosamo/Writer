@@ -9,7 +9,6 @@ import SwiftUI
 import CoreData
 
 
-
 struct NotesList: View {
     
     // Managed Object from Coredata
@@ -18,7 +17,6 @@ struct NotesList: View {
     // Fetch and sorting
     @FetchRequest(sortDescriptors:  [SortDescriptor(\.date)])
     private var items: FetchedResults<Item>
-    
     //Text string
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
@@ -38,7 +36,7 @@ struct NotesList: View {
                     ForEach(items) { item in
                     NavigationLink {
                        
-                        ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
+                        ZStack(alignment: Alignment(horizontal: .leading, vertical: .top)) {
                             EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle)
                             AddNote()
                                 .padding()
@@ -47,8 +45,9 @@ struct NotesList: View {
                         .ignoresSafeArea(edges: .top)
                     } label: {
                         Text("\(item.title!)")
-                        .font(.system(size: 12, weight: Font.Weight.thin, design: .monospaced))
-                    }
+                            .font(.system(size: 12, weight: Font.Weight.thin, design: .monospaced))
+                        
+                    }.frame(maxWidth: 240, alignment: .trailing) // sidebar elements
                     
                     // Deleting with right click
                     .contextMenu(ContextMenu(menuItems: {
@@ -62,21 +61,25 @@ struct NotesList: View {
                                         }, label: {
                                             Text("Delete")
                                         })
-                                    }))
+                    }))
+
+                    }
                 }
-                }.ignoresSafeArea()
+                
+                    .ignoresSafeArea()
                     .padding(.horizontal, 16.0)
-                    .background(Color(red: 0.08, green: 0.14, blue: 0.13))
+//                    .background(Color(red: 0.08, green: 0.148, blue: 0.135))
+//                    .foregroundColor(Color(red: 0.55, green: 0.54, blue: 0.52)
+                
 //                .toolbar {
 //                    ToolbarItem {
-//                        Button("hi") {
-//                            Label("Add Item", systemImage: "plus")
-//                        }
+//                        Text("Op")
 //                    }
 //                }
-                
                 Text("Make it count")
-            }
+            }.environment(\.layoutDirection, .rightToLeft)
+        
+            
             
             
         }

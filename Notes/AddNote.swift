@@ -12,6 +12,9 @@ struct AddNote: View {
     // Managed Object from Coredata
      @Environment(\.managedObjectContext) var viewContext
     
+    
+    @State private var overText = false
+
     //Text string
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
@@ -20,12 +23,24 @@ struct AddNote: View {
         Button(action: addNote) {
             Image(systemName: "plus")
                 .frame(width: 24, height: 24, alignment: .center)
-                .background(Color(red: 0.82, green: 0.40, blue: 0.22))
-                .font(.system(size: 12, weight: Font.Weight.regular))
+                .font(.system(size: 12, weight: Font.Weight.regular, design: .rounded))
                 .foregroundColor(.white)
-                .clipShape(Circle())
-                
+              
         } .buttonStyle(.borderless)
+            .background(overText ? Color(red: 0.82, green: 0.40, blue: 0.22) :  Color(red: 0.11, green: 0.13, blue: 0.12))
+            .clipShape(Circle())
+            .onHover { over in
+                            overText = over
+                        }
+            .onHover { inside in
+                if inside {
+                    NSCursor.pointingHand.push()
+                           } else {
+                               NSCursor.pop()
+                           }
+            }
+           
+
         
             
     }
