@@ -9,38 +9,54 @@ import SwiftUI
 import CoreData
 
 
+
+
 struct NotesList: View {
     
     // Managed Object from Coredata
      @Environment(\.managedObjectContext) var viewContext
     
     // Fetch and sorting
-    @FetchRequest(sortDescriptors:  [SortDescriptor(\.date)])
-    private var items: FetchedResults<Item>
+//    @FetchRequest(sortDescriptors:  [SortDescriptor(\.date)])
+//    @FetchRequest(sortDescriptors:
+//            [NSSortDescriptor(key: "orderIndex", ascending: true)],
+//            animation: .default)
+    @FetchRequest( entity: Item.entity(),
+                       sortDescriptors:
+                       [
+                           NSSortDescriptor(
+                               keyPath: \Item.orderIndex,
+                               ascending: true)
+                       ]
+        )
+    var items: FetchedResults<Item>
+
+
     //Text string
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
-    @State private var showDetails = false
-    
+  
     var body: some View {
-       
         
+//        let _ = print(items)
+
         
             NavigationView {
+             
                 
                 List {
-                    // Empty text works as padding above list
+//                     Empty text works as padding above list
                     Text("")
                         .padding(.bottom, 32.0)
+                   
                     
-                    ForEach(items) { item in
+                    ForEach(items, id: \.self) { item in
                     NavigationLink {
                        
                         ZStack(alignment: Alignment(horizontal: .leading, vertical: .top)) {
                             EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle)
                             AddNote()
                                 .padding()
-                            
                         }
                         .ignoresSafeArea(edges: .top)
                     } label: {
@@ -62,32 +78,51 @@ struct NotesList: View {
                                             Text("Delete")
                                         })
                     }))
-
+                    
                     }
+                    .onMove( perform: move )
+
+//                    .onMove { indices, newOffset in
+//                        items.nsSortDescriptors.move(fromOffsets: indices, toOffset: newOffset)
+//                    } // move
                 }
-                
                     .ignoresSafeArea()
                     .padding(.horizontal, 16.0)
-//                    .background(Color(red: 0.08, green: 0.148, blue: 0.135))
-//                    .foregroundColor(Color(red: 0.55, green: 0.54, blue: 0.52)
-                
-//                .toolbar {
-//                    ToolbarItem {
-//                        Text("Op")
-//                    }
-//                }
                 Text("Make it count")
-            }.environment(\.layoutDirection, .rightToLeft)
-        
-            
-            
-            
+            }
+            .environment(\.layoutDirection, .rightToLeft) //navigation view ends
+   
         }
-        
+     
+    
+    private func move( from source: IndexSet, to destination: Int)
+    {
+        // Make an array of items from fetched results
+        var revisedItems: [ Item ] = items.map{ $0 }
+
+        // change the order of the items in the array
+        revisedItems.move(fromOffsets: source, toOffset: destination )
+
+        // update the orderIndex attribute in revisedItems to
+        // persist the new order. This is done in reverse order
+        // to minimize changes to the indices.
+        for reverseIndex in stride( from: revisedItems.count - 1,
+                                    through: 0,
+                                    by: -1 )
+        {
+            revisedItems[ reverseIndex ].orderIndex =
+                Int16( reverseIndex )
+        }
+    }
+   
 }
+
 
 struct List_Previews: PreviewProvider {
     static var previews: some View {
         NotesList()
     }
 }
+
+
+

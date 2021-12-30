@@ -60,6 +60,5 @@ struct AddNote: View {
 struct AddNote_Previews: PreviewProvider {
     static var previews: some View {
         AddNote()
-
         }
     }
