@@ -53,7 +53,7 @@ struct EditorView: View {
                                .padding(.trailing, 72.0)
                                .onChange(of: title) { newValue in
                                                updateItem(item: item)
-                                              print("New title: \(title)!")
+//                                              print("New title: \(title)!")
                                    
                                           }
                        }
@@ -71,7 +71,7 @@ struct EditorView: View {
                     .multilineTextAlignment(.trailing)
                     .onChange(of: note) { newValue in
                                     updateItem(item: item)
-                                   print("New title: \(note)!")
+//                                   print("New title: \(note)!")
                         
                                }
                     

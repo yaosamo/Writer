@@ -35,35 +35,32 @@ struct NotesList: View {
     //Text string
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
-  
+    @State var empty:String = ""
     var body: some View {
         
 //        let _ = print(items)
-
+        
         
             NavigationView {
-             
-                
                 List {
 //                     Empty text works as padding above list
                     Text("")
                         .padding(.bottom, 32.0)
                    
-                    
                     ForEach(items, id: \.self) { item in
                     NavigationLink {
                        
                         ZStack(alignment: Alignment(horizontal: .leading, vertical: .top)) {
                             EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle)
                             AddNote()
-                                .padding()
+                            .padding()
                         }
                         .ignoresSafeArea(edges: .top)
                     } label: {
                         Text("\(item.title!)")
                             .font(.system(size: 12, weight: Font.Weight.thin, design: .monospaced))
                         
-                    }.frame(maxWidth: 240, alignment: .trailing) // sidebar elements
+                    }.frame(maxWidth: .infinity, alignment: .trailing) // sidebar elements
                     
                     // Deleting with right click
                     .contextMenu(ContextMenu(menuItems: {
@@ -81,17 +78,21 @@ struct NotesList: View {
                     
                     }
                     .onMove( perform: move )
-
-//                    .onMove { indices, newOffset in
-//                        items.nsSortDescriptors.move(fromOffsets: indices, toOffset: newOffset)
-//                    } // move
+                    
                 }
                     .ignoresSafeArea()
                     .padding(.horizontal, 16.0)
                 Text("Make it count")
+                .foregroundColor(.white)
+//                    .toolbar {
+//                        ToolbarItem {
+//                            Button(action: {}) {
+//                                Label("Add Item", systemImage: "plus")
+//                            }
+//                        }
+//                    }
             }
             .environment(\.layoutDirection, .rightToLeft) //navigation view ends
-   
         }
      
     
@@ -113,6 +114,7 @@ struct NotesList: View {
             revisedItems[ reverseIndex ].orderIndex =
                 Int16( reverseIndex )
         }
+        try? viewContext.save()
     }
    
 }
