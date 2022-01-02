@@ -24,6 +24,7 @@ extension NSTextView {
 }
 
 
+
 struct EditorView: View {
     // Coredata for saving / updating viewContext
     @Environment(\.managedObjectContext) var viewContext
@@ -38,9 +39,9 @@ struct EditorView: View {
     @State var date: Date
     @State var title: String
     
-    
        var body: some View {
-           
+           // Wrap editor and add button into zstack so add button is sticky
+           ZStack(alignment: Alignment(horizontal: .leading, vertical: .top))  {
            ScrollView {
                VStack {
                    
@@ -48,13 +49,13 @@ struct EditorView: View {
                        Group {
                            Text("\(item.date!, formatter: itemFormatter)")
                                .padding(.trailing, 24.0)
-                           TextField("Title", text: $title).textFieldStyle(PlainTextFieldStyle())
+                           TextField("Title", text: $title)
+//                               .textFieldStyle(PlainTextFieldStyle())
                                .multilineTextAlignment(.trailing)
-                               .padding(.trailing, 72.0)
+                               .padding(.trailing, 64.0)
                                .onChange(of: title) { newValue in
                                                updateItem(item: item)
 //                                              print("New title: \(title)!")
-                                   
                                           }
                        }
                        .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
@@ -74,11 +75,14 @@ struct EditorView: View {
 //                                   print("New title: \(note)!")
                         
                                }
-                    
-           }
+               }
     
                
            }
+            AddNote()
+            .padding()
+           } .ignoresSafeArea(edges: .top)
+          
         
        }
     
@@ -95,6 +99,7 @@ struct EditorView: View {
         try? viewContext.save()
         }
         }
+    
 }
 
 

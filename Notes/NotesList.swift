@@ -18,49 +18,51 @@ struct NotesList: View {
     
     // Fetch and sorting
 //    @FetchRequest(sortDescriptors:  [SortDescriptor(\.date)])
-//    @FetchRequest(sortDescriptors:
-//            [NSSortDescriptor(key: "orderIndex", ascending: true)],
-//            animation: .default)
-    @FetchRequest( entity: Item.entity(),
-                       sortDescriptors:
-                       [
-                           NSSortDescriptor(
-                               keyPath: \Item.orderIndex,
-                               ascending: true)
-                       ]
-        )
+    @FetchRequest(sortDescriptors:
+            [NSSortDescriptor(key: "orderIndex", ascending: true)],
+                  animation: .default)
+//    @FetchRequest( entity: Item.entity(),
+//                       sortDescriptors:
+//                       [
+//                           NSSortDescriptor(
+//                               keyPath: \Item.orderIndex,
+//                               ascending: true)
+//                       ]
+//        )
     var items: FetchedResults<Item>
-
-
+    
     //Text string
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
-    @State var empty:String = ""
+    @State private var selectedItemId: UUID?
+    @State private var shouldShowPurple: Bool = true
     var body: some View {
         
 //        let _ = print(items)
-        
-        
+       
             NavigationView {
                 List {
 //                     Empty text works as padding above list
                     Text("")
                         .padding(.bottom, 32.0)
                    
-                    ForEach(items, id: \.self) { item in
-                    NavigationLink {
+                    ForEach(items) { item in
+//                        let _ = print(item.id)
+//                        if (item.selection == true) {
+//                           let selectedItemId = item.id
+//                        }
+                     
+                    NavigationLink(
+                        destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
+                        tag: item.id ?? UUID(),
+                        selection: self.$selectedItemId)
+                    {
                        
-                        ZStack(alignment: Alignment(horizontal: .leading, vertical: .top)) {
-                            EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle)
-                            AddNote()
-                            .padding()
-                        }
-                        .ignoresSafeArea(edges: .top)
-                    } label: {
                         Text("\(item.title!)")
                             .font(.system(size: 12, weight: Font.Weight.thin, design: .monospaced))
-                        
-                    }.frame(maxWidth: .infinity, alignment: .trailing) // sidebar elements
+         
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing) // sidebar elements
                     
                     // Deleting with right click
                     .contextMenu(ContextMenu(menuItems: {
@@ -78,6 +80,7 @@ struct NotesList: View {
                     
                     }
                     .onMove( perform: move )
+                  
                     
                 }
                     .ignoresSafeArea()
@@ -103,7 +106,7 @@ struct NotesList: View {
 
         // change the order of the items in the array
         revisedItems.move(fromOffsets: source, toOffset: destination )
-
+        
         // update the orderIndex attribute in revisedItems to
         // persist the new order. This is done in reverse order
         // to minimize changes to the indices.
@@ -113,10 +116,11 @@ struct NotesList: View {
         {
             revisedItems[ reverseIndex ].orderIndex =
                 Int16( reverseIndex )
+            
         }
         try? viewContext.save()
     }
-   
+    
 }
 
 

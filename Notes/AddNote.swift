@@ -52,6 +52,7 @@ struct AddNote: View {
             newItem.date = Date()
             newItem.note = emptyText
             newItem.title = emptyTitle
+            newItem.id = UUID()
             try? viewContext.save()
         }
     }
