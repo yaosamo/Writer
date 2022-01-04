@@ -116,7 +116,7 @@ struct NotesList: View {
         {
             revisedItems[ reverseIndex ].orderIndex =
                 Int16( reverseIndex )
-            // checking if current item is selected and maintain it after move
+            // checking if current item is selected and maintain it
             if (currentSelection == revisedItems[ reverseIndex ].id) {
                 let newSpot = UUID()
                 revisedItems[ reverseIndex ].id = newSpot
