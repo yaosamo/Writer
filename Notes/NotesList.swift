@@ -13,6 +13,9 @@ import CoreData
 
 struct NotesList: View {
     
+    
+    
+    
     // Managed Object from Coredata
      @Environment(\.managedObjectContext) var viewContext
     
@@ -34,8 +37,8 @@ struct NotesList: View {
     //Text string
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
-    @State private var selectedItemId: UUID?
-    @State private var shouldShowPurple: Bool = true
+    @State private var currentSelection: UUID?
+    
     var body: some View {
         
 //        let _ = print(items)
@@ -46,21 +49,15 @@ struct NotesList: View {
                     Text("")
                         .padding(.bottom, 32.0)
                    
-                    ForEach(items) { item in
-//                        let _ = print(item.id)
-//                        if (item.selection == true) {
-//                           let selectedItemId = item.id
-//                        }
-                     
+                    ForEach(items, id: \.self) { item in
+                        
                     NavigationLink(
                         destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
                         tag: item.id ?? UUID(),
-                        selection: self.$selectedItemId)
+                        selection: self.$currentSelection)
                     {
-                       
                         Text("\(item.title!)")
                             .font(.system(size: 12, weight: Font.Weight.thin, design: .monospaced))
-         
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing) // sidebar elements
                     
@@ -77,11 +74,8 @@ struct NotesList: View {
                                             Text("Delete")
                                         })
                     }))
-                    
                     }
                     .onMove( perform: move )
-                  
-                    
                 }
                     .ignoresSafeArea()
                     .padding(.horizontal, 16.0)
@@ -96,17 +90,23 @@ struct NotesList: View {
 //                    }
             }
             .environment(\.layoutDirection, .rightToLeft) //navigation view ends
+            .onAppear(perform: first)
         }
-     
+    
+    private func first() {
+        self.currentSelection = items.first?.id
+    }
     
     private func move( from source: IndexSet, to destination: Int)
     {
+
         // Make an array of items from fetched results
         var revisedItems: [ Item ] = items.map{ $0 }
-
+//        let _ = print(self.currentSelection)
+        
         // change the order of the items in the array
         revisedItems.move(fromOffsets: source, toOffset: destination )
-        
+       
         // update the orderIndex attribute in revisedItems to
         // persist the new order. This is done in reverse order
         // to minimize changes to the indices.
@@ -117,6 +117,11 @@ struct NotesList: View {
             revisedItems[ reverseIndex ].orderIndex =
                 Int16( reverseIndex )
             
+            if (currentSelection == revisedItems[ reverseIndex ].id) {
+                let newSpot = UUID()
+                revisedItems[ reverseIndex ].id = newSpot
+                currentSelection = newSpot
+            }
         }
         try? viewContext.save()
     }

@@ -14,6 +14,7 @@ struct AddNote: View {
     
     
     @State private var overText = false
+//    @State var currentSelection: UUID?
 
     //Text string
     var emptyText = "Free your mind"
@@ -38,11 +39,7 @@ struct AddNote: View {
                            } else {
                                NSCursor.pop()
                            }
-            }
-           
-
-        
-            
+            } 
     }
 
 

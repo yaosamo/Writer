@@ -50,7 +50,7 @@ struct EditorView: View {
                            Text("\(item.date!, formatter: itemFormatter)")
                                .padding(.trailing, 24.0)
                            TextField("Title", text: $title)
-//                               .textFieldStyle(PlainTextFieldStyle())
+                               .textFieldStyle(PlainTextFieldStyle())
                                .multilineTextAlignment(.trailing)
                                .padding(.trailing, 64.0)
                                .onChange(of: title) { newValue in
@@ -72,12 +72,8 @@ struct EditorView: View {
                     .multilineTextAlignment(.trailing)
                     .onChange(of: note) { newValue in
                                     updateItem(item: item)
-//                                   print("New title: \(note)!")
-                        
                                }
-               }
-    
-               
+                    }
            }
             AddNote()
             .padding()
