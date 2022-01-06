@@ -75,7 +75,7 @@ struct EditorView: View {
                                }
                     }
            }
-            AddNote()
+               AddNote()
             .padding()
            } .ignoresSafeArea(edges: .top)
           

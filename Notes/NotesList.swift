@@ -9,18 +9,13 @@ import SwiftUI
 import CoreData
 
 
-
-
 struct NotesList: View {
-    
-    
-    
     
     // Managed Object from Coredata
      @Environment(\.managedObjectContext) var viewContext
     
     // Fetch and sorting
-//    @FetchRequest(sortDescriptors:  [SortDescriptor(\.date)])
+    // @FetchRequest(sortDescriptors:  [SortDescriptor(\.date)])
     @FetchRequest(sortDescriptors:
             [NSSortDescriptor(key: "orderIndex", ascending: true)],
                   animation: .default)
@@ -37,11 +32,9 @@ struct NotesList: View {
     //Text string
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
-    @State private var currentSelection: UUID?
+    @State var currentSelection: UUID?
     
     var body: some View {
-        
-//        let _ = print(items)
        
             NavigationView {
                 List {
@@ -54,7 +47,7 @@ struct NotesList: View {
                     NavigationLink(
                         destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
                         tag: item.id ?? UUID(),
-                        selection: self.$currentSelection)
+                        selection: $currentSelection)
                     {
                         Text("\(item.title!)")
                             .font(.system(size: 12, weight: Font.Weight.thin, design: .monospaced))
@@ -77,6 +70,9 @@ struct NotesList: View {
                     }
                     .onMove( perform: move )
                 }
+                .onChange(of: items.count) { newValue in
+                    currentSelection = items.first?.id
+                }
                     .ignoresSafeArea()
                     .padding(.horizontal, 16.0)
                 Text("Make it count")
@@ -94,15 +90,13 @@ struct NotesList: View {
         }
     
     private func first() {
-        self.currentSelection = items.first?.id
+        currentSelection = items.first?.id
     }
-    
+ 
     private func move( from source: IndexSet, to destination: Int)
     {
-
         // Make an array of items from fetched results
         var revisedItems: [ Item ] = items.map{ $0 }
-//        let _ = print(self.currentSelection)
         
         // change the order of the items in the array
         revisedItems.move(fromOffsets: source, toOffset: destination )
@@ -116,12 +110,14 @@ struct NotesList: View {
         {
             revisedItems[ reverseIndex ].orderIndex =
                 Int16( reverseIndex )
+            
             // checking if current item is selected and maintain it
             if (currentSelection == revisedItems[ reverseIndex ].id) {
                 let newSpot = UUID()
                 revisedItems[ reverseIndex ].id = newSpot
+                revisedItems[ reverseIndex ].selection = true
                 currentSelection = newSpot
-            }
+            } else { revisedItems[ reverseIndex ].selection = false }
         }
         try? viewContext.save()
     }
