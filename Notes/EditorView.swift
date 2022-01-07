@@ -24,7 +24,6 @@ extension NSTextView {
 }
 
 
-
 struct EditorView: View {
     // Coredata for saving / updating viewContext
     @Environment(\.managedObjectContext) var viewContext
@@ -44,7 +43,6 @@ struct EditorView: View {
            ZStack(alignment: Alignment(horizontal: .leading, vertical: .top))  {
            ScrollView {
                VStack {
-                   
                    HStack {
                        Group {
                            Text("\(item.date!, formatter: itemFormatter)")
@@ -55,7 +53,6 @@ struct EditorView: View {
                                .padding(.trailing, 64.0)
                                .onChange(of: title) { newValue in
                                                updateItem(item: item)
-//                                              print("New title: \(title)!")
                                           }
                        }
                        .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
@@ -75,11 +72,10 @@ struct EditorView: View {
                                }
                     }
            }
-               AddNote()
+            AddNote()
             .padding()
-           } .ignoresSafeArea(edges: .top)
-          
-        
+           }
+           .ignoresSafeArea(edges: .top)
        }
     
     // Updating item funcion
@@ -97,7 +93,6 @@ struct EditorView: View {
         }
     
 }
-
 
 
 // Date formatter

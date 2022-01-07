@@ -7,11 +7,11 @@
 
 import SwiftUI
 
+
 struct AddNote: View {
     
     // Managed Object from Coredata
      @Environment(\.managedObjectContext) var viewContext
-    
     
     @State private var overText = false
 
@@ -42,11 +42,13 @@ struct AddNote: View {
     }
 
     private func addNote() {
+        
 //        Attempt creating new item after selected item and moving others below it.
-//        let first = NotesList().items.first?.orderIndex
+//        let items
+//        
 //        let currentlySelected = NotesList().currentSelection
 //        var currentlySelectedIndex = Int16()
-//        for reverseIndex in stride( from: items.count - 1,
+//        for reverseIndex in stride( from: items.count,
 //                                    through: 0,
 //                                    by: -1 )
 //        {
@@ -54,25 +56,27 @@ struct AddNote: View {
 //                items[ reverseIndex ].id == currentlySelected) {
 //                currentlySelectedIndex = items[ reverseIndex ].orderIndex
 //            let _ = print(items[reverseIndex])
+//                
 //                }
 //
 //        }
-//        NotesList().currentSelection =
-//        withAnimation {
+//    
+        withAnimation {
             let newItem = Item(context: viewContext)
             newItem.date = Date()
             newItem.note = emptyText
             newItem.title = emptyTitle
             newItem.id = UUID()
-        newItem.orderIndex = -1
+            newItem.orderIndex = -1
             try? viewContext.save()
-//        }
+        }
     }
    
 }
 
 
 struct AddNote_Previews: PreviewProvider {
+
     static var previews: some View {
         AddNote()
         }
