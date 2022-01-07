@@ -9,20 +9,53 @@ import SwiftUI
 
 
 // Making textfields transparent thanks to https://stackoverflow.com/questions/65865182/transparent-background-for-texteditor-in-swiftui
-extension NSTextView {
-    open override var frame: CGRect {
-    didSet {
-        backgroundColor = .clear
-        insertionPointColor = .orange
-        textContainer?.lineFragmentPadding = 72
-//        textContainerInset = (CGSize:72)
-//        usesFontPanel = true
-//        isRichText = true
-//        usesInspectorBar = true
+//extension NSTextView {
+//    open override var frame: CGRect {
+//    didSet {
+//        backgroundColor = .clear
+//        insertionPointColor = .orange
+//        textContainer?.lineFragmentPadding = 72
+//
+////        textContainerInset = (CGSize:72)
+////        usesFontPanel = true
+////        isRichText = true
+////        usesInspectorBar = true
+//    }
+//  }
+//}
+
+class ParagraphStyle {
+
+let NStext: NSTextView
+
+
+init(NStext: NSTextView) {
+    self.NStext = NStext
+    //Set paragraph style
+    NStext.textContainer?.lineFragmentPadding = 59
     }
-  }
 }
 
+
+struct TextFieldModifier: ViewModifier {
+    let color: Color
+    let padding: CGFloat // <- space between text and border
+    let lineWidth: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .padding(padding)
+            .overlay(RoundedRectangle(cornerRadius: padding)
+                        .stroke(color, lineWidth: lineWidth)
+            )
+    }
+}
+
+extension View {
+    func customTextField(color: Color = .secondary, padding: CGFloat = 3, lineWidth: CGFloat = 1.0) -> some View { // <- Default settings
+        self.modifier(TextFieldModifier(color: color, padding: padding, lineWidth: lineWidth))
+    }
+}
 
 struct EditorView: View {
     // Coredata for saving / updating viewContext
@@ -38,6 +71,7 @@ struct EditorView: View {
     @State var date: Date
     @State var title: String
     
+    
        var body: some View {
            // Wrap editor and add button into zstack so add button is sticky
            ZStack(alignment: Alignment(horizontal: .leading, vertical: .top))  {
@@ -48,6 +82,7 @@ struct EditorView: View {
                            Text("\(item.date!, formatter: itemFormatter)")
                                .padding(.trailing, 24.0)
                            TextField("Title", text: $title)
+                               .customTextField()
                                .textFieldStyle(PlainTextFieldStyle())
                                .multilineTextAlignment(.trailing)
                                .padding(.trailing, 64.0)
