@@ -13,7 +13,10 @@ extension NSTextView {
     didSet {
         backgroundColor = .clear
         insertionPointColor = .orange
+		enclosingScrollView?.hasVerticalScroller = false
+//		enclosingScrollView?.verticalScrollElasticity = NSScrollView.Elasticity.none
 		
+			
 //        textContainerInset = NSSize(width: 0, height: 40)
         
 //        textContainer?.lineFragmentPadding = 0
@@ -21,7 +24,7 @@ extension NSTextView {
 //        usesFontPanel = true
 //        isRichText = true
 //        usesInspectorBar = true
-//        textContainerInset = NSSize(width: 24, height: 44)
+//        textContainerInset = NSSize(width: 0, height: 44)
     }
   }
 }
@@ -51,6 +54,7 @@ struct MultilineTextField: NSViewRepresentable {
         textView.textContainer?.lineFragmentPadding = 0
         textView.allowsUndo = true
         textView.isRichText = false
+		textView.enclosingScrollView?.hasVerticalScroller = false
         textView.pasteAsPlainText(Any?.self)
         return textView
     }
@@ -105,7 +109,6 @@ struct EditorView: View {
                                .padding(.trailing, 24.0)
 
                            TextField("Title", text: $title)
-//                           MultilineTextField(text: $title)
                                .textFieldStyle(PlainTextFieldStyle())
                                .multilineTextAlignment(.trailing)
                                .padding(.trailing, 72)
@@ -123,17 +126,18 @@ struct EditorView: View {
                    
 				   
                    TextEditor(text: $note)
-					.fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
                     .lineSpacing(5.0)
 					.padding([.trailing, .leading], 72)
                     .multilineTextAlignment(.trailing)
                     .onChange(of: note) { newValue in
                                     updateItem(item: item)
-					}.frame(minHeight: height.size.height-176)
-
-              	} .rotationEffect(Angle(degrees: 180))
-			   }.rotationEffect(Angle(degrees: 180)) // scrollviwe
+					}
+					.frame(minHeight: height.size.height-176)
+              	}
+			   .rotationEffect(Angle(degrees: 180))
+			   }  // scrollviwe
+			   .rotationEffect(Angle(degrees: 180))
                AddNote()
             .padding()
            }
