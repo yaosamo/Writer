@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 // Making textfields transparent thanks to https://stackoverflow.com/questions/65865182/transparent-background-for-texteditor-in-swiftui
 extension NSTextView {
     open override var frame: CGRect {
@@ -15,8 +16,8 @@ extension NSTextView {
         insertionPointColor = .orange
 		enclosingScrollView?.hasVerticalScroller = false
 //		enclosingScrollView?.verticalScrollElasticity = NSScrollView.Elasticity.none
-		
-			
+		enclosingScrollView?.horizontalScrollElasticity = NSScrollView.Elasticity.none
+		isAutomaticLinkDetectionEnabled = true
 //        textContainerInset = NSSize(width: 0, height: 40)
         
 //        textContainer?.lineFragmentPadding = 0
@@ -133,7 +134,9 @@ struct EditorView: View {
                     .onChange(of: note) { newValue in
                                     updateItem(item: item)
 					}
-					.frame(minHeight: height.size.height-176)
+					.frame(minWidth: 0, maxWidth: .infinity, minHeight: height.size.height-176, alignment: Alignment.bottomLeading)
+
+//					.frame(minHeight: height.size.height-176)
               	}
 			   .rotationEffect(Angle(degrees: 180))
 			   }  // scrollviwe
