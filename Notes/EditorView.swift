@@ -7,6 +7,55 @@
 
 import SwiftUI
 
+class Singer {
+	var name: String
+	var age: Int
+
+	init(name: String, age: Int) {
+		self.name = name
+		self.age = age
+	}
+
+	func sing() {
+		print("La la la la")
+	}
+}
+
+class CountrySinger: Singer {
+	override func sing() {
+		print("Trucks, guitars, and liquor")
+	}
+}
+
+class FatRoundInsertionCaretTextView: NSTextView {
+
+	var caretWidth: CGFloat = 3
+	var caretColor = NSColor.systemOrange
+	
+	private lazy var radius = caretWidth / 2
+	private lazy var displayAdjustment = caretWidth - 1
+
+		open override func drawInsertionPoint(in rect: NSRect, color: NSColor, turnedOn flag: Bool) {
+			
+			var rect = rect
+			rect.size.width = caretWidth
+
+			let path = NSBezierPath(roundedRect: rect,
+									xRadius: radius,
+									yRadius: radius)
+			path.setClip()
+
+			super.drawInsertionPoint(in: rect,
+									 color: caretColor,
+									 turnedOn: flag)
+		}
+
+		open override func setNeedsDisplay(_ rect: NSRect, avoidAdditionalLayout flag: Bool) {
+			var rect = rect
+			rect.size.width += displayAdjustment
+			super.setNeedsDisplay(rect, avoidAdditionalLayout: flag)
+		}
+}
 
 // Making textfields transparent thanks to https://stackoverflow.com/questions/65865182/transparent-background-for-texteditor-in-swiftui
 extension NSTextView {
@@ -18,8 +67,8 @@ extension NSTextView {
 //		enclosingScrollView?.verticalScrollElasticity = NSScrollView.Elasticity.none
 		enclosingScrollView?.horizontalScrollElasticity = NSScrollView.Elasticity.none
 		isAutomaticLinkDetectionEnabled = true
+		
 //        textContainerInset = NSSize(width: 0, height: 40)
-        
 //        textContainer?.lineFragmentPadding = 0
 //        textContainerInset = (CGSize:72)
 //        usesFontPanel = true
@@ -27,9 +76,10 @@ extension NSTextView {
 //        usesInspectorBar = true
 //        textContainerInset = NSSize(width: 0, height: 44)
     }
+		
   }
 }
-
+//
 //@IBDesignable class UITextViewFixed: UITextView {
 //    override func layoutSubviews() {
 //        super.layoutSubviews()
@@ -86,7 +136,7 @@ struct MultilineTextField: NSViewRepresentable {
 struct EditorView: View {
     // Coredata for saving / updating viewContext
     @Environment(\.managedObjectContext) var viewContext
-   
+	var taylor = CountrySinger(name: "Taylor", age: 25)
     //Text string
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
@@ -97,8 +147,8 @@ struct EditorView: View {
     @State var date: Date
     @State var title: String
     
-    
        var body: some View {
+		   
            // Wrap editor and add button into zstack so add button is sticky
 		   GeometryReader { height in
            ZStack(alignment: Alignment(horizontal: .leading, vertical: .top))  {
