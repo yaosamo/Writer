@@ -51,7 +51,7 @@ struct NotesList: View {
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
     @State var currentSelection: UUID?
-    
+
     var body: some View {
             NavigationView {
                 List {
@@ -91,7 +91,6 @@ struct NotesList: View {
                 }
                 // on change of items count set current selection in the list to firts item
                 .onChange(of: items.count) { newValue in
-                    let _ = print("count")
                     currentSelection = items.first?.id
                 }
                     .ignoresSafeArea()
@@ -113,7 +112,6 @@ struct NotesList: View {
         }
     
     private func first() {
-        let _ = print("first")
                 currentSelection = items.first?.id
     }
  
@@ -124,7 +122,6 @@ struct NotesList: View {
    
         // change the order of the items in the array
         revisedItems.move(fromOffsets: source, toOffset: destination )
-        let _ = print("Order Index save")
         // update the orderIndex attribute in revisedItems to
         // persist the new order. This is done in reverse order
         // to minimize changes to the indices.
@@ -137,7 +134,6 @@ struct NotesList: View {
             
             // checking if current item is selected and maintain it
             if (currentSelection == revisedItems[ reverseIndex ].id) {
-                let _ = print("current selection definded")
                 let newSpot = UUID()
                 revisedItems[ reverseIndex ].id = newSpot
                 revisedItems[ reverseIndex ].selection = true

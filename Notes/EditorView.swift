@@ -47,6 +47,7 @@ extension NSTextView {
 		enclosingScrollView?.hasVerticalScroller = false
 		enclosingScrollView?.horizontalScrollElasticity = NSScrollView.Elasticity.none
 		isAutomaticLinkDetectionEnabled = true
+//		isRichText = true
 //        textContainerInset = NSSize(width: 0, height: 40)
 //        textContainer?.lineFragmentPadding = 0
 //        textContainerInset = (CGSize:72)
@@ -146,7 +147,6 @@ struct EditorView: View {
                                .padding(.trailing, 72)
                                .onChange(of: title) { newValue in
                                                updateItem(item: item)
-								   let _ = print("title change request")
                                           }
 					   }
                        .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
@@ -164,7 +164,6 @@ struct EditorView: View {
                     .multilineTextAlignment(.trailing)
                     .onChange(of: note) { newValue in
                                     updateItem(item: item)
-						let _ = print("note change request")
 					}
 					.frame(minWidth: 0, maxWidth: .infinity, minHeight: height.size.height-176, alignment: Alignment.bottomLeading)
               	} // vstack
@@ -180,12 +179,11 @@ struct EditorView: View {
     
     // Updating item funcion
     private func updateItem(item: Item) {
-		let _ = print("Note or Title updated")
         let note = note
         let title = title
             viewContext.performAndWait {
             item.note = note
-                item.title = title
+			item.title = title
             try? viewContext.save()
             }
 		}
