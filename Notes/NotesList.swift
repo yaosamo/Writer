@@ -8,6 +8,21 @@
 import SwiftUI
 import CoreData
 
+
+// background in List
+//extension NSTableView {
+//    open override func viewDidMoveToWindow() {
+//        super.viewDidMoveToWindow()
+//        let bgcolor = NSColor(Color(red: 0.08, green: 0.14, blue: 0.13))
+//        backgroundColor = bgcolor
+//        if let esv = enclosingScrollView {
+//            esv.drawsBackground = true
+//        }
+//    }
+//}
+
+
+
 struct NotesList: View {
     
     // Managed Object from Coredata
@@ -28,13 +43,15 @@ struct NotesList: View {
 //        )
     var items: FetchedResults<Item>
 
-   
+    let bgcolor = Color(red: 0.08, green: 0.14, blue: 0.13)
+    let selectedColor = Color(red: 0.06, green: 0.10, blue: 0.09)
+ 
 
     //Text string
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
     @State var currentSelection: UUID?
-
+    
     var body: some View {
             NavigationView {
                 List {
@@ -70,14 +87,17 @@ struct NotesList: View {
                     }
                     // On move perform function called move
                     .onMove( perform: move )
+                    
                 }
                 // on change of items count set current selection in the list to firts item
                 .onChange(of: items.count) { newValue in
+                    let _ = print("count")
                     currentSelection = items.first?.id
                 }
-                
                     .ignoresSafeArea()
                     .padding(.horizontal, 16.0)
+//                    .foregroundColor(Color(red: 0.55, green: 0.54, blue: 0.52))
+//                    .background(bgcolor)
                 Text("Make it count")
                 .foregroundColor(.white)
 //                    .toolbar {
@@ -93,6 +113,7 @@ struct NotesList: View {
         }
     
     private func first() {
+        let _ = print("first")
                 currentSelection = items.first?.id
     }
  
@@ -103,7 +124,7 @@ struct NotesList: View {
    
         // change the order of the items in the array
         revisedItems.move(fromOffsets: source, toOffset: destination )
-       
+        let _ = print("Order Index save")
         // update the orderIndex attribute in revisedItems to
         // persist the new order. This is done in reverse order
         // to minimize changes to the indices.
@@ -116,6 +137,7 @@ struct NotesList: View {
             
             // checking if current item is selected and maintain it
             if (currentSelection == revisedItems[ reverseIndex ].id) {
+                let _ = print("current selection definded")
                 let newSpot = UUID()
                 revisedItems[ reverseIndex ].id = newSpot
                 revisedItems[ reverseIndex ].selection = true

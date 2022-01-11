@@ -7,55 +7,36 @@
 
 import SwiftUI
 
-class Singer {
-	var name: String
-	var age: Int
-
-	init(name: String, age: Int) {
-		self.name = name
-		self.age = age
-	}
-
-	func sing() {
-		print("La la la la")
-	}
-}
-
-class CountrySinger: Singer {
-	override func sing() {
-		print("Trucks, guitars, and liquor")
-	}
-}
-
-class FatRoundInsertionCaretTextView: NSTextView {
-
-	var caretWidth: CGFloat = 3
-	var caretColor = NSColor.systemOrange
-	
-	private lazy var radius = caretWidth / 2
-	private lazy var displayAdjustment = caretWidth - 1
-
-		open override func drawInsertionPoint(in rect: NSRect, color: NSColor, turnedOn flag: Bool) {
-			
-			var rect = rect
-			rect.size.width = caretWidth
-
-			let path = NSBezierPath(roundedRect: rect,
-									xRadius: radius,
-									yRadius: radius)
-			path.setClip()
-
-			super.drawInsertionPoint(in: rect,
-									 color: caretColor,
-									 turnedOn: flag)
-		}
-
-		open override func setNeedsDisplay(_ rect: NSRect, avoidAdditionalLayout flag: Bool) {
-			var rect = rect
-			rect.size.width += displayAdjustment
-			super.setNeedsDisplay(rect, avoidAdditionalLayout: flag)
-		}
-}
+//
+//class FatCaret: NSTextView {
+//
+//	var caretWidth: CGFloat = 3
+//	var caretColor = NSColor.systemOrange
+//
+//	private lazy var radius = caretWidth / 2
+//	private lazy var displayAdjustment = caretWidth - 1
+//
+//		open override func drawInsertionPoint(in rect: NSRect, color: NSColor, turnedOn flag: Bool) {
+//
+//			var rect = rect
+//			rect.size.width = caretWidth
+//
+//			let path = NSBezierPath(roundedRect: rect,
+//									xRadius: radius,
+//									yRadius: radius)
+//			path.setClip()
+//
+//			super.drawInsertionPoint(in: rect,
+//									 color: caretColor,
+//									 turnedOn: flag)
+//		}
+//
+//		open override func setNeedsDisplay(_ rect: NSRect, avoidAdditionalLayout flag: Bool) {
+//			var rect = rect
+//			rect.size.width += displayAdjustment
+//			super.setNeedsDisplay(rect, avoidAdditionalLayout: flag)
+//		}
+//}
 
 // Making textfields transparent thanks to https://stackoverflow.com/questions/65865182/transparent-background-for-texteditor-in-swiftui
 extension NSTextView {
@@ -64,10 +45,8 @@ extension NSTextView {
         backgroundColor = .clear
         insertionPointColor = .orange
 		enclosingScrollView?.hasVerticalScroller = false
-//		enclosingScrollView?.verticalScrollElasticity = NSScrollView.Elasticity.none
 		enclosingScrollView?.horizontalScrollElasticity = NSScrollView.Elasticity.none
 		isAutomaticLinkDetectionEnabled = true
-		
 //        textContainerInset = NSSize(width: 0, height: 40)
 //        textContainer?.lineFragmentPadding = 0
 //        textContainerInset = (CGSize:72)
@@ -76,7 +55,6 @@ extension NSTextView {
 //        usesInspectorBar = true
 //        textContainerInset = NSSize(width: 0, height: 44)
     }
-		
   }
 }
 //
@@ -92,61 +70,63 @@ extension NSTextView {
 //}
 
 
-
-
-struct MultilineTextField: NSViewRepresentable {
-
-    typealias NSViewType = NSTextView
-    private let textView = NSTextView()
-    @Binding var text: String
-
-    func makeNSView(context: Context) -> NSTextView {
-        textView.delegate = context.coordinator
-        textView.textContainer?.lineFragmentPadding = 0
-        textView.allowsUndo = true
-        textView.isRichText = false
-		textView.enclosingScrollView?.hasVerticalScroller = false
-        textView.pasteAsPlainText(Any?.self)
-        return textView
-    }
-    func updateNSView(_ nsView: NSTextView, context: Context) {
-        nsView.string = text
-        textView.textStorage?.foregroundColor = NSColor(red: 0.47, green: 0.47, blue: 0.52, alpha: 1)
-        textView.font = .monospacedSystemFont(ofSize: 14, weight: NSFont.Weight.thin)
-
-    }
-    func makeCoordinator() -> Coordinator {
-        return Coordinator(self)
-
-    }
-    class Coordinator: NSObject, NSTextViewDelegate {
-        let parent: MultilineTextField
-        init(_ textView: MultilineTextField) {
-            parent = textView
-        }
-        func textDidChange(_ notification: Notification) {
-            guard let textView = notification.object as? NSTextView else { return }
-            self.parent.text = textView.string
-
-        }
-    }
-}
+//
+//struct MultilineTextField: NSViewRepresentable {
+//
+//    typealias NSViewType = NSTextView
+//	private let textView = NSTextView()
+//    @Binding var text: String
+//
+//    func makeNSView(context: Context) -> NSTextView {
+//        textView.delegate = context.coordinator
+//        textView.textContainer?.lineFragmentPadding = 0
+//        textView.allowsUndo = true
+//        textView.isRichText = false
+//		textView.enclosingScrollView?.hasVerticalScroller = false
+//		textView.textStorage?.foregroundColor = NSColor(red: 0.47, green: 0.47, blue: 0.52, alpha: 1)
+//        textView.pasteAsPlainText(Any?.self)
+//		textView.font = .monospacedSystemFont(ofSize: 14, weight: NSFont.Weight.thin)
+//        return textView
+//    }
+//
+//    func updateNSView(_ nsView: NSTextView, context: Context) {
+//        nsView.string = text
+////        textView.textStorage?.foregroundColor = NSColor(red: 0.47, green: 0.47, blue: 0.52, alpha: 1)
+////        textView.font = .monospacedSystemFont(ofSize: 14, weight: NSFont.Weight.thin)
+//    }
+//
+//    func makeCoordinator() -> Coordinator {
+//        return Coordinator(self)
+//    }
+//
+//    class Coordinator: NSObject, NSTextViewDelegate {
+//        let parent: MultilineTextField
+//        init(_ textView: MultilineTextField) {
+//            parent = textView
+//        }
+//        func textDidChange(_ notification: Notification) {
+//            guard let textView = notification.object as? NSTextView else { return }
+//            self.parent.text = textView.string
+//        }
+//    }
+//}
 
 
 struct EditorView: View {
+
     // Coredata for saving / updating viewContext
     @Environment(\.managedObjectContext) var viewContext
-	var taylor = CountrySinger(name: "Taylor", age: 25)
+
     //Text string
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
-	
+
     //Item var for which we perform an update
     @State var item: Item
     @State var note: String
     @State var date: Date
     @State var title: String
-    
+
        var body: some View {
 		   
            // Wrap editor and add button into zstack so add button is sticky
@@ -156,26 +136,27 @@ struct EditorView: View {
                VStack {
                    HStack {
                        Group {
-                           Text("\(item.date!, formatter: itemFormatter)")
+						   
+                           Text("\(item.date ?? Date(), formatter: itemFormatter)")
                                .padding(.trailing, 24.0)
-
-                           TextField("Title", text: $title)
+						   
+						   TextField("Title", text: $title)
                                .textFieldStyle(PlainTextFieldStyle())
                                .multilineTextAlignment(.trailing)
                                .padding(.trailing, 72)
                                .onChange(of: title) { newValue in
                                                updateItem(item: item)
+								   let _ = print("title change request")
                                           }
-                       }
+					   }
                        .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
                        .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
                        Spacer()
-                   }
+                   } // hstack
                         // Paddings top and bottom for Date and Title
                        .padding(.leading, 72.0)
                        .padding([.bottom, .top], 88.0)
-                   
-				   
+				
                    TextEditor(text: $note)
                     .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
                     .lineSpacing(5.0)
@@ -183,23 +164,23 @@ struct EditorView: View {
                     .multilineTextAlignment(.trailing)
                     .onChange(of: note) { newValue in
                                     updateItem(item: item)
+						let _ = print("note change request")
 					}
 					.frame(minWidth: 0, maxWidth: .infinity, minHeight: height.size.height-176, alignment: Alignment.bottomLeading)
-
-//					.frame(minHeight: height.size.height-176)
-              	}
+              	} // vstack
 			   .rotationEffect(Angle(degrees: 180))
-			   }  // scrollviwe
+			   }  // scrollview
 			   .rotationEffect(Angle(degrees: 180))
                AddNote()
             .padding()
-           }
+           } // z-stack
            .ignoresSafeArea(edges: .top)
-		   } // geome
+		   } // geometry
 }
     
     // Updating item funcion
     private func updateItem(item: Item) {
+		let _ = print("Note or Title updated")
         let note = note
         let title = title
             viewContext.performAndWait {
@@ -207,7 +188,7 @@ struct EditorView: View {
                 item.title = title
             try? viewContext.save()
             }
-        }
+		}
 }
 
 
@@ -217,4 +198,3 @@ private let itemFormatter: DateFormatter = {
     formatter.dateStyle = .long
     return formatter
 }()
-

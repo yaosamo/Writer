@@ -22,12 +22,13 @@ struct AddNote: View {
     var body: some View {
         Button(action: addNote) {
             Image(systemName: "plus")
-                .frame(width: 24, height: 24, alignment: .center)
-                .font(.system(size: 12, weight: Font.Weight.regular, design: .rounded))
+                .frame(width: 32, height: 32, alignment: .center)
+                .font(.system(size: 16, weight: Font.Weight.regular, design: .rounded))
                 .foregroundColor(.white)
               
         } .buttonStyle(.borderless)
-            .background(overText ? Color(red: 0.82, green: 0.40, blue: 0.22) :  Color(red: 0.11, green: 0.13, blue: 0.12))
+            .background(overText ? Color(red: 0.1, green: 0.1, blue: 0.12) :  Color(.clear))
+//        (red: 0.82, green: 0.40, blue: 0.22)
             .clipShape(Circle())
             .onHover { over in
                             overText = over
