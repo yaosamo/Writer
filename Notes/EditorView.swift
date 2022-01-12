@@ -46,11 +46,13 @@ extension NSTextView {
         insertionPointColor = .orange
 		enclosingScrollView?.hasVerticalScroller = false
 		enclosingScrollView?.horizontalScrollElasticity = NSScrollView.Elasticity.none
-		isAutomaticLinkDetectionEnabled = true
+		isAutomaticLinkDetectionEnabled = false
+		enclosingScrollView?.contentView.automaticallyAdjustsContentInsets = false
+//		enclosingScrollView?.contentInsets = NSEdgeInsets(top: 40, left: 72, bottom: 40, right: 0)
 //		isRichText = true
 //        textContainerInset = NSSize(width: 0, height: 40)
 //        textContainer?.lineFragmentPadding = 0
-//        textContainerInset = (CGSize:72)
+//		textContainerInset = (CGSize(width: 40, height: -40))
 //        usesFontPanel = true
 //        isRichText = true
 //        usesInspectorBar = true
@@ -148,6 +150,7 @@ struct EditorView: View {
                                .onChange(of: title) { newValue in
                                                updateItem(item: item)
                                           }
+							   
 					   }
                        .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
                        .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
@@ -165,6 +168,7 @@ struct EditorView: View {
                     .onChange(of: note) { newValue in
                                     updateItem(item: item)
 					}
+					.padding(.bottom, 56)
 					.frame(minWidth: 0, maxWidth: .infinity, minHeight: height.size.height-176, alignment: Alignment.bottomLeading)
               	} // vstack
 			   .rotationEffect(Angle(degrees: 180))
@@ -173,7 +177,7 @@ struct EditorView: View {
                AddNote()
             .padding()
            } // z-stack
-           .ignoresSafeArea(edges: .top)
+		   .ignoresSafeArea()
 		   } // geometry
 }
     

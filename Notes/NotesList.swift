@@ -55,12 +55,11 @@ struct NotesList: View {
     var body: some View {
             NavigationView {
                 List {
-                    
 //                     Empty text works as padding above list
                     Text("")
                         .padding(.bottom, 32.0)
                    
-                    ForEach(items, id: \.self) { item in
+                    ForEach(items) { item in
                     NavigationLink(
                         destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
                         tag: item.id ?? UUID(),
@@ -87,26 +86,31 @@ struct NotesList: View {
                     }
                     // On move perform function called move
                     .onMove( perform: move )
-                    
                 }
                 // on change of items count set current selection in the list to firts item
                 .onChange(of: items.count) { newValue in
-                    currentSelection = items.first?.id
+                    if (items.count >= 1) {
+                        let newSpot = UUID()
+                        items.first?.id = newSpot
+                        currentSelection = newSpot
+                        }
                 }
                     .ignoresSafeArea()
                     .padding(.horizontal, 16.0)
 //                    .foregroundColor(Color(red: 0.55, green: 0.54, blue: 0.52))
 //                    .background(bgcolor)
-                Text("Make it count")
+                    AddNote()
                 .foregroundColor(.white)
 //                    .toolbar {
 //                        ToolbarItem {
-//                            Button(action: {}) {
+//                            Button(action: {   AddNote()}) {
 //                                Label("Add Item", systemImage: "plus")
 //                            }
 //                        }
 //                    }
             }
+            .ignoresSafeArea()
+            .background(Color(red: 0.06, green: 0.07, blue: 0.06))
             .environment(\.layoutDirection, .rightToLeft) //navigation view ends
             .onAppear(perform: first)
         }
@@ -136,9 +140,8 @@ struct NotesList: View {
             if (currentSelection == revisedItems[ reverseIndex ].id) {
                 let newSpot = UUID()
                 revisedItems[ reverseIndex ].id = newSpot
-                revisedItems[ reverseIndex ].selection = true
                 currentSelection = newSpot
-            } else { revisedItems[ reverseIndex ].selection = false }
+            }
         }
         try? viewContext.save()
     }

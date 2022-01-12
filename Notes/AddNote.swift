@@ -43,7 +43,7 @@ struct AddNote: View {
     }
 
     private func addNote() {
-        
+//        if (items.count < 1) { }
 //        Attempt creating new item after selected item and moving others below it.
 //        let items
 //        
@@ -68,8 +68,9 @@ struct AddNote: View {
             newItem.note = emptyText
             newItem.title = emptyTitle
             newItem.id = UUID()
-            newItem.orderIndex = -1
+            newItem.orderIndex = 0
             try? viewContext.save()
+            let _ = print("new created")
         }
     }
    
