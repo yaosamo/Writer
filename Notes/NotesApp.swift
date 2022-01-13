@@ -14,7 +14,6 @@ struct NotesCoreBasicApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                // Background for the whole view
                 .ignoresSafeArea()
                 .background(Color(red: 0.06, green: 0.07, blue: 0.06))
                 .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
