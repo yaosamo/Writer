@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D4363BE2791396500001B3D /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4363B627912D4900001B3D /* CloudKit.framework */; };
 		5D577D6927736E5400C5AF92 /* EditorHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D577D6827736E5400C5AF92 /* EditorHeader.swift */; };
 		5DA29A2D2766475D006AE014 /* NotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA29A2C2766475D006AE014 /* NotesApp.swift */; };
 		5DA29A2F2766475D006AE014 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA29A2E2766475D006AE014 /* ContentView.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D4363B627912D4900001B3D /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		5D577D6827736E5400C5AF92 /* EditorHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorHeader.swift; sourceTree = "<group>"; };
 		5DA29A292766475D006AE014 /* Nothing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nothing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DA29A2C2766475D006AE014 /* NotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesApp.swift; sourceTree = "<group>"; };
@@ -39,17 +41,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D4363BE2791396500001B3D /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D4363B527912D4900001B3D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5D4363B627912D4900001B3D /* CloudKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		5DA29A202766475D006AE014 = {
 			isa = PBXGroup;
 			children = (
 				5DA29A2B2766475D006AE014 /* Notes */,
 				5DA29A2A2766475D006AE014 /* Products */,
+				5D4363B527912D4900001B3D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -308,7 +320,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.01;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -339,7 +351,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.01;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

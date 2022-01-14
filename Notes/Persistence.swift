@@ -16,8 +16,10 @@ struct PersistenceController {
         for _ in 0..<10 {
             let newItem = Item(context: viewContext)
             newItem.date = Date()
-//            newItem.note = "Empty note"
-//            newItem.title = "Empty title"
+            newItem.note = "Empty note"
+            newItem.title = "Empty title"
+            newItem.orderIndex = 0
+            newItem.id = UUID()
         }
         do {
             try viewContext.save()
@@ -30,10 +32,11 @@ struct PersistenceController {
         return result
     }()
 
-    let container: NSPersistentContainer
+    let container: NSPersistentCloudKitContainer
 
     init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "Model")
+        container = NSPersistentCloudKitContainer(name: "Model")
+        
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
