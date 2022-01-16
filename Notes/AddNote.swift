@@ -68,7 +68,6 @@ struct AddNote: View {
             newItem.note = emptyText
             newItem.title = emptyTitle
             newItem.id = UUID()
-            newItem.orderIndex = 0
             try? viewContext.save()
             let _ = print("new created")
         }

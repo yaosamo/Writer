@@ -51,6 +51,7 @@ struct NotesList: View {
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
     @State var currentSelection: UUID?
+    @State private var selectedNote: Item? = nil
 
     var body: some View {
             NavigationView {
@@ -74,10 +75,7 @@ struct NotesList: View {
                     .contextMenu(ContextMenu(menuItems: {
                      Button(action: {viewContext.delete(item)
                                             do {
-                                                try viewContext.save()
-                                            } catch {
-                                                let nsError = error as NSError
-                                                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                                                try? viewContext.save()
                                             }
                                         }, label: {
                                             Text("Delete")
@@ -86,6 +84,9 @@ struct NotesList: View {
                     }
                     // On move perform function called move
                     .onMove( perform: move )
+                }
+                .onDeleteCommand {
+                   let _ = print("delete")
                 }
                 // on change of items count set current selection in the list to firts item
                 .onChange(of: items.count) { newValue in
@@ -97,17 +98,8 @@ struct NotesList: View {
                 }
                     .ignoresSafeArea()
                     .padding(.horizontal, 16.0)
-//                    .foregroundColor(Color(red: 0.55, green: 0.54, blue: 0.52))
-//                    .background(bgcolor)
                     AddNote()
                 .foregroundColor(.white)
-//                    .toolbar {
-//                        ToolbarItem {
-//                            Button(action: {   AddNote()}) {
-//                                Label("Add Item", systemImage: "plus")
-//                            }
-//                        }
-//                    }
             }
             .ignoresSafeArea()
             .background(Color(red: 0.06, green: 0.07, blue: 0.06))
