@@ -54,6 +54,7 @@ struct NotesList: View {
     @State private var selectedNote: Item? = nil
 
     var body: some View {
+        
             NavigationView {
                 List {
 //                     Empty text works as padding above list
