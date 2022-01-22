@@ -39,7 +39,7 @@ import SwiftUI
 //}
 
 // Making textfields transparent thanks to https://stackoverflow.com/questions/65865182/transparent-background-for-texteditor-in-swiftui
-#if os(macOS)
+
 extension NSTextView {
     open override var frame: CGRect {
     didSet {
@@ -61,7 +61,7 @@ extension NSTextView {
     }
   }
 }
-#endif
+
 //
 //@IBDesignable class UITextViewFixed: UITextView {
 //    override func layoutSubviews() {
@@ -166,16 +166,16 @@ struct EditorView: View {
                     .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
                     .lineSpacing(5.0)
 					.padding([.trailing, .leading], 72)
-                    .multilineTextAlignment(.trailing)
+//                    .multilineTextAlignment(.trailing)
                     .onChange(of: note) { newValue in
                                     updateItem(item: item)
 					}
-					.padding(.bottom, 56)
+					.padding(.bottom, 0)
 					.frame(minWidth: 0, maxWidth: .infinity, minHeight: height.size.height-176, alignment: Alignment.bottomLeading)
               	} // vstack
-			   .rotationEffect(Angle(degrees: 180))
+//			   .rotationEffect(Angle(degrees: 180))
 			   }  // scrollview
-			   .rotationEffect(Angle(degrees: 180))
+//			   .rotationEffect(Angle(degrees: 180))
                AddNote()
             .padding()
            } // z-stack

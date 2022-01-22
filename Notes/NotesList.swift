@@ -67,12 +67,13 @@ struct NotesList: View {
     var body: some View {
         
             NavigationView {
+            
                 List {
 //                     Empty text works as padding above list
+#if os(macOS)
                     Text("")
                         .padding(.bottom, 32.0)
-                   let _ = print("YOOOOOOOO", items)
-                    let _ = print("enddddddddddd")
+#endif
                     ForEach(items) { item in
                     NavigationLink(
                         destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
@@ -111,14 +112,18 @@ struct NotesList: View {
                         currentSelection = newSpot
                         }
                 }
+                #if os(macOS)
                     .ignoresSafeArea()
+                #endif
                     .padding(.horizontal, 16.0)
                     AddNote()
                 .foregroundColor(.white)
             }
             .ignoresSafeArea()
             .background(Color(red: 0.06, green: 0.07, blue: 0.06))
+        #if os(macOS)
             .environment(\.layoutDirection, .rightToLeft) //navigation view ends
+        #endif
             .onAppear(perform: first)
         }
     
