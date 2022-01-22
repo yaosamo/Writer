@@ -22,6 +22,17 @@ import CoreData
 //}
 
 
+//extension NSTableView {
+//    open override func viewDidMoveToWindow() {
+//        super.viewDidMoveToWindow()
+//        
+//        backgroundColor = NSColor.clear
+//        if let esv = enclosingScrollView {
+//            esv.drawsBackground = false
+//        }
+//    }
+//}
+
 
 struct NotesList: View {
     
@@ -60,7 +71,8 @@ struct NotesList: View {
 //                     Empty text works as padding above list
                     Text("")
                         .padding(.bottom, 32.0)
-                   
+                   let _ = print("YOOOOOOOO", items)
+                    let _ = print("enddddddddddd")
                     ForEach(items) { item in
                     NavigationLink(
                         destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
@@ -86,9 +98,11 @@ struct NotesList: View {
                     // On move perform function called move
                     .onMove( perform: move )
                 }
+                #if os(macOS)
                 .onDeleteCommand {
                    let _ = print("delete")
                 }
+                #endif
                 // on change of items count set current selection in the list to firts item
                 .onChange(of: items.count) { newValue in
                     if (items.count >= 1) {

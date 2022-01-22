@@ -33,13 +33,15 @@ struct AddNote: View {
             .onHover { over in
                             overText = over
                         }
+        #if os(macOS)
             .onHover { inside in
                 if inside {
                     NSCursor.pointingHand.push()
                            } else {
                                NSCursor.pop()
                            }
-            } 
+            }
+        #endif
     }
 
     private func addNote() {

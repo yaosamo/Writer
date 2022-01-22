@@ -8,14 +8,15 @@
 import SwiftUI
 
 
-struct ContentView: View {
+struct ContentViewiOS: View {
     var body: some View {
-        NotesList()
+        NotesListiOS()
+   
     }
 }
-
-    struct ContentView_Previews: PreviewProvider {
+    struct ContentView_PreviewsiOS: PreviewProvider {
         static var previews: some View {
-            ContentView()
-    }
-}
+            ContentViewiOS()
+
+            }
+        }

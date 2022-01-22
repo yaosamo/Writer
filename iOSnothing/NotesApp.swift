@@ -13,17 +13,12 @@ struct NotesCoreBasicApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .ignoresSafeArea()
+            ContentViewiOS()
                 .background(Color(red: 0.06, green: 0.07, blue: 0.06))
                 .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
                 .environment(\.managedObjectContext,persistenceController.container.viewContext)
                 .preferredColorScheme(.dark)
         }
-        // Hiding title bar
-        #if os(macOS)
-        .windowStyle(HiddenTitleBarWindowStyle())
-        #endif
     }
 }
 

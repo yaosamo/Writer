@@ -39,6 +39,7 @@ import SwiftUI
 //}
 
 // Making textfields transparent thanks to https://stackoverflow.com/questions/65865182/transparent-background-for-texteditor-in-swiftui
+#if os(macOS)
 extension NSTextView {
     open override var frame: CGRect {
     didSet {
@@ -60,6 +61,7 @@ extension NSTextView {
     }
   }
 }
+#endif
 //
 //@IBDesignable class UITextViewFixed: UITextView {
 //    override func layoutSubviews() {
