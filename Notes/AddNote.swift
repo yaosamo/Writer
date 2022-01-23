@@ -14,6 +14,7 @@ struct AddNote: View {
      @Environment(\.managedObjectContext) var viewContext
     
     @State private var overText = false
+    @State var iconsize : CGFloat
 
     //Text string
     var emptyText = "Free your mind"
@@ -22,13 +23,12 @@ struct AddNote: View {
     var body: some View {
         Button(action: addNote) {
             Image(systemName: "plus")
-                .frame(width: 32, height: 32, alignment: .center)
-                .font(.system(size: 16, weight: Font.Weight.regular, design: .rounded))
+                .frame(width: 48, height: 48, alignment: .center)
+                .font(.system(size: iconsize, weight: Font.Weight.regular, design: .rounded))
                 .foregroundColor(.white)
               
         } .buttonStyle(.borderless)
             .background(overText ? Color(red: 0.1, green: 0.1, blue: 0.12) :  Color(.clear))
-//        (red: 0.82, green: 0.40, blue: 0.22)
             .clipShape(Circle())
             .onHover { over in
                             overText = over
@@ -81,6 +81,6 @@ struct AddNote: View {
 struct AddNote_Previews: PreviewProvider {
 
     static var previews: some View {
-        AddNote()
+        AddNote(iconsize: 24)
         }
     }

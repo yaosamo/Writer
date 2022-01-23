@@ -18,10 +18,8 @@ struct NotesList: View {
                   animation: .default)
     
     var items: FetchedResults<Item>
-    
-    let bgcolor = Color(red: 0.08, green: 0.14, blue: 0.13)
-    let selectedColor = Color(red: 0.06, green: 0.10, blue: 0.09)
-    
+    @State var isEditing = false
+    @State var selection = Set<String>()
     
     //Text string
     var emptyText = "Free your mind"
@@ -29,14 +27,15 @@ struct NotesList: View {
     @State var currentSelection: UUID?
     @State private var selectedNote: Item? = nil
     
+    init(){
+        UITableView.appearance().backgroundColor = UIColor(Color.clear)
+    }
+    
     var body: some View {
         
         NavigationView {
-            
             List {
                 //Empty text works as padding above list
-                Text("")
-                    .padding(.bottom, 32.0)
                 ForEach(items) { item in
                     NavigationLink(
                         destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
@@ -44,29 +43,16 @@ struct NotesList: View {
                         selection: $currentSelection)
                     {
                         Text("\(item.title!)")
-                            .font(.system(size: 12, weight: Font.Weight.thin, design: .monospaced))
+                            .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
+                            .padding([.top, .bottom], 8)
                     }
-                    .frame(maxWidth: .infinity, alignment: .trailing) // sidebar elements
-                    
-                    // Deleting with right click
-                    .contextMenu(ContextMenu(menuItems: {
-                        Button(action: {viewContext.delete(item)
-                            do {
-                                try? viewContext.save()
-                            }
-                        }, label: {
-                            Text("Delete")
-                        })
-                    }))
                 }
-                // On move perform function called move
-                .onMove( perform: move )
+                .onMove( perform: move)
+                .onDelete(perform: deleteItems)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                .listRowSeparator(.hidden)
             }
-#if os(macOS)
-            .onDeleteCommand {
-                let _ = print("delete")
-            }
-#endif
             // on change of items count set current selection in the list to firts item
             .onChange(of: items.count) { newValue in
                 if (items.count >= 1) {
@@ -75,13 +61,16 @@ struct NotesList: View {
                     currentSelection = newSpot
                 }
             }
-            .ignoresSafeArea()
-            .padding(.horizontal, 16.0)
-            AddNote()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    EditButton()
+                        .foregroundColor(.white)
+                }
+                ToolbarItem {
+                    AddNote(iconsize: 16)
+                }
+            }
         }
-        .ignoresSafeArea()
-        .background(Color(red: 0.06, green: 0.07, blue: 0.06))
-        .environment(\.layoutDirection, .rightToLeft) //navigation view ends
         .onAppear(perform: first)
     }
     
@@ -115,11 +104,29 @@ struct NotesList: View {
         }
         try? viewContext.save()
     }
+    
+    private func deleteItems(offsets: IndexSet) {
+        withAnimation {
+            offsets.map { items[$0] }.forEach(viewContext.delete)
+            
+            do {
+                try viewContext.save()
+            } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
 }
 
 
-struct List_Previews: PreviewProvider {
+struct NotesList_Previews : PreviewProvider {
     static var previews: some View {
-        NotesList()
+        ForEach(["iPhone SE (2nd generation)", "iPhone XS Max"], id: \.self) { deviceName in
+            NotesList().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+                .previewDevice(PreviewDevice(rawValue: deviceName))
+        }
     }
 }

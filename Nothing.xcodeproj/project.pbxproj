@@ -17,7 +17,6 @@
 		5D0FA716279BBB2600ED6101 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DA29A302766475D006AE014 /* Assets.xcassets */; };
 		5D0FA718279BBB7E00ED6101 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D0FA6DE279BB58200ED6101 /* Assets.xcassets */; };
 		5D0FA765279BC80E00ED6101 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0FA764279BC80E00ED6101 /* CloudKit.framework */; };
-		5D0FA766279BC9BC00ED6101 /* NotesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CA2774F1A10093A613 /* NotesList.swift */; };
 		5D0FA767279BC9D600ED6101 /* NotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA29A2C2766475D006AE014 /* NotesApp.swift */; };
 		5D0FA768279BC9D800ED6101 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA29A2E2766475D006AE014 /* ContentView.swift */; };
 		5D4363BE2791396500001B3D /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4363B627912D4900001B3D /* CloudKit.framework */; };
@@ -26,11 +25,12 @@
 		5DA29A2F2766475D006AE014 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA29A2E2766475D006AE014 /* ContentView.swift */; };
 		5DA29A342766475D006AE014 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DA29A332766475D006AE014 /* Preview Assets.xcassets */; };
 		5DA29A5E27664DD8006AE014 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5DA29A5C27664DD8006AE014 /* Model.xcdatamodeld */; };
-		5DC043CB2774F1A10093A613 /* NotesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CA2774F1A10093A613 /* NotesList.swift */; };
 		5DC043CD2774F3430093A613 /* AddNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CC2774F3430093A613 /* AddNote.swift */; };
 		5DF3AFDF279BFD78009BD6B5 /* EditorView-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF3AFDE279BFD78009BD6B5 /* EditorView-iOS.swift */; };
 		5DF694A227685C0400782FE1 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF694A127685C0400782FE1 /* Persistence.swift */; };
 		5DF694A427686A2900782FE1 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF694A327686A2900782FE1 /* EditorView.swift */; };
+		5DF90E9E279D0F11002B0828 /* NotesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CA2774F1A10093A613 /* NotesList.swift */; };
+		5DF90EA0279D0F17002B0828 /* NotesList-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF90E9F279D0F17002B0828 /* NotesList-iOS.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +75,7 @@
 		5DF3AFDE279BFD78009BD6B5 /* EditorView-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorView-iOS.swift"; sourceTree = "<group>"; };
 		5DF694A127685C0400782FE1 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		5DF694A327686A2900782FE1 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; usesTabs = 1; };
+		5DF90E9F279D0F17002B0828 /* NotesList-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotesList-iOS.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +116,7 @@
 			isa = PBXGroup;
 			children = (
 				5D0FA763279BC80B00ED6101 /* iOSnothing.entitlements */,
+				5DF90E9F279D0F17002B0828 /* NotesList-iOS.swift */,
 				5DF3AFDE279BFD78009BD6B5 /* EditorView-iOS.swift */,
 				5D0FA6DE279BB58200ED6101 /* Assets.xcassets */,
 				5D0FA6E0279BB58200ED6101 /* Preview Content */,
@@ -368,8 +370,8 @@
 				5D0FA711279BBAC000ED6101 /* AddNote.swift in Sources */,
 				5D0FA714279BBAC500ED6101 /* Model.xcdatamodeld in Sources */,
 				5D0FA768279BC9D800ED6101 /* ContentView.swift in Sources */,
-				5D0FA766279BC9BC00ED6101 /* NotesList.swift in Sources */,
 				5D0FA767279BC9D600ED6101 /* NotesApp.swift in Sources */,
+				5DF90EA0279D0F17002B0828 /* NotesList-iOS.swift in Sources */,
 				5D0FA70E279BBAC000ED6101 /* Persistence.swift in Sources */,
 				5DF3AFDF279BFD78009BD6B5 /* EditorView-iOS.swift in Sources */,
 			);
@@ -399,11 +401,11 @@
 				5DC043CD2774F3430093A613 /* AddNote.swift in Sources */,
 				5DA29A2F2766475D006AE014 /* ContentView.swift in Sources */,
 				5D577D6927736E5400C5AF92 /* EditorHeader.swift in Sources */,
-				5DC043CB2774F1A10093A613 /* NotesList.swift in Sources */,
 				5DA29A2D2766475D006AE014 /* NotesApp.swift in Sources */,
 				5DF694A227685C0400782FE1 /* Persistence.swift in Sources */,
 				5DA29A5E27664DD8006AE014 /* Model.xcdatamodeld in Sources */,
 				5DF694A427686A2900782FE1 /* EditorView.swift in Sources */,
+				5DF90E9E279D0F11002B0828 /* NotesList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,7 +442,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -472,7 +474,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
