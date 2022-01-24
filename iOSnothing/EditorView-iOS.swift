@@ -22,48 +22,59 @@ struct EditorView: View {
     @State var note: String
     @State var date: Date
     @State var title: String
-    
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var body: some View {
-        GeometryReader { height in
-            // Wrap editor and add button into zstack so add button is sticky
-            ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top))  {
-                ScrollView(showsIndicators: false) {
-                    VStack {
-                        VStack(alignment: .leading) {
-                            Text("\(item.date ?? Date(), formatter: itemFormatter)")
+            GeometryReader { height in
+                // Wrap editor and add button into zstack so add button is sticky
+                ZStack(alignment: Alignment(horizontal: .leading, vertical: .top))  {
+                   
+                    ScrollView(showsIndicators: false) {
+                        VStack {
+                            HStack {
+                                TextField("Title", text: $title)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .onChange(of: title) { newValue in
+                                        updateItem(item: item)
+                                    }
+                                Spacer()
+                                Text("\(item.date ?? Date(), formatter: itemFormatter)")
                                 
-                            TextField("Title", text: $title)
-                                .textFieldStyle(PlainTextFieldStyle())
-                                
-                                .onChange(of: title) { newValue in
+                            }
+                            .padding(.top, 88)
+                            .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
+                            .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
+                            Spacer()
+                            
+                            // Paddings top and bottom for Date and Title
+                                .padding([.bottom, .top], 20.0)
+                            TextEditor(text: $note)
+                                .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
+                                .disableAutocorrection(true)
+                                .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
+                                .lineSpacing(5.0)
+                                .onChange(of: note) { newValue in
                                     updateItem(item: item)
                                 }
+                            //                            .padding(.bottom, 56)
+                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: height.size.height, maxHeight: .infinity, alignment: .bottomLeading)
+                        } // vstack
+                        .padding([.trailing, .leading], 24)
+                    }  // scrollview
+                    Button(action: goback) {
+                        Image(systemName: "chevron.backward")
+                            .foregroundColor(.white)
+                            .font(.system(size: 24, weight: Font.Weight.regular, design: .rounded))
+                            .frame(width: 48, height: 48, alignment: .center)
+                            .background(.black)
+                            .clipShape(Circle())
                             
-                        }
-                        .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
-                        .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
-                        Spacer()
-                        
-                        // Paddings top and bottom for Date and Title
-                        
-                            .padding([.bottom, .top], 20.0)
-                        
-                        TextEditor(text: $note)
-                            .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
-                            .lineSpacing(5.0)
-                            .padding([.trailing, .leading], 0)
-                        //                    .multilineTextAlignment(.trailing)
-                            .onChange(of: note) { newValue in
-                                updateItem(item: item)
-                            }
-//                            .padding(.bottom, 56)
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: height.size.height, maxHeight: .infinity, alignment: .bottomLeading)
-                    } // vstack
-                }  // scrollview
-                
-            } // z-stack
-        } // geometry
-    }
+                    }
+                    
+                } // z-stack
+            } // geometry\
+            .navigationBarBackButtonHidden(true)
+            .navigationBarHidden(true)
+}
     
     // Updating item funcion
     private func updateItem(item: Item) {
@@ -74,6 +85,10 @@ struct EditorView: View {
             item.title = title
             try? viewContext.save()
         }
+    }
+    
+    private func goback() {
+        self.presentationMode.wrappedValue.dismiss()
     }
 }
 

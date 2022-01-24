@@ -26,19 +26,16 @@ struct NotesList: View {
     var emptyTitle = "Note"
     @State var currentSelection: UUID?
     @State private var selectedNote: Item? = nil
-    
-    init(){
-        UITableView.appearance().backgroundColor = UIColor(Color.clear)
-    }
-    
+
     var body: some View {
-        
+       
         NavigationView {
             List {
                 //Empty text works as padding above list
                 ForEach(items) { item in
-                    NavigationLink(
-                        destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
+                    ZStack {
+                        NavigationLink(
+                            destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
                         tag: item.id ?? UUID(),
                         selection: $currentSelection)
                     {
@@ -46,6 +43,16 @@ struct NotesList: View {
                             .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
                             .padding([.top, .bottom], 8)
                     }
+                        HStack {
+                        Spacer()
+                    Text(" ")
+                            .frame(width: 48, height: 48)
+                            .background(.black)
+                            .offset(x: 16, y: 0)
+                           
+                        }
+                            
+                    } //z
                 }
                 .onMove( perform: move)
                 .onDelete(perform: deleteItems)
@@ -62,10 +69,6 @@ struct NotesList: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                        .foregroundColor(.white)
-                }
                 ToolbarItem {
                     AddNote(iconsize: 16)
                 }
