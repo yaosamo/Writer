@@ -74,11 +74,6 @@ struct NotesList: View {
                 }
             }
         }
-        .onAppear(perform: first)
-    }
-    
-    private func first() {
-        currentSelection = items.first?.id
     }
     
     private func move( from source: IndexSet, to destination: Int)

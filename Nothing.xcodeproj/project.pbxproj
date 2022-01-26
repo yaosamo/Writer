@@ -52,7 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5D0FA6D8279BB58100ED6101 /* iOSnothing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSnothing.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D0FA6D8279BB58100ED6101 /* Nothing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nothing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D0FA6DE279BB58200ED6101 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5D0FA6E1279BB58200ED6101 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5D0FA6EC279BB58200ED6101 /* iOSnothingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSnothingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -177,7 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				5DA29A292766475D006AE014 /* Nothing.app */,
-				5D0FA6D8279BB58100ED6101 /* iOSnothing.app */,
+				5D0FA6D8279BB58100ED6101 /* Nothing.app */,
 				5D0FA6EC279BB58200ED6101 /* iOSnothingTests.xctest */,
 				5D0FA6F6279BB58200ED6101 /* iOSnothingUITests.xctest */,
 			);
@@ -227,7 +227,7 @@
 			);
 			name = iOSnothing;
 			productName = iOSnothing;
-			productReference = 5D0FA6D8279BB58100ED6101 /* iOSnothing.app */;
+			productReference = 5D0FA6D8279BB58100ED6101 /* Nothing.app */;
 			productType = "com.apple.product-type.application";
 		};
 		5D0FA6EB279BB58200ED6101 /* iOSnothingTests */ = {
@@ -432,7 +432,7 @@
 		5D0FA6FF279BB58200ED6101 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-ios";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iOSnothing/iOSnothing.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -454,7 +454,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Nothing;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -465,7 +465,7 @@
 		5D0FA700279BB58200ED6101 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-ios";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iOSnothing/iOSnothing.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -487,7 +487,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Nothing;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

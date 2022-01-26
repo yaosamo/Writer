@@ -49,6 +49,7 @@ extension NSTextView {
 		enclosingScrollView?.horizontalScrollElasticity = NSScrollView.Elasticity.none
 		isAutomaticLinkDetectionEnabled = false
 		enclosingScrollView?.contentView.automaticallyAdjustsContentInsets = false
+//		importsGraphics = true
 //		enclosingScrollView?.contentInsets = NSEdgeInsets(top: 40, left: 72, bottom: 40, right: 0)
 //		isRichText = true
 //        textContainerInset = NSSize(width: 0, height: 40)
@@ -166,17 +167,17 @@ struct EditorView: View {
                     .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
                     .lineSpacing(5.0)
 					.padding([.trailing, .leading], 72)
-//                    .multilineTextAlignment(.trailing)
+                    .multilineTextAlignment(.trailing)
                     .onChange(of: note) { newValue in
                                     updateItem(item: item)
 					}
 					.padding(.bottom, 0)
 					.frame(minWidth: 0, maxWidth: .infinity, minHeight: height.size.height-176, alignment: Alignment.bottomLeading)
               	} // vstack
-//			   .rotationEffect(Angle(degrees: 180))
+			   .rotationEffect(Angle(degrees: 180))
 			   }  // scrollview
-//			   .rotationEffect(Angle(degrees: 180))
-               AddNote()
+			   .rotationEffect(Angle(degrees: 180))
+               AddNote(iconsize: 16)
             .padding()
            } // z-stack
 		   .ignoresSafeArea()

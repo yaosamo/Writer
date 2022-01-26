@@ -62,11 +62,9 @@ struct NotesList: View {
                 // On move perform function called move
                 .onMove( perform: move )
             }
-#if os(macOS)
             .onDeleteCommand {
                 let _ = print("delete")
             }
-#endif
             // on change of items count set current selection in the list to firts item
             .onChange(of: items.count) { newValue in
                 if (items.count >= 1) {
@@ -77,7 +75,7 @@ struct NotesList: View {
             }
             .ignoresSafeArea()
             .padding(.horizontal, 16.0)
-            AddNote()
+            AddNote(iconsize: 16)
         }
         .ignoresSafeArea()
         .background(Color(red: 0.06, green: 0.07, blue: 0.06))
