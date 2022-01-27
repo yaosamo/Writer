@@ -64,12 +64,10 @@ struct EditorView: View {
             Button(action: goback) {
                 Image(systemName: "chevron.backward")
                     .foregroundColor(.white)
-                    .font(.system(size: 24, weight: Font.Weight.regular, design: .rounded))
+                    .font(.system(size: 16, weight: Font.Weight.regular, design: .rounded))
                     .frame(width: 48, height: 48, alignment: .center)
                     .background(.black)
                     .clipShape(Circle())
-//                    .padding([.top, .leading], 32)
-                
             }
         } // z-stack
         .navigationBarBackButtonHidden(true)

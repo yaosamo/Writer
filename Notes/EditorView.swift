@@ -171,8 +171,8 @@ struct EditorView: View {
                     .onChange(of: note) { newValue in
                                     updateItem(item: item)
 					}
-					.padding(.bottom, 0)
-					.frame(minWidth: 0, maxWidth: .infinity, minHeight: height.size.height-176, alignment: Alignment.bottomLeading)
+					.padding(.bottom, 56)
+					.frame(minWidth: 0, maxWidth: .infinity, minHeight: height.size.height-176, alignment: .top)
               	} // vstack
 			   .rotationEffect(Angle(degrees: 180))
 			   }  // scrollview

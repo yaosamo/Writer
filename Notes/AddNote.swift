@@ -45,25 +45,6 @@ struct AddNote: View {
     }
 
     private func addNote() {
-//        if (items.count < 1) { }
-//        Attempt creating new item after selected item and moving others below it.
-//        let items
-//        
-//        let currentlySelected = NotesList().currentSelection
-//        var currentlySelectedIndex = Int16()
-//        for reverseIndex in stride( from: items.count,
-//                                    through: 0,
-//                                    by: -1 )
-//        {
-//            if (
-//                items[ reverseIndex ].id == currentlySelected) {
-//                currentlySelectedIndex = items[ reverseIndex ].orderIndex
-//            let _ = print(items[reverseIndex])
-//                
-//                }
-//
-//        }
-//    
         withAnimation {
             let newItem = Item(context: viewContext)
             newItem.date = Date()

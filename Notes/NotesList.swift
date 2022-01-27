@@ -32,7 +32,6 @@ struct NotesList: View {
     var body: some View {
         
         NavigationView {
-            
             List {
                 //Empty text works as padding above list
                 Text("")

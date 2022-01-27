@@ -60,14 +60,6 @@ struct NotesList: View {
                 .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
                 .listRowSeparator(.hidden)
             }
-            // on change of items count set current selection in the list to firts item
-            .onChange(of: items.count) { newValue in
-                if (items.count >= 1) {
-                    let newSpot = UUID()
-                    items.first?.id = newSpot
-                    currentSelection = newSpot
-                }
-            }
             .toolbar {
                 ToolbarItem {
                     AddNote(iconsize: 16)
