@@ -9,6 +9,7 @@ import SwiftUI
 import CoreData
 
 
+
 struct NotesList: View {
     
     // Managed Object from Coredata
@@ -26,9 +27,9 @@ struct NotesList: View {
     var emptyTitle = "Note"
     @State var currentSelection: UUID?
     @State private var selectedNote: Item? = nil
-
+    
     var body: some View {
-       
+        
         NavigationView {
             List {
                 //Empty text works as padding above list
@@ -36,22 +37,22 @@ struct NotesList: View {
                     ZStack {
                         NavigationLink(
                             destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
-                        tag: item.id ?? UUID(),
-                        selection: $currentSelection)
-                    {
-                        Text("\(item.title!)")
-                            .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
-                            .padding([.top, .bottom], 8)
-                    }
-                        HStack {
-                        Spacer()
-                    Text(" ")
-                            .frame(width: 48, height: 48)
-                            .background(.black)
-                            .offset(x: 16, y: 0)
-                           
+                            tag: item.id ?? UUID(),
+                            selection: $currentSelection)
+                        {
+                            Text("\(item.title!)")
+                                .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
+                                .padding([.top, .bottom], 8)
                         }
+                        HStack {
+                            Spacer()
+                            Text(" ")
+                                .frame(width: 48, height: 48)
+                                .background(.black)
+                                .offset(x: 16, y: 0)
                             
+                        }
+                        
                     } //z
                 }
                 .onMove( perform: move)
