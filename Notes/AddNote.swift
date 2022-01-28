@@ -26,6 +26,9 @@ struct AddNote: View {
                 .frame(width: 48, height: 48, alignment: .center)
                 .font(.system(size: iconsize, weight: Font.Weight.regular, design: .rounded))
                 .foregroundColor(.white)
+            #if os(iOS)
+                .background(Color(red: 0.08, green: 0.08, blue: 0.08))
+            #endif
               
         } .buttonStyle(.borderless)
             .background(overText ? Color(red: 0.1, green: 0.1, blue: 0.12) :  Color(.clear))
@@ -55,12 +58,10 @@ struct AddNote: View {
             let _ = print("new created")
         }
     }
-   
 }
 
 
 struct AddNote_Previews: PreviewProvider {
-
     static var previews: some View {
         AddNote(iconsize: 24)
         }

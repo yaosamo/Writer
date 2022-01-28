@@ -8,7 +8,6 @@
 import SwiftUI
 
 extension UINavigationController: UIGestureRecognizerDelegate {
-
     open override func viewDidLoad() {
         super.viewDidLoad()
         interactivePopGestureRecognizer?.delegate = self
@@ -28,7 +27,12 @@ struct EditorView: View {
     var emptyText = "Free your mind"
     var emptyTitle = "Note"
     
-    //Item var for which we perform an update
+    private enum Field: Int {
+         case yourTextEdit
+     }
+    @FocusState private var focusedField: Field?
+
+    //Item var for which we perform an upd  ate
     @State var item: Item
     @State var note: String
     @State var date: Date
@@ -59,12 +63,18 @@ struct EditorView: View {
                         // Paddings top and bottom for Date and Title
                             .padding([.bottom, .top], 20.0)
                         TextEditor(text: $note)
+                            .focused($focusedField, equals: .yourTextEdit)
                             .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
                             .disableAutocorrection(true)
                             .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
                             .lineSpacing(5.0)
                             .onChange(of: note) { newValue in
                                 updateItem(item: item)
+                            }
+                            .onTapGesture {
+                                        if (focusedField != nil) {
+                                            focusedField = nil
+                                        }
                             }
                             .frame(idealHeight: 800*2, alignment: .top)
                     } // vstack

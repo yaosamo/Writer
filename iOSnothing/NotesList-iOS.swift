@@ -31,41 +31,46 @@ struct NotesList: View {
     var body: some View {
         
         NavigationView {
-            List {
-                //Empty text works as padding above list
-                ForEach(items) { item in
-                    ZStack {
-                        NavigationLink(
-                            destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
-                            tag: item.id ?? UUID(),
-                            selection: $currentSelection)
-                        {
-                            Text("\(item.title!)")
-                                .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
-                                .padding([.top, .bottom], 8)
-                        }
-                        HStack {
-                            Spacer()
-                            Text(" ")
-                                .frame(width: 48, height: 48)
-                                .background(.black)
-                                .offset(x: 16, y: 0)
+            ZStack(alignment: .bottom) {
+                List {
+                    Text("")
+                    //Empty text works as padding above list
+                    ForEach(items) { item in
+                        ZStack {
+                            NavigationLink(
+                                destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
+                                tag: item.id ?? UUID(),
+                                selection: $currentSelection)
+                            {
+                                Text("\(item.title!)")
+                                    .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
+                                    .padding([.top, .bottom], 8)
+                            }
+                            .navigationBarHidden(true)
                             
-                        }
-                        
-                    } //z
+                            HStack {
+                                Spacer()
+                                Text(" ")
+                                    .frame(width: 48, height: 48)
+                                    .background(.black)
+                                    .offset(x: 8, y: 0)
+                            }
+                        } //z
+                    }
+                    .onMove( perform: move)
+                    .onDelete(perform: deleteItems)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                    .listRowSeparator(.hidden)
                 }
-                .onMove( perform: move)
-                .onDelete(perform: deleteItems)
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                .listRowSeparator(.hidden)
-            }
-            .toolbar {
-                ToolbarItem {
+                .listStyle(.inset)
+                .padding(.leading, 24)
+                HStack {
+                    Spacer()
                     AddNote(iconsize: 16)
+                        .padding([.trailing], 8)
                 }
-            }
+            } //ztack new
         }
     }
     
