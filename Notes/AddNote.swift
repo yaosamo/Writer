@@ -18,7 +18,6 @@ extension Notification.Name {
 // "+" menu: new note, or new folder (Pro). ⌘N / ⇧⌘N do the same from the File menu
 struct NewItemMenu: View {
     @Environment(Store.self) private var store
-    @Environment(\.palette) private var palette
 
     let iconsize: CGFloat
 
@@ -36,87 +35,92 @@ struct NewItemMenu: View {
                       systemImage: store.isPro ? "folder.badge.plus" : "lock")
             }
         } label: {
-            Image(systemName: "plus")
-                .font(.system(size: iconsize, weight: Font.Weight.regular, design: .rounded))
-                .foregroundColor(palette.buttonForeground)
-                .frame(width: 48, height: 48)
-            #if os(iOS)
-                .background(palette.buttonBackground)
-                .clipShape(Circle())
-            #endif
+            CircleIcon(systemName: "plus", iconsize: iconsize)
         }
-        .circleButtonChrome()
+        .circleMenuStyle()
         .accessibilityLabel("New")
         .help("New note or folder")
     }
 }
 
-// Round 48pt icon button used for + and the sidebar toggle
+// Round icon button used for the sidebar toggle (and styled like the + and … menus)
 struct CircleIconButton: View {
     let systemName: String
     let label: String
     let iconsize: CGFloat
     let action: () -> Void
 
-    @Environment(\.palette) private var palette
-
     var body: some View {
         Button(action: action) {
-            Image(systemName: systemName)
-                .frame(width: 48, height: 48, alignment: .center)
-                .font(.system(size: iconsize, weight: Font.Weight.regular, design: .rounded))
-                .foregroundColor(palette.buttonForeground)
-            #if os(iOS)
-                .background(palette.buttonBackground)
-            #endif
+            CircleIcon(systemName: systemName, iconsize: iconsize)
         }
-        .buttonStyle(.borderless)
-        .circleHover()
+        .buttonStyle(.plain)
         .accessibilityLabel(label)
         .help(label)
     }
 }
 
-extension View {
-    // Menus styled like CircleIconButton: borderless, no indicator, 48pt circle with hover
-    func circleButtonChrome() -> some View {
-        #if os(macOS)
-        // Button-style menus render the label as SwiftUI, so hover highlights work
-        self.menuStyle(.button)
-            .buttonStyle(.plain)
-            .menuIndicator(.hidden)
-            .circleHover()
-        #else
-        self
-        #endif
-    }
+// The round icon itself. macOS: 38pt circle with hover highlight inside a 44pt hit area.
+// iOS: 48pt filled circle (touch target)
+struct CircleIcon: View {
+    let systemName: String
+    let iconsize: CGFloat
 
-    // Round hover highlight and pointing-hand cursor (macOS)
-    func circleHover() -> some View {
-        modifier(CircleHover())
-    }
-}
-
-private struct CircleHover: ViewModifier {
     @Environment(\.palette) private var palette
     @State private var isHovering = false
 
-    func body(content: Content) -> some View {
-        content
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.system(size: iconsize, weight: Font.Weight.regular, design: .rounded))
+            .foregroundColor(palette.buttonForeground)
+        #if os(macOS)
+            .frame(width: 38, height: 38)
+            .background(Circle().fill(isHovering ? palette.buttonHover : Color.clear))
+            .padding(3)
+            // The whole 44pt square is clickable, not just the glyph
+            .contentShape(Rectangle())
+            .onHover { isHovering = $0 }
+            .linkPointer()
+        #else
             .frame(width: 48, height: 48)
-            .background(isHovering ? palette.buttonHover : Color.clear)
+            .background(palette.buttonBackground)
             .clipShape(Circle())
             .contentShape(Circle())
-            .onHover { hovering in
-                isHovering = hovering
-                #if os(macOS)
-                if hovering {
-                    NSCursor.pointingHand.push()
-                } else {
-                    NSCursor.pop()
-                }
-                #endif
+        #endif
+    }
+}
+
+#if os(macOS)
+private struct LinkPointer: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(macOS 15.0, *) {
+            content.pointerStyle(.link)
+        } else {
+            // NSCursor.push alone gets reset by the hosting view's cursor updates
+            content.onContinuousHover { phase in
+                if case .active = phase { NSCursor.pointingHand.set() }
             }
+        }
+    }
+}
+
+extension View {
+    // Pointing-hand cursor over clickable icons
+    func linkPointer() -> some View { modifier(LinkPointer()) }
+}
+#endif
+
+extension View {
+    // Menus that look like CircleIconButton: the label renders as SwiftUI, no indicator
+    func circleMenuStyle() -> some View {
+        #if os(macOS)
+        self.menuStyle(.button)
+            .buttonStyle(.plain)
+            .menuIndicator(.hidden)
+            .fixedSize()
+        #else
+        self
+        #endif
     }
 }
 

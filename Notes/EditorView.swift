@@ -51,14 +51,19 @@ private struct EditorHeader: View {
         .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
         .foregroundColor(palette.secondaryText)
         .padding(.horizontal, NoteTextViewMetrics.horizontalInset)
-        .frame(height: NoteTextViewMetrics.headerHeight)
+        // Title row sits where it was before the toolbar strip existed (88pt from the top)
+        .padding(.top, 88 - NoteTextViewMetrics.toolbarHeight)
+        .frame(height: NoteTextViewMetrics.headerHeight, alignment: .top)
     }
 }
 
 enum NoteTextViewMetrics {
     static let horizontalInset: CGFloat = 72
-    // Space above the text for the header; also used as bottom padding
-    static let headerHeight: CGFloat = 176
+    // macOS toolbar strip above the editor (+, …, sidebar)
+    static let toolbarHeight: CGFloat = 60
+    // Space above the text for the header (below the toolbar); also used as bottom padding.
+    // Together with the toolbar this keeps the title and text where they were
+    static let headerHeight: CGFloat = 176 - toolbarHeight
 }
 
 

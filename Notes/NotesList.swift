@@ -52,20 +52,24 @@ struct NotesList: View {
 
     var body: some View {
         ZStack(alignment: .trailing) {
-            detail
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .overlay(alignment: .topTrailing) {
-                    HStack(spacing: 6) {
-                        NewItemMenu(iconsize: 16)
-                        MoreMenu()
-                        CircleIconButton(systemName: "sidebar.right",
-                                         label: sidebarVisible ? "Hide notes" : "Show notes",
-                                         iconsize: 15,
-                                         action: toggleSidebar)
-                            .keyboardShortcut("s", modifiers: [.control, .command])
-                    }
-                    .padding()
+            VStack(spacing: 0) {
+                // Own strip, not an overlay: over the text view the I-beam cursor would win
+                HStack(spacing: 0) {
+                    Spacer()
+                    NewItemMenu(iconsize: 13)
+                    MoreMenu(iconSize: 12)
+                    CircleIconButton(systemName: "sidebar.right",
+                                     label: sidebarVisible ? "Hide notes" : "Show notes",
+                                     iconsize: 12,
+                                     action: toggleSidebar)
+                        .keyboardShortcut("s", modifiers: [.control, .command])
                 }
+                .padding(.horizontal, 12)
+                .frame(height: NoteTextViewMetrics.toolbarHeight)
+                
+                detail
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
                 // The editor's edge follows the sliding sidebar
                 .padding(.trailing, sidebarVisible ? sidebarWidth : 0)
             
@@ -169,7 +173,8 @@ struct NotesList: View {
             .listStyle(.sidebar)
             .scrollContentBackground(.hidden)
             // Rows scroll all the way to the window's top edge; the gap is a content margin
-            .safeAreaPadding(.top, 40)
+            // First row starts at the top, level with the toolbar buttons
+            .safeAreaPadding(.top, 6)
             .onDeleteCommand {
                 if let item = selectedItem {
                     delete(item)

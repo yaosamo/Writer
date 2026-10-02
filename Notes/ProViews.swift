@@ -171,7 +171,7 @@ struct ThemeMenuItems: View {
 // "…" menu: Nothing Pro and theme
 struct MoreMenu: View {
     @Environment(Store.self) private var store
-    @Environment(\.palette) private var palette
+    var iconSize: CGFloat = 15
 
     var body: some View {
         Menu {
@@ -193,16 +193,9 @@ struct MoreMenu: View {
                 }
             }
         } label: {
-            Image(systemName: "ellipsis")
-                .font(.system(size: 15, weight: .regular, design: .rounded))
-                .foregroundColor(palette.buttonForeground)
-                .frame(width: 48, height: 48)
-            #if os(iOS)
-                .background(palette.buttonBackground)
-                .clipShape(Circle())
-            #endif
+            CircleIcon(systemName: "ellipsis", iconsize: iconSize)
         }
-        .circleButtonChrome()
+        .circleMenuStyle()
         .accessibilityLabel("More")
         .help("Theme and Nothing Pro")
     }
