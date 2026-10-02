@@ -62,26 +62,36 @@ struct PaywallView: View {
     var body: some View {
         Group {
             if isWide {
-                HStack(alignment: .center, spacing: 48) {
-                    video
-                        .frame(width: 680)
-                    VStack(alignment: .leading, spacing: 32) {
+                // Video fills the left side edge to edge; the right column spans top to bottom
+                HStack(spacing: 0) {
+                    LoopingVideo(resource: feature.clip)
+                        .id(feature)
+                        .transition(.opacity)
+                        .frame(width: 640)
+                        .frame(maxHeight: .infinity)
+                        .clipped()
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 0) {
                         header
-                        details
+                        Spacer(minLength: 32)
+                        featureList
+                        Spacer(minLength: 32)
+                        purchase
                     }
-                    .frame(width: 330)
+                    .padding(40)
+                    .frame(width: 400)
                 }
-                .padding(.vertical, 28)
-                .frame(minHeight: 560)
+                .frame(height: 580)
             } else {
                 VStack(alignment: .leading, spacing: 28) {
                     header
                     video
-                    details
+                    featureList
+                    purchase
                 }
+                .padding(32)
             }
         }
-        .padding(isWide ? 40 : 32)
         #if os(macOS)
         .background(palette.background)
         #else
@@ -131,29 +141,31 @@ struct PaywallView: View {
             .accessibilityHidden(true)
     }
 
-    private var details: some View {
-        VStack(alignment: .leading, spacing: 28) {
-            VStack(alignment: .leading, spacing: 16) {
-                ForEach(ProFeature.allCases, id: \.self) { item in
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) { feature = item }
-                    } label: {
-                        featureRow(item.title, item.detail)
-                            .opacity(item == feature ? 1 : 0.45)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
+    private var featureList: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            ForEach(ProFeature.allCases, id: \.self) { item in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) { feature = item }
+                } label: {
+                    featureRow(item.title, item.detail)
+                        .opacity(item == feature ? 1 : 0.45)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
                 }
-                featureRow("What comes next", "Future Pro features included")
-                    .opacity(0.45)
+                .buttonStyle(.plain)
             }
-            .task(id: feature) {
-                try? await Task.sleep(for: .seconds(7))
-                guard !Task.isCancelled else { return }
-                withAnimation(.easeInOut(duration: 0.3)) { feature = feature.next }
-            }
+            featureRow("What comes next", "Future Pro features included")
+                .opacity(0.45)
+        }
+        .task(id: feature) {
+            try? await Task.sleep(for: .seconds(7))
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeInOut(duration: 0.3)) { feature = feature.next }
+        }
+    }
 
+    private var purchase: some View {
+        VStack(alignment: .leading, spacing: 20) {
             if store.isPro {
                 Text("Unlocked. Thank you.")
                     .foregroundColor(palette.caret)
