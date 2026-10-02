@@ -132,11 +132,11 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--caret); outline
   display: inline-block;
   margin-top: 40px;
   padding: 14px 26px;
-  border: 1px solid var(--caret);
   border-radius: 999px;
-  color: var(--caret);
+  background: var(--strong);
+  color: var(--bg);
 }
-.download:hover { background: color-mix(in srgb, var(--caret) 10%, transparent); color: var(--caret); }
+.download:hover { color: var(--bg); opacity: 0.88; }
 
 footer {
   display: flex;
@@ -167,44 +167,22 @@ footer {
 /* ---------- app-like opening screen ---------- */
 .top { position: absolute; top: 0; left: 0; right: 0; z-index: 2; }
 main { padding: 0; }
-/* The stage is taller than the screen; its sticky inside holds the window while you scroll */
-.stage { --p: 0; height: 200vh; }
-.stage-sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  /* the desktop that appears around the window */
-  background:
-    radial-gradient(ellipse 70% 60% at 30% 80%, rgba(214, 110, 40, 0.55), transparent 70%),
-    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(120, 60, 140, 0.45), transparent 70%),
-    linear-gradient(160deg, #1b1420, #0c0a10 60%, #1a0f08);
+.hero { height: 100vh; height: 100svh; }
+/* Stays on screen all the way down; dark on light, light on dark */
+.sticky-download {
+  position: fixed;
+  left: clamp(24px, 9vw, 160px);
+  bottom: clamp(24px, 6vh, 56px);
+  z-index: 5;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--strong);
+  color: var(--bg);
+  font-size: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease;
 }
-.window {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform: scale(calc(1 - var(--p) * 0.24));
-  border-radius: calc(var(--p) * 20px);
-  overflow: hidden;
-  box-shadow: 0 calc(var(--p) * 40px) calc(var(--p) * 120px) rgba(0, 0, 0, calc(var(--p) * 0.6)),
-              0 0 0 calc(var(--p) * 1px) rgba(255, 255, 255, 0.08);
-  will-change: transform;
-}
-.window-buttons {
-  position: absolute;
-  top: 18px;
-  left: 20px;
-  display: flex;
-  gap: 8px;
-  opacity: var(--p);
-}
-.window-buttons i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
-.window-buttons i:nth-child(2) { background: #febc2e; }
-.window-buttons i:nth-child(3) { background: #28c840; }
+.sticky-download:hover { color: var(--bg); transform: translateY(-1px); }
 .editor-hero {
   height: 100%;
   padding: 0 clamp(24px, 9vw, 160px);
@@ -212,14 +190,7 @@ main { padding: 0; }
   display: flex;
   flex-direction: column;
 }
-.editor-download {
-  margin-top: auto;
-  margin-bottom: clamp(48px, 9vh, 88px);
-  align-self: flex-start;
-  color: var(--editor-dim);
-  font-size: 14px;
-}
-.editor-download:hover { color: var(--caret); }
+
 .editor-header {
   display: flex;
   justify-content: space-between;
@@ -281,7 +252,6 @@ main { padding: 0; }
   .copy { padding: 0 8px; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .stage { height: auto; }
-  .stage-sticky { position: static; height: 100vh; }
+@media (max-width: 760px) {
+  .sticky-download { left: 20px; bottom: 20px; }
 }

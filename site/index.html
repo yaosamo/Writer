@@ -31,21 +31,17 @@
     </nav>
   </header>
 
+  <a class="sticky-download" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">Download on App Store</a>
+
   <main>
-    <!-- Opens like the app full screen; scrolling shrinks it into a window on a Mac desktop -->
-    <section class="stage" aria-label="Nothing">
-      <div class="stage-sticky">
-        <div class="window">
-          <div class="window-buttons" aria-hidden="true"><i></i><i></i><i></i></div>
-          <div class="editor-hero">
-            <div class="editor-header">
-              <span>Title</span>
-              <span class="editor-date" id="today"></span>
-            </div>
-            <h1 class="editor-text"><span id="typed">Ascetic writer for your Mac and iPhone</span><span class="caret" aria-hidden="true"></span></h1>
-            <a class="editor-download" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">Download on App Store</a>
-          </div>
+    <!-- Opens like the app, full screen -->
+    <section class="hero" aria-label="Nothing">
+      <div class="editor-hero">
+        <div class="editor-header">
+          <span>Title</span>
+          <span class="editor-date" id="today"></span>
         </div>
+        <h1 class="editor-text"><span id="typed">Ascetic writer for your Mac and iPhone</span><span class="caret" aria-hidden="true"></span></h1>
       </div>
     </section>
 
@@ -137,25 +133,6 @@
   </footer>
 
   <script src="theme.js"></script>
-  <script>
-    // Scroll progress through the opening stage, 0 → 1, drives the window shrinking
-    (function () {
-      var stage = document.querySelector(".stage");
-      if (!stage || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      var ticking = false;
-      function update() {
-        var range = stage.offsetHeight - window.innerHeight;
-        var p = range > 0 ? Math.min(Math.max(window.scrollY / range, 0), 1) : 0;
-        stage.style.setProperty("--p", p.toFixed(4));
-        ticking = false;
-      }
-      window.addEventListener("scroll", function () {
-        if (!ticking) { ticking = true; requestAnimationFrame(update); }
-      }, { passive: true });
-      window.addEventListener("resize", update);
-      update();
-    })();
-  </script>
   <script>
     // The hero types its line like the editor does; static for reduced motion
     (function () {
