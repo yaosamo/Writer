@@ -89,6 +89,12 @@ enum NoteTextViewMetrics {
     // Space above the text for the header (below the toolbar); also used as bottom padding.
     // Together with the toolbar this keeps the title and text where they were
     static let headerHeight: CGFloat = 176 - toolbarHeight
+    // Lines stay a comfortable length in wide windows: the text column is centred, at most this wide
+    static let maxTextWidth: CGFloat = 720
+
+    static func sideInset(forWidth width: CGFloat) -> CGFloat {
+        max(horizontalInset, ((width - maxTextWidth) / 2).rounded())
+    }
 }
 
 
@@ -478,6 +484,11 @@ final class PlaceholderTextView: NSTextView {
     // Keep the header as wide as the text view (autoresizing from a zero frame overshoots)
     override func setFrameSize(_ newSize: NSSize) {
         let widthChanged = abs(newSize.width - frame.width) > 0.5
+        // Line fragment padding (5) keeps text where the old TextEditor put it
+        let inset = NoteTextViewMetrics.sideInset(forWidth: newSize.width) - 5
+        if abs(textContainerInset.width - inset) > 0.5 {
+            textContainerInset = NSSize(width: inset, height: NoteTextViewMetrics.headerHeight)
+        }
         super.setFrameSize(newSize)
         layoutHeader()
         if widthChanged { onWidthChange?() }
@@ -514,7 +525,9 @@ final class PlaceholderTextView: NSTextView {
     }
 
     private func layoutHeader() {
-        headerView?.frame = NSRect(x: 0, y: 0, width: bounds.width, height: NoteTextViewMetrics.headerHeight)
+        // The header pads itself by horizontalInset; shift it so title and date line up with the text column
+        let shift = NoteTextViewMetrics.sideInset(forWidth: bounds.width) - NoteTextViewMetrics.horizontalInset
+        headerView?.frame = NSRect(x: shift, y: 0, width: bounds.width - 2 * shift, height: NoteTextViewMetrics.headerHeight)
     }
 
     override func draw(_ dirtyRect: NSRect) {

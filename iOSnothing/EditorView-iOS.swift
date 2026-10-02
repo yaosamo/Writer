@@ -95,6 +95,9 @@ struct EditorView: View {
                             }
                         }
                 } // vstack
+                // Comfortable line length on iPad and unfolded phones: the column is centred, at most 720pt
+                .frame(maxWidth: 720)
+                .frame(maxWidth: .infinity)
                 // Roomier margins when the note list sits beside the editor
                 .padding([.trailing, .leading], showsBack ? 24 : 56)
             // back button

@@ -22,6 +22,8 @@ struct NewItemMenu: View {
     let iconsize: CGFloat
 
     var body: some View {
+        // Read here, not inside the menu: AppKit builds the menu from its own copy of the content
+        let isPro = store.isPro
         Menu {
             Button {
                 NotificationCenter.default.post(name: .newNoteRequested, object: nil)
@@ -31,13 +33,15 @@ struct NewItemMenu: View {
             Button {
                 NotificationCenter.default.post(name: .newFolderRequested, object: nil)
             } label: {
-                Label(store.isPro ? "New Folder" : "New Folder · Pro",
-                      systemImage: store.isPro ? "folder.badge.plus" : "lock")
+                Label(isPro ? "New Folder" : "New Folder · Pro",
+                      systemImage: isPro ? "folder.badge.plus" : "lock")
             }
         } label: {
             CircleIcon(systemName: "plus", iconsize: iconsize)
         }
         .circleMenuStyle()
+        // AppKit keeps the built menu; rebuild it when Pro unlocks so the lock goes away
+        .id(isPro)
         .accessibilityLabel("New")
         .help("New note or folder")
     }
@@ -128,6 +132,6 @@ extension View {
 struct NewItemMenu_Previews: PreviewProvider {
     static var previews: some View {
         NewItemMenu(iconsize: 24)
-            .environment(Store())
+            .environment(Store.shared)
     }
 }

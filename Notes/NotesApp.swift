@@ -12,7 +12,7 @@ struct NotesCoreBasicApp: App {
     let persistenceController = PersistenceController.shared
     @Environment(\.scenePhase) private var scenePhase
     @State private var syncMonitor = SyncMonitor(container: PersistenceController.shared.container)
-    @State private var store = Store()
+    @State private var store = Store.shared
     @AppStorage(AppTheme.storageKey) private var themeName = AppTheme.dark.rawValue
 
     // Pro themes fall back to Dark if Pro isn't (or is no longer) unlocked

@@ -309,6 +309,6 @@ struct List_Previews: PreviewProvider {
         NotesList()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
             .environment(SyncMonitor(container: PersistenceController.preview.container))
-            .environment(Store())
+            .environment(Store.shared)
     }
 }

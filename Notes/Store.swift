@@ -20,6 +20,9 @@ final class Store {
     static let lifetimeID = "com.yaosamo.NothingWriter.pro"
     static let monthlyID = "com.yaosamo.NothingWriter.pro.monthly"
 
+    // One store for every window: the App struct can be created more than once (window restoration)
+    static let shared = Store()
+
     private(set) var lifetime: Product?
     private(set) var monthly: Product?
     private(set) var isPro = false
@@ -29,7 +32,11 @@ final class Store {
     private(set) var didLoadProducts = false
     private(set) var message: String?
 
-    init() {
+    private init() {
+        #if DEBUG
+        // Unlocked from the first frame; product loading can take a while
+        isPro = UserDefaults.standard.bool(forKey: "debugProUnlocked")
+        #endif
         // Purchases made on another device, Ask to Buy approvals, renewals and refunds arrive here
         Task { [weak self] in
             for await result in Transaction.updates {

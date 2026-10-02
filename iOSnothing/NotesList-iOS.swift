@@ -288,7 +288,7 @@ struct NotesList_Previews : PreviewProvider {
         ForEach(["iPhone SE (2nd generation)", "iPhone XS Max"], id: \.self) { deviceName in
             NotesList().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
                 .environment(SyncMonitor(container: PersistenceController.preview.container))
-                .environment(Store())
+                .environment(Store.shared)
                 .previewDevice(PreviewDevice(rawValue: deviceName))
         }
     }
