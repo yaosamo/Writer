@@ -5,13 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Nothing — Ascetic Writer</title>
   <meta name="description" content="A quiet place to write. Nothing is an ascetic, dark writing app for Mac and iPhone.">
-  <meta name="theme-color" content="#09090a">
+  <meta name="theme-color" content="#09090a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f1ec" media="(prefers-color-scheme: light)">
   <meta property="og:title" content="Nothing — Ascetic Writer">
   <meta property="og:description" content="A quiet place to write. For Mac and iPhone.">
   <meta property="og:image" content="media/mac-write.jpg">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="media/icon-256.png">
   <link rel="stylesheet" href="style.css">
+  <script>
+    // Apply a saved light/dark choice before first paint; otherwise follow the system
+    try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
 </head>
 <body>
   <header class="top">
@@ -19,50 +24,67 @@
       <img src="media/icon-256.png" alt="" width="28" height="28">
       <span>Nothing</span>
     </a>
-    <a class="store-link" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">App Store</a>
+    <nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to light mode" title="Light / dark">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg>
+      </button>
+      <a class="store-link" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">App Store</a>
+    </nav>
   </header>
 
   <main>
     <section class="hero">
-      <h1>Nothing<span class="caret" aria-hidden="true"></span></h1>
-      <p>A quiet place to write. For Mac and iPhone.</p>
-    </section>
-
-    <figure class="shot mac">
-      <video src="media/mac-write.mp4" poster="media/mac-write.jpg" muted loop playsinline preload="metadata" aria-label="Typing a new note in Nothing on Mac"></video>
-    </figure>
-
-    <section class="line">
-      <p>No bold. No bullets. No noise.<br>Just the page and an orange caret.</p>
+      <h1>Ascetic writer for your Mac and iPhone<span class="caret" aria-hidden="true"></span></h1>
     </section>
 
     <section class="feature">
-      <p class="caption">Folders, when you need them. <span class="pro">Pro</span></p>
-      <figure class="shot mac">
-        <video src="media/mac-folders.mp4" poster="media/mac-folders.jpg" muted loop playsinline preload="metadata" aria-label="Creating a folder and opening a note inside it"></video>
-      </figure>
+      <p class="caption">No bold. No bullets. No noise. Just the page and an orange caret.</p>
+      <div class="card" style="--card-image: url(media/bg/ember.jpg)">
+        <figure class="shot mac">
+          <video src="media/mac-write.mp4" poster="media/mac-write.jpg" muted loop playsinline preload="metadata" aria-label="Typing a new note in Nothing on Mac"></video>
+        </figure>
+      </div>
+    </section>
+
+    <section class="feature">
+      <p class="caption">Folders, when you need them.</p>
+      <div class="card" style="--card-image: url(media/bg/dusk.jpg)">
+        <figure class="shot mac">
+          <video src="media/mac-folders.mp4" poster="media/mac-folders.jpg" muted loop playsinline preload="metadata" aria-label="Creating a folder and opening a note inside it"></video>
+        </figure>
+      </div>
     </section>
 
     <section class="feature">
       <p class="caption">Hide everything but the page.</p>
-      <figure class="shot mac">
-        <video src="media/mac-sidebar.mp4" poster="media/mac-sidebar.jpg" muted loop playsinline preload="metadata" aria-label="The note list sliding away and back"></video>
-      </figure>
+      <div class="card" style="--card-image: url(media/bg/tide.jpg)">
+        <figure class="shot mac">
+          <video src="media/mac-sidebar.mp4" poster="media/mac-sidebar.jpg" muted loop playsinline preload="metadata" aria-label="The note list sliding away and back"></video>
+        </figure>
+      </div>
     </section>
 
     <section class="feature">
-      <p class="caption">Dark by default. Dark Sepia, Midnight and Light. <span class="pro">Pro</span></p>
-      <figure class="shot mac">
-        <video src="media/mac-themes.mp4" poster="media/mac-themes.jpg" muted loop playsinline preload="metadata" aria-label="Switching between the four themes"></video>
-      </figure>
+      <p class="caption">Dark by default. Dark Sepia, Midnight and Light.</p>
+      <div class="card" style="--card-image: url(media/bg/sand.jpg)">
+        <figure class="shot mac">
+          <video src="media/mac-themes.mp4" poster="media/mac-themes.jpg" muted loop playsinline preload="metadata" aria-label="Switching between the four themes"></video>
+        </figure>
+      </div>
     </section>
 
     <section class="feature">
       <p class="caption">In your pocket. Synced through your iCloud.</p>
-      <div class="phones">
+      <div class="card" style="--card-image: url(media/bg/ink.jpg)">
         <figure class="shot phone">
           <video src="media/ios-write.mp4" poster="media/ios-write.jpg" muted loop playsinline preload="metadata" aria-label="Writing a note on iPhone"></video>
         </figure>
+      </div>
+    </section>
+
+    <section class="feature">
+      <p class="caption">The same quiet page, in any light.</p>
+      <div class="card" style="--card-image: url(media/bg/rose.jpg)">
         <figure class="shot phone">
           <video src="media/ios-themes.mp4" poster="media/ios-themes.jpg" muted loop playsinline preload="metadata" aria-label="Switching themes on iPhone"></video>
         </figure>
@@ -81,6 +103,7 @@
     <span>© 2026 Yaroslav Samoylov</span>
   </footer>
 
+  <script src="theme.js"></script>
   <script>
     // Play each video only while it is on screen; respect reduced motion
     (function () {

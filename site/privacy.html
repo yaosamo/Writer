@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Privacy — Nothing</title>
   <meta name="description" content="Privacy policy for Nothing — Ascetic Writer.">
-  <meta name="theme-color" content="#09090a">
+  <meta name="theme-color" content="#09090a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f1ec" media="(prefers-color-scheme: light)">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css">
+  <script>
+    try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
 </head>
 <body>
   <header class="top">
@@ -15,7 +19,12 @@
       <img src="media/icon-256.png" alt="" width="28" height="28">
       <span>Nothing</span>
     </a>
-    <a class="store-link" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">App Store</a>
+    <nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to light mode" title="Light / dark">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg>
+      </button>
+      <a class="store-link" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">App Store</a>
+    </nav>
   </header>
 
   <main>
@@ -47,5 +56,6 @@
     <a href="https://github.com/yaosamo/Writer">Source</a>
     <span>© 2026 Yaroslav Samoylov</span>
   </footer>
+  <script src="theme.js"></script>
 </body>
 </html>
