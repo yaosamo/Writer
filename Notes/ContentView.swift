@@ -12,6 +12,9 @@ struct ContentView: View {
     let loadError: Error?
 
     @State private var showPaywall = false
+    #if os(macOS)
+    @Environment(\.openWindow) private var openWindow
+    #endif
 
     var body: some View {
         Group {
@@ -25,12 +28,37 @@ struct ContentView: View {
             PaywallView()
         }
         .onReceive(NotificationCenter.default.publisher(for: .showPaywall)) { _ in
+            #if os(macOS)
+            openWindow(id: "paywall")
+            #else
             showPaywall = true
+            #endif
         }
     }
 }
 
 // Shown when the notes database can't be opened
+#if os(macOS)
+extension View {
+    // Lets the window be dragged from anywhere on its background
+    func draggableBackground() -> some View {
+        background(WindowDragEnabler())
+    }
+}
+
+private struct WindowDragEnabler: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        DispatchQueue.main.async { view.window?.isMovableByWindowBackground = true }
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        nsView.window?.isMovableByWindowBackground = true
+    }
+}
+#endif
+
 struct StoreErrorView: View {
     let error: Error
     @Environment(\.palette) private var palette

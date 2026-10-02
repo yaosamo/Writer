@@ -62,15 +62,17 @@ struct PaywallView: View {
     var body: some View {
         Group {
             if isWide {
-                HStack(alignment: .center, spacing: 40) {
+                HStack(alignment: .center, spacing: 48) {
                     video
-                        .frame(width: 560)
-                    VStack(alignment: .leading, spacing: 28) {
+                        .frame(width: 680)
+                    VStack(alignment: .leading, spacing: 32) {
                         header
                         details
                     }
-                    .frame(width: 320)
+                    .frame(width: 330)
                 }
+                .padding(.vertical, 28)
+                .frame(minHeight: 560)
             } else {
                 VStack(alignment: .leading, spacing: 28) {
                     header
@@ -79,7 +81,7 @@ struct PaywallView: View {
                 }
             }
         }
-        .padding(32)
+        .padding(isWide ? 40 : 32)
         #if os(macOS)
         .background(palette.background)
         #else
@@ -159,12 +161,13 @@ struct PaywallView: View {
                 Button {
                     Task { await store.purchase() }
                 } label: {
+                    // White on dark themes (the text colour, so it stays visible on Light)
                     Text(buttonTitle)
                         .font(.system(size: 15, weight: .medium, design: .monospaced))
-                        .foregroundColor(.black)
+                        .foregroundColor(palette.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(palette.caret)
+                        .background(palette.colorScheme == .dark ? Color.white : palette.text)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
