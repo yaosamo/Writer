@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import iOSnothing
+@testable import Nothing
 
 class iOSnothingTests: XCTestCase {
 
