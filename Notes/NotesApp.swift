@@ -11,14 +11,16 @@ import SwiftUI
 struct NotesCoreBasicApp: App {
     let persistenceController = PersistenceController.shared
     @Environment(\.scenePhase) private var scenePhase
+    @State private var syncMonitor = SyncMonitor(container: PersistenceController.shared.container)
 
     var body: some Scene {
         WindowGroup {
             ContentView(loadError: persistenceController.loadError)
                 .ignoresSafeArea()
-                .background(Color(red: 0.06, green: 0.07, blue: 0.06))
+                .background(Theme.background)
                 .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
                 .environment(\.managedObjectContext,persistenceController.container.viewContext)
+                .environment(syncMonitor)
                 .preferredColorScheme(.dark)
             #if os(macOS)
                 // Flush the editor's pending debounced save on quit

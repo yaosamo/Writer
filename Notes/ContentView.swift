@@ -27,10 +27,10 @@ struct StoreErrorView: View {
     var body: some View {
         VStack(spacing: 16) {
             Text("Couldn't open your notes")
-                .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
+                .foregroundColor(Theme.text)
             Text("Nothing was deleted. Try restarting the app or freeing up storage.\n\n\(error.localizedDescription)")
                 .font(.system(size: 12, weight: .regular, design: .monospaced))
-                .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
+                .foregroundColor(Theme.secondaryText)
                 .multilineTextAlignment(.center)
         }
         .padding(48)

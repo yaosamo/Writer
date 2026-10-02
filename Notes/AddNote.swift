@@ -14,23 +14,44 @@ struct AddNote: View {
     // Managed Object from Coredata
     @Environment(\.managedObjectContext) var viewContext
 
-    @State private var isHovering = false
     let iconsize: CGFloat
 
     var body: some View {
-        Button(action: addNote) {
-            Image(systemName: "plus")
+        CircleIconButton(systemName: "plus", label: "New note", iconsize: iconsize, action: addNote)
+            .keyboardShortcut("n", modifiers: .command)
+    }
+
+    private func addNote() {
+        withAnimation {
+            Item.create(in: viewContext)
+        }
+    }
+}
+
+// Round 48pt icon button used for + and the sidebar toggle
+struct CircleIconButton: View {
+    let systemName: String
+    let label: String
+    let iconsize: CGFloat
+    let action: () -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemName)
                 .frame(width: 48, height: 48, alignment: .center)
                 .font(.system(size: iconsize, weight: Font.Weight.regular, design: .rounded))
                 .foregroundColor(.white)
             #if os(iOS)
-                .background(Color(red: 0.08, green: 0.08, blue: 0.08))
+                .background(Theme.buttonBackground)
             #endif
         }
         .buttonStyle(.borderless)
-        .background(isHovering ? Color(red: 0.1, green: 0.1, blue: 0.12) : Color(.clear))
+        .background(isHovering ? Theme.buttonHover : Color(.clear))
         .clipShape(Circle())
-        .accessibilityLabel("New note")
+        .accessibilityLabel(label)
+        .help(label)
         .onHover { hovering in
             isHovering = hovering
             #if os(macOS)
@@ -40,12 +61,6 @@ struct AddNote: View {
                 NSCursor.pop()
             }
             #endif
-        }
-    }
-
-    private func addNote() {
-        withAnimation {
-            Item.create(in: viewContext)
         }
     }
 }

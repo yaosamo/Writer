@@ -8,7 +8,8 @@
 import SwiftUI
 import CoreData
 
-extension UINavigationController: UIGestureRecognizerDelegate {
+// Keeps swipe-back working while the system back button is hidden
+extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
     open override func viewDidLoad() {
         super.viewDidLoad()
         interactivePopGestureRecognizer?.delegate = self
@@ -51,7 +52,7 @@ struct EditorView: View {
 
                     }
                     .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
-                    .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
+                    .foregroundColor(Theme.secondaryText)
                     // Paddings top and bottom for Date and Title
                     .padding(.top, 108)
                     .padding(.bottom, 76)
@@ -60,7 +61,7 @@ struct EditorView: View {
                         .focused($focusedField, equals: .note)
                         .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
                         .disableAutocorrection(true)
-                        .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
+                        .foregroundColor(Theme.text)
                         .lineSpacing(5.0)
                         .scrollIndicators(.hidden)
                         .scrollDismissesKeyboard(.interactively)
@@ -68,7 +69,7 @@ struct EditorView: View {
                             if item.noteText.isEmpty {
                                 Text(emptyNotePlaceholder)
                                     .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
-                                    .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
+                                    .foregroundColor(Theme.secondaryText)
                                     .padding(.top, 8) // UITextView text container inset
                                     .padding(.leading, 5) // line fragment padding
                                     .allowsHitTesting(false)

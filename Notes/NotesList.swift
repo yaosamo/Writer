@@ -9,6 +9,8 @@ import SwiftUI
 import CoreData
 
 
+// Editor on the left, note list on the right. Built as a plain HStack instead of a
+// NavigationView flipped right-to-left, which broke text alignment on recent macOS.
 struct NotesList: View {
 
     // Managed Object from Coredata
@@ -21,60 +23,127 @@ struct NotesList: View {
     var items: FetchedResults<Item>
 
     // objectID is stable once saved, so selection never requires mutating the note
-    @State private var currentSelection: NSManagedObjectID?
+    @State private var selection: NSManagedObjectID?
+    @AppStorage("sidebarVisible") private var sidebarVisible = true
+    @AppStorage("sidebarWidth") private var sidebarWidth: Double = 240
+    @State private var dragStartWidth: Double?
+
+    private var selectedItem: Item? {
+        items.first { $0.objectID == selection }
+    }
 
     var body: some View {
+        HStack(spacing: 0) {
+            detail
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay(alignment: .topTrailing) {
+                    HStack(spacing: 0) {
+                        AddNote(iconsize: 16)
+                        CircleIconButton(systemName: "sidebar.right",
+                                         label: sidebarVisible ? "Hide notes" : "Show notes",
+                                         iconsize: 15,
+                                         action: toggleSidebar)
+                            .keyboardShortcut("s", modifiers: [.control, .command])
+                    }
+                    .padding()
+                }
 
-        NavigationView {
-            List {
-                //Empty text works as padding above list
-                Text("")
-                    .padding(.bottom, 32.0)
+            if sidebarVisible {
+                sidebar
+                    .frame(width: sidebarWidth)
+                    .overlay(alignment: .leading) { resizeHandle }
+                    .transition(.move(edge: .trailing))
+            }
+        }
+        .ignoresSafeArea()
+        .background(Theme.background)
+        // Select newly created notes
+        .onReceive(NotificationCenter.default.publisher(for: .noteCreated)) { notification in
+            selection = notification.object as? NSManagedObjectID
+        }
+        // Keep a valid selection when notes are deleted here or on another device
+        .onChange(of: items.count) {
+            if selectedItem == nil {
+                selection = items.first?.objectID
+            }
+        }
+        .onAppear {
+            selection = items.first?.objectID
+        }
+    }
+
+    @ViewBuilder
+    private var detail: some View {
+        if let item = selectedItem {
+            EditorView(item: item)
+                .id(item.objectID)
+        } else {
+            EmptyStateView()
+        }
+    }
+
+    private var sidebar: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            List(selection: $selection) {
                 ForEach(items) { item in
-                    NavigationLink(
-                        destination: EditorView(item: item),
-                        tag: item.objectID,
-                        selection: $currentSelection)
-                    {
-                        Text(item.displayTitle)
-                            .font(.system(size: 12, weight: Font.Weight.thin, design: .monospaced))
-                    }
-                    .frame(maxWidth: .infinity, alignment: .trailing) // sidebar elements
-
-                    // Deleting with right click
-                    .contextMenu {
-                        Button("Delete") {
-                            delete(item)
+                    Text(item.displayTitle)
+                        .font(.system(size: 12, weight: Font.Weight.thin, design: .monospaced))
+                        .lineLimit(1)
+                        .tag(item.objectID)
+                        // Deleting with right click
+                        .contextMenu {
+                            Button("Delete") {
+                                delete(item)
+                            }
                         }
-                    }
                 }
                 // On move perform function called move
-                .onMove( perform: move )
+                .onMove(perform: move)
             }
+            .listStyle(.sidebar)
+            .scrollContentBackground(.hidden)
             .onDeleteCommand {
-                if let item = items.first(where: { $0.objectID == currentSelection }) {
+                if let item = selectedItem {
                     delete(item)
                 }
             }
-            // Select newly created notes
-            .onReceive(NotificationCenter.default.publisher(for: .noteCreated)) { notification in
-                currentSelection = notification.object as? NSManagedObjectID
-            }
-            // Keep a valid selection when notes are deleted here or on another device
-            .onChange(of: items.count) {
-                if !items.contains(where: { $0.objectID == currentSelection }) {
-                    currentSelection = items.first?.objectID
+
+            SyncStatusView()
+                .padding(.horizontal, 20)
+                .padding(.bottom, 16)
+        }
+        .padding(.top, 40)
+        .background(SidebarMaterial())
+    }
+
+    // Drag the sidebar's left edge to resize it
+    private var resizeHandle: some View {
+        Color.clear
+            .frame(width: 6)
+            .contentShape(Rectangle())
+            .onHover { hovering in
+                if hovering {
+                    NSCursor.resizeLeftRight.push()
+                } else {
+                    NSCursor.pop()
                 }
             }
-            .ignoresSafeArea()
-            .padding(.horizontal, 16.0)
-            AddNote(iconsize: 16)
-        }
-        .ignoresSafeArea()
-        .background(Color(red: 0.06, green: 0.07, blue: 0.06))
-        .environment(\.layoutDirection, .rightToLeft) //navigation view ends
-        .onAppear {
-            currentSelection = items.first?.objectID
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        let start = dragStartWidth ?? sidebarWidth
+                        dragStartWidth = start
+                        sidebarWidth = min(max(start - value.translation.width, 180), 420)
+                    }
+                    .onEnded { _ in
+                        dragStartWidth = nil
+                    }
+            )
+    }
+
+    private func toggleSidebar() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            sidebarVisible.toggle()
         }
     }
 
@@ -89,9 +158,24 @@ struct NotesList: View {
     }
 }
 
+// Translucent sidebar background that blurs the desktop, like the former NavigationView sidebar
+private struct SidebarMaterial: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .sidebar
+        view.blendingMode = .behindWindow
+        view.state = .followsWindowActiveState
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+}
+
 
 struct List_Previews: PreviewProvider {
     static var previews: some View {
         NotesList()
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environment(SyncMonitor(container: PersistenceController.preview.container))
     }
 }

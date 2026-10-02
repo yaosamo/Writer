@@ -26,8 +26,10 @@ struct NotesList: View {
         NavigationView {
             ZStack(alignment: .bottom) {
                 List {
-                    Text("")
                     //Empty text works as padding above list
+                    Text("")
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     ForEach(items) { item in
                         ZStack {
                             NavigationLink(destination: EditorView(item: item)) {
@@ -54,7 +56,14 @@ struct NotesList: View {
                 }
                 .listStyle(.inset)
                 .padding(.leading, 24)
+                .overlay {
+                    if items.isEmpty {
+                        EmptyStateView()
+                    }
+                }
                 HStack {
+                    SyncStatusView()
+                        .padding(.leading, 32)
                     Spacer()
                     AddNote(iconsize: 16)
                         .padding([.trailing], 8)
@@ -79,6 +88,7 @@ struct NotesList_Previews : PreviewProvider {
     static var previews: some View {
         ForEach(["iPhone SE (2nd generation)", "iPhone XS Max"], id: \.self) { deviceName in
             NotesList().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+                .environment(SyncMonitor(container: PersistenceController.preview.container))
                 .previewDevice(PreviewDevice(rawValue: deviceName))
         }
     }
