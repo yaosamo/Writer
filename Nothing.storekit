@@ -1,0 +1,33 @@
+{
+  "identifier" : "4E7C1B2A",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : true,
+      "internalID" : "6740000001",
+      "localizations" : [
+        {
+          "description" : "Folders, themes and future Pro features. One-time purchase.",
+          "displayName" : "Nothing Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.yaosamo.NothingWriter.pro",
+      "referenceName" : "Nothing Pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

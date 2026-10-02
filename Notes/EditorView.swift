@@ -13,6 +13,7 @@ struct EditorView: View {
 
     // Coredata for saving / updating viewContext
     @Environment(\.managedObjectContext) var viewContext
+    @Environment(\.palette) private var palette
 
     // Observed directly so edits synced from other devices show up and aren't overwritten
     @ObservedObject var item: Item
@@ -31,22 +32,22 @@ struct EditorView: View {
                                 .padding(.leading, 24.0)
                         }
                         .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
-                        .foregroundColor(Theme.secondaryText)
+                        .foregroundColor(palette.secondaryText)
                     } // hstack
                     // Paddings top and bottom for Date and Title
                     .padding(.trailing, 72.0)
                     .padding([.bottom, .top], 88.0)
 
                     TextEditor(text: $item.noteText)
-                        .foregroundColor(Theme.text)
-                        .background(CaretColor(color: NSColor(Theme.caret)))
+                        .foregroundColor(palette.text)
+                        .background(CaretColor(color: NSColor(palette.caret)))
                         .lineSpacing(5.0)
                         .scrollContentBackground(.hidden)
                         .scrollIndicators(.hidden)
                         .overlay(alignment: .topLeading) {
                             if item.noteText.isEmpty {
                                 Text(emptyNotePlaceholder)
-                                    .foregroundColor(Theme.secondaryText)
+                                    .foregroundColor(palette.secondaryText)
                                     .padding(.leading, 5) // NSTextView line fragment padding
                                     .allowsHitTesting(false)
                             }
@@ -79,18 +80,24 @@ private struct CaretColor: NSViewRepresentable {
     let color: NSColor
 
     func makeNSView(context: Context) -> ProbeView {
-        let view = ProbeView()
-        view.color = color
-        return view
+        ProbeView()
     }
 
-    func updateNSView(_ view: ProbeView, context: Context) {}
+    // Also runs when the theme changes
+    func updateNSView(_ view: ProbeView, context: Context) {
+        view.color = color
+        view.apply()
+    }
 
     final class ProbeView: NSView {
         var color: NSColor = .orange
 
         override func viewDidMoveToWindow() {
             super.viewDidMoveToWindow()
+            apply()
+        }
+
+        func apply() {
             DispatchQueue.main.async { [weak self] in
                 guard let self, let root = self.window?.contentView else { return }
                 Self.textViews(in: root).forEach { $0.insertionPointColor = self.color }

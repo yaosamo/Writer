@@ -25,6 +25,7 @@ struct EditorView: View {
     // Coredata for saving / updating viewContext
     @Environment(\.managedObjectContext) var viewContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.palette) private var palette
 
     private enum Field: Hashable {
         case title
@@ -52,7 +53,7 @@ struct EditorView: View {
 
                     }
                     .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
-                    .foregroundColor(Theme.secondaryText)
+                    .foregroundColor(palette.secondaryText)
                     // Paddings top and bottom for Date and Title
                     .padding(.top, 108)
                     .padding(.bottom, 76)
@@ -61,15 +62,17 @@ struct EditorView: View {
                         .focused($focusedField, equals: .note)
                         .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
                         .disableAutocorrection(true)
-                        .foregroundColor(Theme.text)
+                        .foregroundColor(palette.text)
                         .lineSpacing(5.0)
+                        .tint(palette.caret)
+                        .scrollContentBackground(.hidden)
                         .scrollIndicators(.hidden)
                         .scrollDismissesKeyboard(.interactively)
                         .overlay(alignment: .topLeading) {
                             if item.noteText.isEmpty {
                                 Text(emptyNotePlaceholder)
                                     .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
-                                    .foregroundColor(Theme.secondaryText)
+                                    .foregroundColor(palette.secondaryText)
                                     .padding(.top, 8) // UITextView text container inset
                                     .padding(.leading, 5) // line fragment padding
                                     .allowsHitTesting(false)
@@ -80,14 +83,15 @@ struct EditorView: View {
             // back button
             Button(action: { dismiss() }) {
                 Image(systemName: "chevron.backward")
-                    .foregroundColor(.white)
+                    .foregroundColor(palette.buttonForeground)
                     .font(.system(size: 16, weight: Font.Weight.regular, design: .rounded))
                     .frame(width: 48, height: 48, alignment: .center)
-                    .background(.black)
+                    .background(palette.buttonBackground)
                     .clipShape(Circle())
             }
             .accessibilityLabel("Back")
         } // z-stack
+        .background(palette.background)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()

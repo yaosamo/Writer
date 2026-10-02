@@ -39,6 +39,12 @@
 		5DB1E0022A00000000000023 /* SyncMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0022A00000000000021 /* SyncMonitor.swift */; };
 		5DB1E0022A00000000000032 /* StatusViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0022A00000000000031 /* StatusViews.swift */; };
 		5DB1E0022A00000000000033 /* StatusViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0022A00000000000031 /* StatusViews.swift */; };
+		5DB1E0032A00000000000012 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0032A00000000000011 /* Store.swift */; };
+		5DB1E0032A00000000000013 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0032A00000000000011 /* Store.swift */; };
+		5DB1E0032A00000000000022 /* ProViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0032A00000000000021 /* ProViews.swift */; };
+		5DB1E0032A00000000000023 /* ProViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0032A00000000000021 /* ProViews.swift */; };
+		5DB1E0052A00000000000012 /* FolderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0052A00000000000011 /* FolderRow.swift */; };
+		5DB1E0052A00000000000013 /* FolderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0052A00000000000011 /* FolderRow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +94,11 @@
 		5DB1E0022A00000000000011 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		5DB1E0022A00000000000021 /* SyncMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMonitor.swift; sourceTree = "<group>"; };
 		5DB1E0022A00000000000031 /* StatusViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusViews.swift; sourceTree = "<group>"; };
+		5DB1E0032A00000000000011 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		5DB1E0032A00000000000021 /* ProViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProViews.swift; sourceTree = "<group>"; };
+		5DB1E0042A00000000000001 /* Model 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 2.xcdatamodel"; sourceTree = "<group>"; };
+		5DB1E0052A00000000000011 /* FolderRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderRow.swift; sourceTree = "<group>"; };
+		5DB1E0062A00000000000001 /* Nothing.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Nothing.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +185,7 @@
 		5DA29A202766475D006AE014 = {
 			isa = PBXGroup;
 			children = (
+				5DB1E0062A00000000000001 /* Nothing.storekit */,
 				5DA29A2B2766475D006AE014 /* Notes */,
 				5D0FA6D9279BB58200ED6101 /* iOSnothing */,
 				5D0FA6EF279BB58200ED6101 /* iOSnothingTests */,
@@ -204,6 +216,9 @@
 				5DC043CC2774F3430093A613 /* AddNote.swift */,
 				5DF694A127685C0400782FE1 /* Persistence.swift */,
 				5DB1E0012A00000000000001 /* Item+Helpers.swift */,
+				5DB1E0052A00000000000011 /* FolderRow.swift */,
+				5DB1E0032A00000000000021 /* ProViews.swift */,
+				5DB1E0032A00000000000011 /* Store.swift */,
 				5DB1E0022A00000000000031 /* StatusViews.swift */,
 				5DB1E0022A00000000000021 /* SyncMonitor.swift */,
 				5DB1E0022A00000000000011 /* Theme.swift */,
@@ -391,6 +406,9 @@
 				5DF90EA0279D0F17002B0828 /* NotesList-iOS.swift in Sources */,
 				5D0FA70E279BBAC000ED6101 /* Persistence.swift in Sources */,
 				5DB1E0012A00000000000003 /* Item+Helpers.swift in Sources */,
+				5DB1E0052A00000000000013 /* FolderRow.swift in Sources */,
+				5DB1E0032A00000000000023 /* ProViews.swift in Sources */,
+				5DB1E0032A00000000000013 /* Store.swift in Sources */,
 				5DB1E0022A00000000000033 /* StatusViews.swift in Sources */,
 				5DB1E0022A00000000000023 /* SyncMonitor.swift in Sources */,
 				5DB1E0022A00000000000013 /* Theme.swift in Sources */,
@@ -424,6 +442,9 @@
 				5DA29A2D2766475D006AE014 /* NotesApp.swift in Sources */,
 				5DF694A227685C0400782FE1 /* Persistence.swift in Sources */,
 				5DB1E0012A00000000000002 /* Item+Helpers.swift in Sources */,
+				5DB1E0052A00000000000012 /* FolderRow.swift in Sources */,
+				5DB1E0032A00000000000022 /* ProViews.swift in Sources */,
+				5DB1E0032A00000000000012 /* Store.swift in Sources */,
 				5DB1E0022A00000000000032 /* StatusViews.swift in Sources */,
 				5DB1E0022A00000000000022 /* SyncMonitor.swift in Sources */,
 				5DB1E0022A00000000000012 /* Theme.swift in Sources */,
@@ -831,8 +852,9 @@
 			isa = XCVersionGroup;
 			children = (
 				5DA29A5D27664DD8006AE014 /* Model.xcdatamodel */,
+				5DB1E0042A00000000000001 /* Model 2.xcdatamodel */,
 			);
-			currentVersion = 5DA29A5D27664DD8006AE014 /* Model.xcdatamodel */;
+			currentVersion = 5DB1E0042A00000000000001 /* Model 2.xcdatamodel */;
 			path = Model.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

@@ -32,11 +32,22 @@ struct PersistenceController {
     // the app shows it instead of crashing
     let loadError: Error?
 
+    // Loaded once: several containers (previews, tests) sharing one model avoids
+    // "Failed to find a unique match for an NSEntityDescription" errors
+    private static let model: NSManagedObjectModel = {
+        guard let url = Bundle.main.url(forResource: "Model", withExtension: "momd"),
+              let model = NSManagedObjectModel(contentsOf: url) else {
+            fatalError("Model.momd missing from the app bundle")
+        }
+        return model
+    }()
+
     init(inMemory: Bool = false) {
-        container = NSPersistentCloudKitContainer(name: "Model")
+        container = NSPersistentCloudKitContainer(name: "Model", managedObjectModel: Self.model)
 
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
+            container.persistentStoreDescriptions.first?.cloudKitContainerOptions = nil
         }
 
         var loadError: Error?

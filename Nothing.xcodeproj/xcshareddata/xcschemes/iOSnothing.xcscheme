@@ -17,6 +17,7 @@
       <BuildableProductRunnable runnableDebuggingMode = "0">
          <BuildableReference BuildableIdentifier = "primary" BlueprintIdentifier = "5D0FA6D7279BB58100ED6101" BuildableName = "Nothing.app" BlueprintName = "iOSnothing" ReferencedContainer = "container:Nothing.xcodeproj"></BuildableReference>
       </BuildableProductRunnable>
+         <StoreKitConfigurationFileReference identifier = "../../Nothing.storekit"></StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction buildConfiguration = "Release" shouldUseLaunchSchemeArgsEnv = "YES" savedToolIdentifier = "" useCustomWorkingDirectory = "NO" debugDocumentVersioning = "YES">
       <BuildableProductRunnable runnableDebuggingMode = "0">

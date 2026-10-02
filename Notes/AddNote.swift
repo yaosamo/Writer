@@ -15,6 +15,8 @@ struct AddNote: View {
     @Environment(\.managedObjectContext) var viewContext
 
     let iconsize: CGFloat
+    // Folder for the new note; nil = unfiled
+    var folder: Folder? = nil
 
     var body: some View {
         CircleIconButton(systemName: "plus", label: "New note", iconsize: iconsize, action: addNote)
@@ -23,7 +25,7 @@ struct AddNote: View {
 
     private func addNote() {
         withAnimation {
-            Item.create(in: viewContext)
+            Item.create(in: viewContext, folder: folder)
         }
     }
 }
@@ -35,6 +37,7 @@ struct CircleIconButton: View {
     let iconsize: CGFloat
     let action: () -> Void
 
+    @Environment(\.palette) private var palette
     @State private var isHovering = false
 
     var body: some View {
@@ -42,13 +45,13 @@ struct CircleIconButton: View {
             Image(systemName: systemName)
                 .frame(width: 48, height: 48, alignment: .center)
                 .font(.system(size: iconsize, weight: Font.Weight.regular, design: .rounded))
-                .foregroundColor(.white)
+                .foregroundColor(palette.buttonForeground)
             #if os(iOS)
-                .background(Theme.buttonBackground)
+                .background(palette.buttonBackground)
             #endif
         }
         .buttonStyle(.borderless)
-        .background(isHovering ? Theme.buttonHover : Color(.clear))
+        .background(isHovering ? palette.buttonHover : Color(.clear))
         .clipShape(Circle())
         .accessibilityLabel(label)
         .help(label)

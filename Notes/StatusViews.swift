@@ -10,6 +10,7 @@ import SwiftUI
 // Shown when there are no notes: first launch, or while notes download from iCloud
 struct EmptyStateView: View {
     @Environment(SyncMonitor.self) private var sync
+    @Environment(\.palette) private var palette
 
     var body: some View {
         VStack(spacing: 12) {
@@ -17,13 +18,13 @@ struct EmptyStateView: View {
                 ProgressView()
                     .controlSize(.small)
                 Text("Bringing your notes from iCloud")
-                    .foregroundColor(Theme.text)
+                    .foregroundColor(palette.text)
             } else {
                 Text("Nothing here yet")
-                    .foregroundColor(Theme.text)
+                    .foregroundColor(palette.text)
                 Text(hint)
                     .font(.system(size: 12, weight: .regular, design: .monospaced))
-                    .foregroundColor(Theme.secondaryText)
+                    .foregroundColor(palette.secondaryText)
             }
         }
         .multilineTextAlignment(.center)
@@ -43,6 +44,7 @@ struct EmptyStateView: View {
 // Quiet one-line sync indicator: visible only while downloading or when sync fails
 struct SyncStatusView: View {
     @Environment(SyncMonitor.self) private var sync
+    @Environment(\.palette) private var palette
 
     var body: some View {
         Group {
@@ -57,7 +59,7 @@ struct SyncStatusView: View {
             }
         }
         .font(.system(size: 11, weight: .regular, design: .monospaced))
-        .foregroundColor(Theme.secondaryText)
+        .foregroundColor(palette.secondaryText)
         .lineLimit(2)
         .animation(.default, value: sync.isDownloading)
     }
