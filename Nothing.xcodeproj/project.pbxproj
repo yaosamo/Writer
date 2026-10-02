@@ -61,6 +61,7 @@
 		5DB1E00E2A00000000000023 /* ImageAttachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00E2A00000000000021 /* ImageAttachments.swift */; };
 		5DB1E00F2A00000000000012 /* ImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00F2A00000000000011 /* ImageTests.swift */; };
 		5DB1E0102A00000000000102 /* Pro-folders.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102A00000000000101 /* Pro-folders.mp4 */; };
+		5DB1E0102D00000000000002 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102D00000000000001 /* PrivacyInfo.xcprivacy */; };
 		5DB1E0102C00000000000004 /* Pro-next.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000004 /* Pro-next.mp4 */; };
 		5DB1E0102C00000000000003 /* Pro-sync.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000003 /* Pro-sync.mp4 */; };
 		5DB1E0102C00000000000002 /* Pro-lists.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000002 /* Pro-lists.mp4 */; };
@@ -68,6 +69,7 @@
 		5DB1E0102A00000000000202 /* Pro-themes.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102A00000000000201 /* Pro-themes.mp4 */; };
 		5DB1E0102A00000000000302 /* Pro-images.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102A00000000000301 /* Pro-images.mp4 */; };
 		5DB1E0102A00000000000402 /* Pro-folders.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102A00000000000401 /* Pro-folders.mp4 */; };
+		5DB1E0102D00000000000003 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102D00000000000001 /* PrivacyInfo.xcprivacy */; };
 		5DB1E0102C00000000000008 /* Pro-next.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000008 /* Pro-next.mp4 */; };
 		5DB1E0102C00000000000007 /* Pro-sync.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000007 /* Pro-sync.mp4 */; };
 		5DB1E0102C00000000000006 /* Pro-lists.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000006 /* Pro-lists.mp4 */; };
@@ -139,6 +141,7 @@
 		5DB1E00E2A00000000000021 /* ImageAttachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageAttachments.swift; sourceTree = "<group>"; };
 		5DB1E00F2A00000000000011 /* ImageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTests.swift; sourceTree = "<group>"; };
 		5DB1E0102A00000000000101 /* Pro-folders.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-folders.mp4"; sourceTree = "<group>"; };
+		5DB1E0102D00000000000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5DB1E0102B00000000000004 /* Pro-next.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-next.mp4"; sourceTree = "<group>"; };
 		5DB1E0102B00000000000003 /* Pro-sync.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-sync.mp4"; sourceTree = "<group>"; };
 		5DB1E0102B00000000000002 /* Pro-lists.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-lists.mp4"; sourceTree = "<group>"; };
@@ -276,6 +279,7 @@
 				5DA29A2E2766475D006AE014 /* ContentView.swift */,
 				5DC043CA2774F1A10093A613 /* NotesList.swift */,
 				5DF694A327686A2900782FE1 /* EditorView.swift */,
+				5DB1E0102D00000000000001 /* PrivacyInfo.xcprivacy */,
 				5DC043CC2774F3430093A613 /* AddNote.swift */,
 				5DF694A127685C0400782FE1 /* Persistence.swift */,
 				5DB1E0012A00000000000001 /* Item+Helpers.swift */,
@@ -444,6 +448,7 @@
 				5DB1E0102A00000000000602 /* Pro-images.mp4 in Resources */,
 				5DB1E0102A00000000000502 /* Pro-themes.mp4 in Resources */,
 				5DB1E0102A00000000000402 /* Pro-folders.mp4 in Resources */,
+				5DB1E0102D00000000000003 /* PrivacyInfo.xcprivacy in Resources */,
 				5DB1E0102C00000000000008 /* Pro-next.mp4 in Resources */,
 				5DB1E0102C00000000000007 /* Pro-sync.mp4 in Resources */,
 				5DB1E0102C00000000000006 /* Pro-lists.mp4 in Resources */,
@@ -474,6 +479,7 @@
 				5DB1E0102A00000000000302 /* Pro-images.mp4 in Resources */,
 				5DB1E0102A00000000000202 /* Pro-themes.mp4 in Resources */,
 				5DB1E0102A00000000000102 /* Pro-folders.mp4 in Resources */,
+				5DB1E0102D00000000000002 /* PrivacyInfo.xcprivacy in Resources */,
 				5DB1E0102C00000000000004 /* Pro-next.mp4 in Resources */,
 				5DB1E0102C00000000000003 /* Pro-sync.mp4 in Resources */,
 				5DB1E0102C00000000000002 /* Pro-lists.mp4 in Resources */,
@@ -582,7 +588,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iOSnothing/iOSnothing.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"iOSnothing/Preview Content\"";
 				DEVELOPMENT_TEAM = 6J57A4298A;
 				ENABLE_PREVIEWS = YES;
@@ -598,7 +604,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.02;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
 				PRODUCT_NAME = Nothing;
 				SDKROOT = iphoneos;
@@ -615,7 +621,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iOSnothing/iOSnothing.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"iOSnothing/Preview Content\"";
 				DEVELOPMENT_TEAM = 6J57A4298A;
 				ENABLE_PREVIEWS = YES;
@@ -631,7 +637,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.02;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
 				PRODUCT_NAME = Nothing;
 				SDKROOT = iphoneos;
@@ -850,7 +856,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Notes/Preview Content\"";
 				DEVELOPMENT_TEAM = 6J57A4298A;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -863,7 +869,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.04;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -881,7 +887,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Notes/Preview Content\"";
 				DEVELOPMENT_TEAM = 6J57A4298A;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -894,7 +900,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.04;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

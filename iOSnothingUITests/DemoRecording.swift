@@ -172,4 +172,77 @@ final class DemoRecording: XCTestCase {
         pause(0.6)
         app.buttons["Hide keyboard"].tap(); pause(3)
     }
+
+    // App Store screenshots: saved as PNGs to SCREENSHOT_DIR (run on an iPhone 16 Pro Max for 1320x2868)
+    private func shot(_ name: String) {
+        guard let dir = ProcessInfo.processInfo.environment["SCREENSHOT_DIR"] else { return }
+        let data = XCUIScreen.main.screenshot().pngRepresentation
+        try? data.write(to: URL(fileURLWithPath: dir).appendingPathComponent("\(name).png"))
+    }
+
+    private func newNote(_ text: String) -> XCUIElement {
+        app.buttons["New"].tap(); pause(0.5)
+        app.buttons["New Note"].tap(); pause(0.6)
+        app.buttons["Untitled"].firstMatch.tap(); pause(0.6)
+        let editor = app.textViews.firstMatch
+        editor.tap(); pause(0.3)
+        editor.typeText(text)
+        app.buttons["Hide keyboard"].tap(); pause(0.8)
+        return editor
+    }
+
+    func testScreenshots() {
+        // 1. Writing
+        launch()
+        app.buttons["Morning pages"].firstMatch.tap(); pause(1.2)
+        shot("1-write")
+
+        // 2. Lists and tasks, one ticked
+        launch()
+        let editor = newNote("Groceries\n- milk\nbread\napples\n\n[] call mom\nwater the plants")
+        let frame = editor.frame
+        app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: frame.minX + 18, dy: frame.minY + 128)).tap()
+        pause(1)
+        shot("2-lists")
+
+        // 3. An image in a note
+        launch()
+        app.buttons["New"].tap(); pause(0.5)
+        app.buttons["New Note"].tap(); pause(0.6)
+        app.buttons["Untitled"].firstMatch.tap(); pause(0.6)
+        let note = app.textViews.firstMatch
+        note.tap(); pause(0.3)
+        note.typeText("Colour study\n")
+        if let path = ProcessInfo.processInfo.environment["DEMO_IMAGE"], let image = UIImage(contentsOfFile: path) {
+            UIPasteboard.general.image = image
+        }
+        note.press(forDuration: 0.8); pause(0.6)
+        let paste = app.menuItems["Paste"].firstMatch
+        if paste.waitForExistence(timeout: 2) { paste.tap() }
+        pause(2)
+        note.typeText("Warm light, slow afternoon.")
+        app.buttons["Hide keyboard"].tap(); pause(1)
+        shot("3-images")
+
+        // 4. Folders in the list
+        launch()
+        pause(0.5)
+        shot("4-folders")
+
+        // 5. Light theme
+        launch(theme: "light")
+        app.buttons["Chapter one"].firstMatch.tap(); pause(1.2)
+        shot("5-light")
+
+        // 6. Dark Sepia
+        launch(theme: "darkSepia")
+        app.buttons["Morning pages"].firstMatch.tap(); pause(1.2)
+        shot("6-sepia")
+
+        // 7. Nothing Pro
+        launch(pro: false)
+        app.buttons["New"].tap(); pause(0.5)
+        app.buttons["New Folder · Pro"].tap(); pause(2.5)
+        shot("7-pro")
+    }
 }
