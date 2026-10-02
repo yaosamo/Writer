@@ -36,29 +36,7 @@ struct NotesCoreBasicApp: App {
                     }
                 }
             }
-        #if os(macOS)
-        paywallWindow
-        #endif
     }
-
-    #if os(macOS)
-    // The paywall is its own small window on macOS, so it can be moved around
-    private var paywallWindow: some Scene {
-        Window("Nothing Pro", id: "paywall") {
-            PaywallView()
-                .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
-                .environment(store)
-                .environment(\.palette, theme.palette)
-                .preferredColorScheme(theme.palette.colorScheme)
-                .background(theme.palette.background)
-                .draggableBackground()
-        }
-        .windowStyle(HiddenTitleBarWindowStyle())
-        .windowResizability(.contentSize)
-        .defaultPosition(.center)
-        .commandsRemoved()
-    }
-    #endif
 
     // One window on macOS: menu commands and the paywall always target it
     #if os(macOS)

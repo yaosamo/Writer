@@ -18,9 +18,11 @@ final class DemoRecording: XCTestCase {
         XCUIDevice.shared.orientation = .portrait
     }
 
-    private func launch(pro: Bool = true) {
+    // Pinned to Dark unless the scene changes themes itself
+    private func launch(pro: Bool = true, theme: String? = "dark") {
         app = XCUIApplication()
-        app.launchArguments += ["-demoContent", "YES", "-demoPrice", "$9.99"]
+        app.launchArguments += ["-demoContent", "YES", "-demoPrice", "$29.99", "-demoMonthlyPrice", "$0.99"]
+        if let theme { app.launchArguments += ["-theme", theme] }
         if pro { app.launchArguments += ["-debugProUnlocked", "YES"] }
         app.launch()
         pause(1.5)
@@ -63,8 +65,8 @@ final class DemoRecording: XCTestCase {
     }
 
     func testThemes() {
-        launch()
-        for theme in ["Dark Sepia", "Midnight", "Light", "Dark"] {
+        launch(theme: nil)
+        for theme in ["Dark", "Dark Sepia", "Midnight", "Light", "Dark"] {
             app.buttons["More"].tap(); pause(0.5)
             app.buttons["Theme"].tap(); pause(0.5)
             app.buttons[theme].tap(); pause(1.8)
@@ -84,7 +86,7 @@ final class DemoRecording: XCTestCase {
         app.buttons["Hide keyboard"].tap(); pause(0.8)
         // tick the first task
         let frame = editor.frame
-        app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: frame.minX + 18, dy: frame.minY + 150)).tap()
+        app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: frame.minX + 18, dy: frame.minY + 128)).tap()
         pause(2.5)
     }
 
@@ -95,11 +97,15 @@ final class DemoRecording: XCTestCase {
         app.buttons["Untitled"].firstMatch.tap(); pause(0.8)
         let editor = app.textViews.firstMatch
         editor.tap(); pause(0.4)
-        type("Lisbon, day one\n", into: editor)
+        type("Colour study\n", into: editor)
         if let path = ProcessInfo.processInfo.environment["DEMO_IMAGE"], let image = UIImage(contentsOfFile: path) {
             UIPasteboard.general.image = image
         }
-        editor.typeKey("v", modifierFlags: .command); pause(2.0)
+        // Paste from the edit menu, as a person would (⌘V needs a hardware keyboard)
+        editor.press(forDuration: 0.8); pause(0.6)
+        let paste = app.menuItems["Paste"].firstMatch
+        if paste.waitForExistence(timeout: 2) { paste.tap() } else { app.buttons["Paste"].firstMatch.tap() }
+        pause(2.0)
         type("Warm light, slow afternoon.", into: editor)
         pause(0.8)
         app.buttons["Hide keyboard"].tap(); pause(0.8)
@@ -124,5 +130,46 @@ final class DemoRecording: XCTestCase {
         launch(pro: false)
         app.buttons["New"].tap(); pause(0.6)
         app.buttons["New Folder · Pro"].tap(); pause(4)
+    }
+
+    // Paywall: one note after another, the list keeps growing
+    func testNotes() {
+        launch()
+        for title in ["Letters", "Recipes", "Dreams", "Travel"] {
+            app.buttons["New"].tap(); pause(0.5)
+            app.buttons["New Note"].tap(); pause(0.6)
+            app.buttons["Untitled"].firstMatch.tap(); pause(0.6)
+            let editor = app.textViews.firstMatch
+            editor.tap(); pause(0.3)
+            type(title, into: editor); pause(0.4)
+            app.buttons["Hide keyboard"].tap(); pause(0.4)
+            app.buttons["Back"].tap(); pause(0.9)
+        }
+        pause(1.5)
+    }
+
+    // Paywall: the same words as the Mac clip, shown side by side with it
+    func testSync() {
+        launch()
+        app.buttons["New"].tap(); pause(0.6)
+        app.buttons["New Note"].tap(); pause(0.8)
+        app.buttons["Untitled"].firstMatch.tap(); pause(0.8)
+        let editor = app.textViews.firstMatch
+        editor.tap(); pause(0.4)
+        type("Written on the Mac\nread on the iPhone.", into: editor)
+        pause(0.8)
+        app.buttons["Hide keyboard"].firstMatch.tap(); pause(2.5)
+    }
+
+    func testNext() {
+        launch()
+        app.buttons["New"].tap(); pause(0.6)
+        app.buttons["New Note"].tap(); pause(0.8)
+        app.buttons["Untitled"].firstMatch.tap(); pause(0.8)
+        let editor = app.textViews.firstMatch
+        editor.tap(); pause(0.4)
+        type("Whatever comes next is included.", into: editor)
+        pause(0.6)
+        app.buttons["Hide keyboard"].tap(); pause(3)
     }
 }

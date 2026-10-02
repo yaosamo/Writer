@@ -96,6 +96,16 @@ final class Store {
         }
     }
 
+    #if DEBUG
+    // "…" menu switch for testing Pro without a purchase (same as launching with -debugProUnlocked YES)
+    var debugPro: Bool { UserDefaults.standard.bool(forKey: "debugProUnlocked") }
+
+    func setDebugPro(_ on: Bool) {
+        UserDefaults.standard.set(on, forKey: "debugProUnlocked")
+        Task { await refreshEntitlement() }
+    }
+    #endif
+
     private func loadProducts() async {
         do {
             let products = try await Product.products(for: [Self.lifetimeID, Self.monthlyID])

@@ -69,13 +69,14 @@ enum AppTheme: String, CaseIterable, Identifiable {
                     buttonHover: Color(red: 0.094, green: 0.133, blue: 0.227),
                     colorScheme: .dark)
         case .light:
-            Palette(background: Color(red: 0.965, green: 0.957, blue: 0.937),
-                    text: Color(red: 0.165, green: 0.165, blue: 0.165),
-                    secondaryText: Color(red: 0.557, green: 0.55, blue: 0.525),
+            // Paper white with soft black text, like iA Writer
+            Palette(background: .white,
+                    text: Color(white: 0.15),
+                    secondaryText: Color(white: 0.6),
                     caret: Color(red: 0.886, green: 0.44, blue: 0.1),
-                    buttonForeground: Color(red: 0.165, green: 0.165, blue: 0.165),
-                    buttonBackground: Color(red: 0.925, green: 0.914, blue: 0.886),
-                    buttonHover: Color(red: 0.894, green: 0.878, blue: 0.847),
+                    buttonForeground: Color(white: 0.15),
+                    buttonBackground: Color(white: 0.95),
+                    buttonHover: Color(white: 0.91),
                     colorScheme: .light)
         }
     }

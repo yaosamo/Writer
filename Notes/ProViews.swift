@@ -8,32 +8,41 @@
 import SwiftUI
 import CoreData
 import StoreKit
+import AVFoundation
 
 private let privacyURL = URL(string: "https://github.com/yaosamo/Writer/blob/main/PrivacyPolicy.md")!
 private let termsURL = URL(string: "https://github.com/yaosamo/Writer/blob/main/Terms.md")!
 
-// Pro features shown in the paywall, each with a short close-up clip
-private enum ProFeature: CaseIterable {
-    case folders, themes, images
+// Every line in the paywall has a short clip showing it; the list plays through them in turn
+private enum ProFeature: String, CaseIterable {
+    case folders, themes, images, notes, lists, sync, next
 
     var title: String {
         switch self {
         case .folders: "Folders"
         case .themes: "Themes"
-        case .images: "Images"
+        case .images: "Images in notes"
+        case .notes: "Unlimited notes"
+        case .lists: "Lists and tasks"
+        case .sync: "Mac, iPhone and iPad"
+        case .next: "Everything that comes next"
         }
     }
 
-    var clip: String { "Pro-\(self)" }
+    var clip: String { "Pro-\(rawValue)" }
 
     var next: ProFeature {
         let all = Self.allCases
         return all[(all.firstIndex(of: self)! + 1) % all.count]
     }
-}
 
-// Everything else Nothing does, listed under the Pro features
-private let includedFeatures = ["Unlimited notes", "Lists and tasks", "Sync across Mac, iPhone and iPad", "and what comes next"]
+    // How long the item stays selected: its clip, played once
+    func duration() async -> Double {
+        guard let url = Bundle.main.url(forResource: clip, withExtension: "mp4"),
+              let time = try? await AVURLAsset(url: url).load(.duration) else { return 6 }
+        return max(3, time.seconds)
+    }
+}
 
 private enum Plan { case lifetime, monthly }
 
@@ -43,13 +52,14 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var feature: ProFeature = .folders
+    @State private var progress: CGFloat = 0
     @State private var plan: Plan = .lifetime
 
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var sizeClass
     #endif
 
-    // Mac, iPad and unfolded: video on the left, everything else on the right
+    // Mac, iPad and unfolded: the clip on the left, everything else on the right
     private var isWide: Bool {
         #if os(macOS)
         true
@@ -62,60 +72,101 @@ struct PaywallView: View {
         Group {
             if isWide {
                 HStack(spacing: 0) {
-                    // Inset 8pt from the window edges; corners follow the window's (minus the inset)
-                    clip(cornerRadius: 10)
-                        .frame(width: 640)
-                        .frame(maxHeight: .infinity)
-                        .padding([.leading, .top, .bottom], 8)
+                    // Full height of the sheet, inset 8pt; corners follow the sheet's
+                    clip(cornerRadius: 12)
+                        .frame(width: 564 * clipAspect, height: 564)
+                        .padding(8)
                     side
-                        .padding(.horizontal, 40)
-                        .padding(.top, 44)
+                        .padding(.leading, 28)
+                        .padding(.trailing, 32)
+                        .padding(.top, 36)
                         .padding(.bottom, 24)
-                        .frame(width: 400)
+                        .frame(width: 360)
                 }
-                // Fills the window up under the hidden title bar (28pt of safe area on top)
-                .frame(maxHeight: .infinity)
-                .ignoresSafeArea()
-                .frame(height: 572)
+                .frame(height: 580)
+                .overlay(alignment: .topTrailing) {
+                    closeButton(onVideo: false).padding(8)
+                }
             } else {
-                VStack(alignment: .leading, spacing: 28) {
-                    clip(cornerRadius: 14)
-                        .aspectRatio(4.0 / 3.0, contentMode: .fit)
-                    side
+                // Sized so the list, the plans and the button fit on one phone screen
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        clip(cornerRadius: 16)
+                            .frame(width: 300 * clipAspect, height: 300)
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 28)
+                        side
+                            .padding(.horizontal, 12)
+                    }
+                    .padding(8)
                 }
-                .padding(20)
+                .scrollBounceBehavior(.basedOnSize)
+                .overlay(alignment: .topTrailing) {
+                    closeButton(onVideo: false).padding(6)
+                }
             }
         }
         #if os(macOS)
         .background(surface.ignoresSafeArea())
-        .onExitCommand { dismiss() }
         #else
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .presentationDetents([.large])
-        .presentationDragIndicator(.visible)
         .presentationBackground { surface }
         #endif
         .preferredColorScheme(palette.colorScheme)
         .onChange(of: store.isPro) { _, unlocked in
             if unlocked { dismiss() }
         }
+        .task(id: feature) {
+            // The bar under the playing item fills over its clip, then the next one starts
+            progress = 0
+            let seconds = await feature.duration()
+            withAnimation(.linear(duration: seconds)) { progress = 1 }
+            try? await Task.sleep(for: .seconds(seconds))
+            guard !Task.isCancelled else { return }
+            feature = feature.next
+        }
+    }
+
+    // Mac clips are square; iPhone clips are a 5:6 slice of the screen
+    private var clipAspect: CGFloat {
+        #if os(macOS)
+        1
+        #else
+        1080.0 / 1296.0
+        #endif
     }
 
     // A step lighter than the editor page
     private var surface: some View {
         ZStack {
             palette.background
-            Color.white.opacity(palette.colorScheme == .dark ? 0.06 : 0.5)
+            Color.white.opacity(palette.colorScheme == .dark ? 0.06 : 0)
         }
     }
 
-    // The selected feature in motion; cycles on its own, tap a feature to pick it
     private func clip(cornerRadius: CGFloat) -> some View {
         LoopingVideo(resource: feature.clip)
             .id(feature)
-            .transition(.opacity)
+            .background(Color.black)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             .accessibilityHidden(true)
+    }
+
+    private func closeButton(onVideo: Bool) -> some View {
+        Button {
+            dismiss()
+        } label: {
+            Image(systemName: "xmark")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(onVideo ? .white : palette.secondaryText)
+                .frame(width: 28, height: 28)
+                .background(Circle().fill(onVideo ? Color.black.opacity(0.45) : palette.text.opacity(0.08)))
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .keyboardShortcut(.cancelAction)
+        .accessibilityLabel("Close")
     }
 
     private var side: some View {
@@ -123,39 +174,41 @@ struct PaywallView: View {
             Text("Nothing Pro")
                 .font(.system(size: 20, weight: .regular, design: .monospaced))
                 .foregroundColor(palette.text)
-            Spacer(minLength: 28)
+            Spacer(minLength: 24)
             featureList
-            Spacer(minLength: 28)
+            Spacer(minLength: 24)
             purchase
         }
         .frame(maxHeight: .infinity, alignment: .top)
     }
 
     private var featureList: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 6) {
             ForEach(ProFeature.allCases, id: \.self) { item in
                 Button {
-                    withAnimation(.easeInOut(duration: 0.2)) { feature = item }
+                    feature = item
                 } label: {
-                    Text(item.title)
-                        .foregroundColor(palette.text)
-                        .opacity(item == feature ? 1 : 0.4)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(item.title)
+                            .foregroundColor(palette.text)
+                            .opacity(item == feature ? 1 : 0.4)
+                        // Always takes its 2pt, so rows don't move when the selection does
+                        GeometryReader { proxy in
+                            Capsule()
+                                .fill(palette.caret)
+                                .frame(width: proxy.size.width * (item == feature ? progress : 0))
+                        }
+                        .frame(width: 120, height: 2)
+                        .opacity(item == feature ? 1 : 0)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-            }
-            ForEach(includedFeatures, id: \.self) { line in
-                Text(line)
-                    .foregroundColor(palette.text)
-                    .opacity(0.4)
+                .accessibilityAddTraits(item == feature ? .isSelected : [])
             }
         }
-        .task(id: feature) {
-            try? await Task.sleep(for: .seconds(7))
-            guard !Task.isCancelled else { return }
-            withAnimation(.easeInOut(duration: 0.3)) { feature = feature.next }
-        }
+        .font(.system(size: 14, weight: .regular, design: .monospaced))
     }
 
     private var purchase: some View {
@@ -170,10 +223,9 @@ struct PaywallView: View {
                         .foregroundColor(palette.secondaryText)
                 }
             } else {
-                planRow(.lifetime, title: "Lifetime", price: price(store.lifetime, demo: "demoPrice"))
-                planRow(.monthly, title: "Monthly", price: price(store.monthly, demo: "demoMonthlyPrice").map { "\($0) / month" })
+                planPicker
                 getButton
-                    .padding(.top, 6)
+                    .padding(.top, 4)
             }
 
             if let message = store.message {
@@ -195,7 +247,23 @@ struct PaywallView: View {
             .buttonStyle(.plain)
             .font(.system(size: 11, design: .monospaced))
             .foregroundColor(palette.secondaryText)
-            .padding(.top, 6)
+            .padding(.top, 4)
+        }
+    }
+
+    // Two choices; on a phone they sit side by side to save height
+    @ViewBuilder
+    private var planPicker: some View {
+        let lifetime = price(store.lifetime, demo: "demoPrice")
+        let monthly = price(store.monthly, demo: "demoMonthlyPrice").map { "\($0) / month" }
+        if isWide {
+            planRow(.lifetime, title: "Lifetime", price: lifetime)
+            planRow(.monthly, title: "Monthly", price: monthly)
+        } else {
+            HStack(spacing: 10) {
+                planRow(.lifetime, title: "Lifetime", price: lifetime)
+                planRow(.monthly, title: "Monthly", price: monthly)
+            }
         }
     }
 
@@ -203,21 +271,30 @@ struct PaywallView: View {
         plan == .lifetime ? store.lifetime : store.monthly
     }
 
-    // One choice of the two; the outline marks the selected plan
+    // The outline and the filled dot mark the selected plan
     private func planRow(_ value: Plan, title: String, price: String?) -> some View {
         let selected = plan == value
+        let priceText = Text(price ?? (store.didLoadProducts ? "Unavailable" : "…"))
+            .foregroundColor(selected ? palette.text : palette.secondaryText)
         return Button {
             withAnimation(.easeInOut(duration: 0.15)) { plan = value }
         } label: {
-            HStack(spacing: 12) {
+            HStack(alignment: isWide ? .center : .top, spacing: 10) {
                 Circle()
                     .strokeBorder(selected ? palette.text : palette.secondaryText.opacity(0.6), lineWidth: 1)
                     .overlay(Circle().fill(palette.text).padding(4).opacity(selected ? 1 : 0))
                     .frame(width: 16, height: 16)
-                Text(title)
-                Spacer()
-                Text(price ?? (store.didLoadProducts ? "Unavailable" : "…"))
-                    .foregroundColor(selected ? palette.text : palette.secondaryText)
+                if isWide {
+                    Text(title)
+                    Spacer()
+                    priceText
+                } else {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(title)
+                        priceText.font(.system(size: 12, design: .monospaced))
+                    }
+                    Spacer(minLength: 0)
+                }
             }
             .font(.system(size: 14, design: .monospaced))
             .foregroundColor(palette.text)
@@ -246,7 +323,16 @@ struct PaywallView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .disabled(selectedProduct == nil || store.isPurchasing)
+        // Demo builds show prices without products; keep the button looking live there
+        .disabled((selectedProduct == nil && !hasDemoPrice) || store.isPurchasing)
+    }
+
+    private var hasDemoPrice: Bool {
+        #if DEBUG
+        UserDefaults.standard.string(forKey: "demoPrice") != nil
+        #else
+        false
+        #endif
     }
 
     private func price(_ product: Product?, demo key: String) -> String? {
@@ -286,9 +372,46 @@ struct ThemeMenuItems: View {
 // "…" menu: Nothing Pro and theme
 struct MoreMenu: View {
     @Environment(Store.self) private var store
+    @AppStorage(AppTheme.storageKey) private var themeName = AppTheme.dark.rawValue
     var iconSize: CGFloat = 15
 
     var body: some View {
+        #if os(macOS)
+        AppMenuButton(systemName: "ellipsis", iconsize: iconSize, label: "More", help: "Theme and Nothing Pro") {
+            var items: [AppMenuItem] = []
+            if !store.isPro {
+                items.append(AppMenuItem("Unlock Nothing Pro…", image: "sparkle") {
+                    NotificationCenter.default.post(name: .showPaywall, object: nil)
+                })
+                items.append(.separator)
+            }
+            let themes = AppTheme.allCases.map { theme in
+                AppMenuItem(theme.name,
+                            image: theme.requiresPro && !store.isPro ? "lock" : nil,
+                            checked: theme.rawValue == themeName) {
+                    if !theme.requiresPro || store.requirePro() {
+                        themeName = theme.rawValue
+                    }
+                }
+            }
+            items.append(AppMenuItem("Theme", children: themes))
+            if store.isPro {
+                items.append(.separator)
+                items.append(AppMenuItem("Nothing Pro: unlocked") {
+                    NotificationCenter.default.post(name: .showPaywall, object: nil)
+                })
+            }
+            #if DEBUG
+            // Hidden in demo recordings
+            if !UserDefaults.standard.bool(forKey: "demoContent") {
+                items.append(.separator)
+                let debugPro = store.debugPro
+                items.append(AppMenuItem("Debug: Pro", checked: debugPro) { store.setDebugPro(!debugPro) })
+            }
+            #endif
+            return items
+        }
+        #else
         Menu {
             if !store.isPro {
                 Button {
@@ -307,12 +430,27 @@ struct MoreMenu: View {
                     NotificationCenter.default.post(name: .showPaywall, object: nil)
                 }
             }
+            #if DEBUG
+            if !UserDefaults.standard.bool(forKey: "demoContent") {
+                Divider()
+                Button {
+                    store.setDebugPro(!store.debugPro)
+                } label: {
+                    if store.debugPro {
+                        Label("Debug: Pro", systemImage: "checkmark")
+                    } else {
+                        Text("Debug: Pro")
+                    }
+                }
+            }
+            #endif
         } label: {
             CircleIcon(systemName: "ellipsis", iconsize: iconSize)
         }
         .circleMenuStyle()
         .accessibilityLabel("More")
         .help("Theme and Nothing Pro")
+        #endif
     }
 }
 
