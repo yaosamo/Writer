@@ -48,7 +48,7 @@ struct NotesList: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
+        ZStack(alignment: .trailing) {
             detail
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(alignment: .topTrailing) {
@@ -63,14 +63,20 @@ struct NotesList: View {
                     }
                     .padding()
                 }
-
-            if sidebarVisible {
-                sidebar
-                    .frame(width: sidebarWidth)
-                    .overlay(alignment: .leading) { resizeHandle }
-                    .transition(.move(edge: .trailing))
-            }
+                // The editor's edge follows the sliding sidebar
+                .padding(.trailing, sidebarVisible ? sidebarWidth : 0)
+            
+            // Always in the view tree so it can slide in and out instead of popping
+            sidebar
+                .frame(width: sidebarWidth)
+                .overlay(alignment: .leading) { resizeHandle }
+                .offset(x: sidebarVisible ? 0 : sidebarWidth)
+                .allowsHitTesting(sidebarVisible)
+                .accessibilityHidden(!sidebarVisible)
         }
+        .clipped()
+        // Attached here because @AppStorage changes don't carry withAnimation's transaction
+        .animation(.smooth(duration: 0.3), value: sidebarVisible)
         .ignoresSafeArea()
         .background(palette.background)
         // Select newly created notes
@@ -80,7 +86,9 @@ struct NotesList: View {
         // New folders appear in the list ready to be named
         .onReceive(NotificationCenter.default.publisher(for: .folderCreated)) { notification in
             if let id = notification.object as? NSManagedObjectID {
-                sidebarVisible = true
+                withAnimation(.smooth(duration: 0.3)) {
+                    sidebarVisible = true
+                }
                 renamingFolderID = id
             }
         }
@@ -227,7 +235,7 @@ struct NotesList: View {
 
 
     private func toggleSidebar() {
-        withAnimation(.easeInOut(duration: 0.2)) {
+        withAnimation(.smooth(duration: 0.3)) {
             sidebarVisible.toggle()
         }
     }

@@ -58,9 +58,10 @@ extension Item {
         return firstLine.isEmpty ? "Untitled" : firstLine
     }
 
-    // Creates an empty note above the other notes in the same folder (nil = unfiled)
+    // Creates an empty note above the other notes in the same folder (nil = unfiled).
+    // With an undo manager, undo removes the new note again
     @discardableResult
-    static func create(in context: NSManagedObjectContext, folder: Folder? = nil) -> Item {
+    static func create(in context: NSManagedObjectContext, folder: Folder? = nil, undoManager: UndoManager? = nil) -> Item {
         let request = NSFetchRequest<Item>(entityName: "Item")
         request.predicate = folder.map { NSPredicate(format: "folder == %@", $0) } ?? NSPredicate(format: "folder == nil")
         request.sortDescriptors = [NSSortDescriptor(key: "orderIndex", ascending: true)]
@@ -80,6 +81,12 @@ extension Item {
         item.orderIndex = topIndex - 1
         item.folder = folder
         context.saveIfNeeded()
+
+        // Undoing runs delete(in:undoManager:), which registers the redo that restores the note
+        undoManager?.registerUndo(withTarget: item) { [weak undoManager] item in
+            item.delete(in: context, undoManager: undoManager)
+        }
+        undoManager?.setActionName("New Note")
 
         NotificationCenter.default.post(name: .noteCreated, object: item.objectID)
         return item

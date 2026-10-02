@@ -90,6 +90,19 @@ final class iOSnothingTests: XCTestCase {
         XCTAssertEqual(restored.note, "keep me")
     }
 
+    func testCreateIsUndoable() throws {
+        let undoManager = UndoManager()
+        let note = Item.create(in: context, undoManager: undoManager)
+        let id = note.id
+        XCTAssertEqual(try notes(in: nil).count, 1)
+
+        undoManager.undo()
+        XCTAssertEqual(try notes(in: nil).count, 0)
+
+        undoManager.redo()
+        XCTAssertEqual(try notes(in: nil).map(\.id), [id])
+    }
+
     func testFoldersAppendInOrder() throws {
         let a = Folder.create(in: context, name: "A")
         let b = Folder.create(in: context, name: "B")

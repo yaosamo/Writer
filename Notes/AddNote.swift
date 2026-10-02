@@ -13,6 +13,7 @@ struct AddNote: View {
 
     // Managed Object from Coredata
     @Environment(\.managedObjectContext) var viewContext
+    @Environment(\.undoManager) private var undoManager
 
     let iconsize: CGFloat
     // Folder for the new note; nil = unfiled
@@ -25,7 +26,7 @@ struct AddNote: View {
 
     private func addNote() {
         withAnimation {
-            Item.create(in: viewContext, folder: folder)
+            Item.create(in: viewContext, folder: folder, undoManager: undoManager)
         }
     }
 }

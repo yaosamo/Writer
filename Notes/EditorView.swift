@@ -19,48 +19,9 @@ struct EditorView: View {
     @ObservedObject var item: Item
 
     var body: some View {
-        GeometryReader { proxy in
-            ScrollView {
-                VStack {
-                    HStack {
-                        Group {
-                            TextField("Title", text: $item.titleText)
-                                .textFieldStyle(PlainTextFieldStyle())
-                                .padding(.leading, 72)
-
-                            Text("\(item.date ?? Date(), formatter: itemFormatter)")
-                                .padding(.leading, 24.0)
-                        }
-                        .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
-                        .foregroundColor(palette.secondaryText)
-                    } // hstack
-                    // Paddings top and bottom for Date and Title
-                    .padding(.trailing, 72.0)
-                    .padding([.bottom, .top], 88.0)
-
-                    TextEditor(text: $item.noteText)
-                        .foregroundColor(palette.text)
-                        .background(CaretColor(color: NSColor(palette.caret)))
-                        .lineSpacing(5.0)
-                        .scrollContentBackground(.hidden)
-                        .scrollIndicators(.hidden)
-                        .overlay(alignment: .topLeading) {
-                            if item.noteText.isEmpty {
-                                Text(emptyNotePlaceholder)
-                                    .foregroundColor(palette.secondaryText)
-                                    .padding(.leading, 5) // NSTextView line fragment padding
-                                    .allowsHitTesting(false)
-                            }
-                        }
-                        .padding([.trailing, .leading], 72)
-                        .padding(.bottom, 56)
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: proxy.size.height - 176, alignment: .top)
-                } // vstack
-            } // scrollview
-            .scrollIndicators(.hidden)
-            // Open long notes at their end, where writing continues
-            .defaultScrollAnchor(.bottom)
-        } // geometry
+        NoteTextView(text: $item.noteText, palette: palette) {
+            EditorHeader(item: item, palette: palette)
+        }
         // Debounced save: restarts on every change, saves after a pause in typing
         .task(id: [item.title, item.note]) {
             try? await Task.sleep(for: .seconds(1))
@@ -73,42 +34,202 @@ struct EditorView: View {
     }
 }
 
+// Title and date above the text. Lives inside the text view so it scrolls with the note
+private struct EditorHeader: View {
+    @ObservedObject var item: Item
+    let palette: Palette
 
-// TextEditor has no caret color API (.tint doesn't reach it); set it on the
-// window's text views once this view is attached
-private struct CaretColor: NSViewRepresentable {
-    let color: NSColor
+    var body: some View {
+        HStack {
+            TextField("Title", text: $item.titleText)
+                .textFieldStyle(PlainTextFieldStyle())
+            Text("\(item.date ?? Date(), formatter: itemFormatter)")
+                .padding(.leading, 24.0)
+        }
+        .font(.system(size: 14, weight: Font.Weight.thin, design: .monospaced))
+        .foregroundColor(palette.secondaryText)
+        .padding(.horizontal, NoteTextViewMetrics.horizontalInset)
+        .frame(height: NoteTextViewMetrics.headerHeight)
+    }
+}
 
-    func makeNSView(context: Context) -> ProbeView {
-        ProbeView()
+enum NoteTextViewMetrics {
+    static let horizontalInset: CGFloat = 72
+    // Space above the text for the header; also used as bottom padding
+    static let headerHeight: CGFloat = 176
+}
+
+
+// One scroll view for the whole note: an NSTextView whose top inset holds the header.
+// (A SwiftUI TextEditor inside a ScrollView gave two nested scrolls that fought each other.)
+struct NoteTextView<Header: View>: NSViewRepresentable {
+    @Binding var text: String
+    let palette: Palette
+    @ViewBuilder let header: () -> Header
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(text: $text)
     }
 
-    // Also runs when the theme changes
-    func updateNSView(_ view: ProbeView, context: Context) {
-        view.color = color
-        view.apply()
+    func makeNSView(context: Context) -> NSScrollView {
+        let scrollView = NSScrollView()
+        scrollView.drawsBackground = false
+        scrollView.hasVerticalScroller = false
+        scrollView.hasHorizontalScroller = false
+        scrollView.horizontalScrollElasticity = .none
+        scrollView.automaticallyAdjustsContentInsets = false
+        scrollView.contentInsets = NSEdgeInsetsZero
+
+        let textView = PlaceholderTextView()
+        textView.delegate = context.coordinator
+        textView.isRichText = false
+        textView.allowsUndo = true
+        textView.usesFindBar = true
+        textView.isIncrementalSearchingEnabled = true
+        textView.isAutomaticLinkDetectionEnabled = false
+        textView.drawsBackground = false
+        textView.font = .monospacedSystemFont(ofSize: 16, weight: .thin)
+        // Line fragment padding (5) keeps text where the old TextEditor put it
+        textView.textContainerInset = NSSize(width: NoteTextViewMetrics.horizontalInset - 5,
+                                             height: NoteTextViewMetrics.headerHeight)
+        textView.minSize = .zero
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.autoresizingMask = [.width]
+        textView.textContainer?.widthTracksTextView = true
+        textView.placeholder = emptyNotePlaceholder
+        textView.string = text
+        apply(palette, to: textView)
+        context.coordinator.appliedColors = [palette.text, palette.caret, palette.secondaryText]
+
+        let headerView = NSHostingView(rootView: header())
+        textView.headerView = headerView
+        context.coordinator.headerView = headerView
+
+        scrollView.documentView = textView
+        return scrollView
     }
 
-    final class ProbeView: NSView {
-        var color: NSColor = .orange
+    func updateNSView(_ scrollView: NSScrollView, context: Context) {
+        guard let textView = scrollView.documentView as? PlaceholderTextView else { return }
+        context.coordinator.text = $text
+        // Only replace the text when it changed elsewhere (iCloud), keeping the caret in place
+        if textView.string != text {
+            let selection = textView.selectedRange()
+            textView.string = text
+            let length = (text as NSString).length
+            textView.setSelectedRange(NSRange(location: min(selection.location, length), length: 0))
+        }
+        // Re-color only when the theme changes, not on every keystroke
+        let colors = [palette.text, palette.caret, palette.secondaryText]
+        if colors != context.coordinator.appliedColors {
+            apply(palette, to: textView)
+            context.coordinator.appliedColors = colors
+        }
+        (context.coordinator.headerView as? NSHostingView<Header>)?.rootView = header()
+    }
 
-        override func viewDidMoveToWindow() {
-            super.viewDidMoveToWindow()
-            apply()
+    private func apply(_ palette: Palette, to textView: PlaceholderTextView) {
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.lineSpacing = 5
+        let textColor = NSColor(palette.text)
+        textView.textColor = textColor
+        textView.insertionPointColor = NSColor(palette.caret)
+        textView.defaultParagraphStyle = paragraph
+        textView.typingAttributes = [
+            .font: textView.font ?? NSFont.monospacedSystemFont(ofSize: 16, weight: .thin),
+            .foregroundColor: textColor,
+            .paragraphStyle: paragraph,
+        ]
+        if let storage = textView.textStorage, storage.length > 0 {
+            storage.addAttributes([.foregroundColor: textColor, .paragraphStyle: paragraph],
+                                  range: NSRange(location: 0, length: storage.length))
+        }
+        textView.placeholderColor = NSColor(palette.secondaryText)
+        textView.needsDisplay = true
+    }
+
+    final class Coordinator: NSObject, NSTextViewDelegate {
+        var text: Binding<String>
+        var headerView: NSView?
+        var appliedColors: [Color] = []
+
+        init(text: Binding<String>) {
+            self.text = text
         }
 
-        func apply() {
-            DispatchQueue.main.async { [weak self] in
-                guard let self, let root = self.window?.contentView else { return }
-                Self.textViews(in: root).forEach { $0.insertionPointColor = self.color }
+        func textDidChange(_ notification: Notification) {
+            guard let textView = notification.object as? NSTextView else { return }
+            text.wrappedValue = textView.string
+        }
+    }
+}
+
+// NSTextView that draws a placeholder while empty and hosts the header in its top inset
+final class PlaceholderTextView: NSTextView {
+    var placeholder = ""
+    var placeholderColor = NSColor.secondaryLabelColor
+
+    var headerView: NSView? {
+        didSet {
+            oldValue?.removeFromSuperview()
+            if let headerView {
+                addSubview(headerView)
+                layoutHeader()
             }
         }
+    }
 
-        private static func textViews(in view: NSView) -> [NSTextView] {
-            view.subviews.flatMap { subview in
-                (subview as? NSTextView).map { [$0] } ?? textViews(in: subview)
-            }
+    // Keep the header as wide as the text view (autoresizing from a zero frame overshoots)
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        layoutHeader()
+    }
+
+    // Open long notes at their end, where writing continues. Waits until the view is in a
+    // window with a real width, then lays the whole text out so the end position is right
+    private var needsScrollToEnd = true
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        guard window != nil, needsScrollToEnd else { return }
+        DispatchQueue.main.async { [weak self] in
+            self?.scrollToEndOnce()
         }
+    }
+
+    private func scrollToEndOnce() {
+        guard needsScrollToEnd, window != nil, bounds.width > 0 else { return }
+        needsScrollToEnd = false
+        if let textLayoutManager {
+            textLayoutManager.ensureLayout(for: textLayoutManager.documentRange)
+        } else if let textContainer {
+            layoutManager?.ensureLayout(for: textContainer)
+        }
+        let end = (string as NSString).length
+        setSelectedRange(NSRange(location: end, length: 0))
+        scrollToEndOfDocument(nil)
+    }
+
+    private func layoutHeader() {
+        headerView?.frame = NSRect(x: 0, y: 0, width: bounds.width, height: NoteTextViewMetrics.headerHeight)
+    }
+
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+        guard string.isEmpty, !placeholder.isEmpty else { return }
+        let padding = textContainer?.lineFragmentPadding ?? 0
+        let origin = NSPoint(x: textContainerOrigin.x + padding, y: textContainerOrigin.y)
+        placeholder.draw(at: origin, withAttributes: [
+            .font: font ?? NSFont.monospacedSystemFont(ofSize: 16, weight: .thin),
+            .foregroundColor: placeholderColor,
+        ])
+    }
+
+    override func didChangeText() {
+        super.didChangeText()
+        needsDisplay = true
     }
 }
 
