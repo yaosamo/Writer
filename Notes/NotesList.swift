@@ -32,7 +32,10 @@ struct NotesList: View {
     @State private var selection: NSManagedObjectID?
     // A note just created with + / ⌘N: its editor takes keyboard focus
     @State private var focusNoteID: NSManagedObjectID?
-    @AppStorage("sidebarVisible") private var sidebarVisible = true
+    @AppStorage("sidebarVisible") private var storedSidebarVisible = true
+    // Drives the layout; changed inside withAnimation (an @AppStorage change alone doesn't
+    // carry the animation, and a clicked button would jump instead of sliding)
+    @State private var sidebarVisible = true
     @AppStorage("sidebarWidth") private var sidebarWidth: Double = 240
     @State private var dragStartWidth: Double?
     @State private var collapsedFolders: Set<NSManagedObjectID> = []
@@ -53,19 +56,10 @@ struct NotesList: View {
     var body: some View {
         ZStack(alignment: .trailing) {
             VStack(spacing: 0) {
-                // Own strip, not an overlay: over the text view the I-beam cursor would win
-                HStack(spacing: 0) {
-                    Spacer()
-                    NewItemMenu(iconsize: 13)
-                    MoreMenu(iconSize: 12)
-                    CircleIconButton(systemName: "sidebar.right",
-                                     label: sidebarVisible ? "Hide notes" : "Show notes",
-                                     iconsize: 12,
-                                     action: toggleSidebar)
-                        .keyboardShortcut("s", modifiers: [.control, .command])
-                }
-                .padding(.horizontal, 12)
-                .frame(height: NoteTextViewMetrics.toolbarHeight)
+                // Empty strip for the toolbar: the buttons never sit over the text view,
+                // whose I-beam cursor would win over theirs
+                Color.clear
+                    .frame(height: NoteTextViewMetrics.toolbarHeight)
                 
                 detail
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -81,9 +75,23 @@ struct NotesList: View {
                 .allowsHitTesting(sidebarVisible)
                 .accessibilityHidden(!sidebarVisible)
         }
+        // Toolbar moves with an offset rather than a re-layout, so a hovered/clicked button
+        // slides with the others instead of waiting for the pointer to leave it
+        .overlay(alignment: .topTrailing) {
+            HStack(spacing: 0) {
+                NewItemMenu(iconsize: 13)
+                MoreMenu(iconSize: 12)
+                CircleIconButton(systemName: "sidebar.right",
+                                 label: "Show or hide notes",
+                                 iconsize: 12,
+                                 action: toggleSidebar)
+                    .keyboardShortcut("s", modifiers: [.control, .command])
+            }
+            .padding(.horizontal, 12)
+            .frame(height: NoteTextViewMetrics.toolbarHeight)
+            .offset(x: sidebarVisible ? -sidebarWidth : 0)
+        }
         .clipped()
-        // Attached here because @AppStorage changes don't carry withAnimation's transaction
-        .animation(.smooth(duration: 0.3), value: sidebarVisible)
         .ignoresSafeArea()
         .background(palette.background)
         // New notes go into the folder of the note being edited
@@ -110,6 +118,7 @@ struct NotesList: View {
                 withAnimation(.smooth(duration: 0.3)) {
                     sidebarVisible = true
                 }
+                storedSidebarVisible = true
                 renamingFolderID = id
             }
         }
@@ -121,6 +130,7 @@ struct NotesList: View {
         }
         .onAppear {
             selection = items.first?.objectID
+            sidebarVisible = storedSidebarVisible
         }
     }
 
@@ -195,19 +205,29 @@ struct NotesList: View {
             .tag(item.objectID)
             // Deleting with right click
             .contextMenu {
-                if !folders.isEmpty {
-                    Menu("Move to") {
+                Menu("Move to") {
+                    // Creates a folder, moves the note into it, then the folder name is edited inline
+                    Button(store.isPro ? "New Folder" : "New Folder · Pro") {
+                        if store.requirePro() {
+                            withAnimation {
+                                let folder = Folder.create(in: viewContext)
+                                item.move(to: folder, in: viewContext)
+                            }
+                        }
+                    }
+                    if item.folder != nil || !folders.isEmpty {
+                        Divider()
+                    }
+                    if item.folder != nil {
                         Button("No folder") {
                             withAnimation { item.move(to: nil, in: viewContext) }
                         }
-                        .disabled(item.folder == nil)
-                        Divider()
-                        ForEach(folders) { folder in
-                            Button(folder.displayName) {
-                                withAnimation { item.move(to: folder, in: viewContext) }
-                            }
-                            .disabled(item.folder == folder)
+                    }
+                    ForEach(folders) { folder in
+                        Button(folder.displayName) {
+                            withAnimation { item.move(to: folder, in: viewContext) }
                         }
+                        .disabled(item.folder == folder)
                     }
                 }
                 Button("Delete") {
@@ -256,6 +276,7 @@ struct NotesList: View {
         withAnimation(.smooth(duration: 0.3)) {
             sidebarVisible.toggle()
         }
+        storedSidebarVisible = sidebarVisible
     }
 
     private func delete(_ item: Item) {

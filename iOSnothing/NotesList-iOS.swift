@@ -152,18 +152,29 @@ struct NotesList: View {
             }
         } //z
         .contextMenu {
-            if !folders.isEmpty {
-                Menu("Move to") {
+            Menu("Move to") {
+                // Creates a folder, moves the note into it, then the folder name is edited inline
+                Button(store.isPro ? "New Folder" : "New Folder · Pro") {
+                    if store.requirePro() {
+                        withAnimation {
+                            let folder = Folder.create(in: viewContext)
+                            item.move(to: folder, in: viewContext)
+                        }
+                    }
+                }
+                if item.folder != nil || !folders.isEmpty {
+                    Divider()
+                }
+                if item.folder != nil {
                     Button("No folder") {
                         withAnimation { item.move(to: nil, in: viewContext) }
                     }
-                    .disabled(item.folder == nil)
-                    ForEach(folders) { folder in
-                        Button(folder.displayName) {
-                            withAnimation { item.move(to: folder, in: viewContext) }
-                        }
-                        .disabled(item.folder == folder)
+                }
+                ForEach(folders) { folder in
+                    Button(folder.displayName) {
+                        withAnimation { item.move(to: folder, in: viewContext) }
                     }
+                    .disabled(item.folder == folder)
                 }
             }
             Button("Delete", role: .destructive) {
