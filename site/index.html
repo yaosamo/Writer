@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Nothing — Ascetic Writer</title>
+  <meta name="description" content="A quiet place to write. Nothing is an ascetic, dark writing app for Mac and iPhone.">
+  <meta name="theme-color" content="#09090a">
+  <meta property="og:title" content="Nothing — Ascetic Writer">
+  <meta property="og:description" content="A quiet place to write. For Mac and iPhone.">
+  <meta property="og:image" content="media/mac-write.jpg">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="media/icon-256.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./">
+      <img src="media/icon-256.png" alt="" width="28" height="28">
+      <span>Nothing</span>
+    </a>
+    <a class="store-link" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">App Store</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Nothing<span class="caret" aria-hidden="true"></span></h1>
+      <p>A quiet place to write. For Mac and iPhone.</p>
+    </section>
+
+    <figure class="shot mac">
+      <video src="media/mac-write.mp4" poster="media/mac-write.jpg" muted loop playsinline preload="metadata" aria-label="Typing a new note in Nothing on Mac"></video>
+    </figure>
+
+    <section class="line">
+      <p>No bold. No bullets. No noise.<br>Just the page and an orange caret.</p>
+    </section>
+
+    <section class="feature">
+      <p class="caption">Folders, when you need them. <span class="pro">Pro</span></p>
+      <figure class="shot mac">
+        <video src="media/mac-folders.mp4" poster="media/mac-folders.jpg" muted loop playsinline preload="metadata" aria-label="Creating a folder and opening a note inside it"></video>
+      </figure>
+    </section>
+
+    <section class="feature">
+      <p class="caption">Hide everything but the page.</p>
+      <figure class="shot mac">
+        <video src="media/mac-sidebar.mp4" poster="media/mac-sidebar.jpg" muted loop playsinline preload="metadata" aria-label="The note list sliding away and back"></video>
+      </figure>
+    </section>
+
+    <section class="feature">
+      <p class="caption">Dark by default. Dark Sepia, Midnight and Light. <span class="pro">Pro</span></p>
+      <figure class="shot mac">
+        <video src="media/mac-themes.mp4" poster="media/mac-themes.jpg" muted loop playsinline preload="metadata" aria-label="Switching between the four themes"></video>
+      </figure>
+    </section>
+
+    <section class="feature">
+      <p class="caption">In your pocket. Synced through your iCloud.</p>
+      <div class="phones">
+        <figure class="shot phone">
+          <video src="media/ios-write.mp4" poster="media/ios-write.jpg" muted loop playsinline preload="metadata" aria-label="Writing a note on iPhone"></video>
+        </figure>
+        <figure class="shot phone">
+          <video src="media/ios-themes.mp4" poster="media/ios-themes.jpg" muted loop playsinline preload="metadata" aria-label="Switching themes on iPhone"></video>
+        </figure>
+      </div>
+    </section>
+
+    <section class="price">
+      <p>Free to write.<br>Pro is one purchase, yours for good.</p>
+      <a class="download" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">Download on the App Store</a>
+    </section>
+  </main>
+
+  <footer>
+    <a href="privacy.html">Privacy</a>
+    <a href="https://github.com/yaosamo/Writer">Source</a>
+    <span>© 2026 Yaroslav Samoylov</span>
+  </footer>
+
+  <script>
+    // Play each video only while it is on screen; respect reduced motion
+    (function () {
+      var videos = document.querySelectorAll("video");
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce || !("IntersectionObserver" in window)) {
+        videos.forEach(function (v) { v.controls = true; });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.play().catch(function () {}); }
+          else { e.target.pause(); }
+        });
+      }, { threshold: 0.35 });
+      videos.forEach(function (v) { io.observe(v); });
+    })();
+  </script>
+</body>
+</html>

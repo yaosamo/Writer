@@ -1,14 +1,22 @@
 ## Privacy Policy
-v1.0 / March 24, 2022.
+v1.1 / October 2, 2026.
 
-Nothing / Ascetic Writer is an application for write ideas down in an ascetic way without distractions.
-Intentionally limiting features help us to make the experience direct and extremely simple.
+Nothing / Ascetic Writer is an app for writing ideas down in an ascetic way, without distractions.
+Intentionally limited features keep the experience direct and simple.
 
-We do not collect any personal data.
-We do not use trackers of any kind.
-We only have access to the analytics that App Store Connect provide to us
-such as opt-in app crashes, product page impression, downloads and so on.
+#### Your notes
+Your notes stay on your devices. If iCloud is turned on, they sync through your own private iCloud database, which only you can access. We never see them.
 
-#### For any questions please contact https://twitter.com/yaosamo
+#### Data we collect
+None. We do not collect personal data and we do not use trackers of any kind.
+
+#### Purchases
+Nothing Pro is bought through the App Store. Apple processes the payment; we never receive your payment details.
+
+#### Analytics
+We only see the aggregate analytics App Store Connect provides, such as opt-in crash reports, product page impressions and downloads.
+
+#### Questions
+Contact https://twitter.com/yaosamo
 
 Thank you very much!
