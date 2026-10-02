@@ -167,14 +167,59 @@ footer {
 /* ---------- app-like opening screen ---------- */
 .top { position: absolute; top: 0; left: 0; right: 0; z-index: 2; }
 main { padding: 0; }
+/* The stage is taller than the screen; its sticky inside holds the window while you scroll */
+.stage { --p: 0; height: 200vh; }
+.stage-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  /* the desktop that appears around the window */
+  background:
+    radial-gradient(ellipse 70% 60% at 30% 80%, rgba(214, 110, 40, 0.55), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(120, 60, 140, 0.45), transparent 70%),
+    linear-gradient(160deg, #1b1420, #0c0a10 60%, #1a0f08);
+}
+.window {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform: scale(calc(1 - var(--p) * 0.24));
+  border-radius: calc(var(--p) * 20px);
+  overflow: hidden;
+  box-shadow: 0 calc(var(--p) * 40px) calc(var(--p) * 120px) rgba(0, 0, 0, calc(var(--p) * 0.6)),
+              0 0 0 calc(var(--p) * 1px) rgba(255, 255, 255, 0.08);
+  will-change: transform;
+}
+.window-buttons {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  display: flex;
+  gap: 8px;
+  opacity: var(--p);
+}
+.window-buttons i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
+.window-buttons i:nth-child(2) { background: #febc2e; }
+.window-buttons i:nth-child(3) { background: #28c840; }
 .editor-hero {
-  min-height: 100vh;
-  min-height: 100svh;
+  height: 100%;
   padding: 0 clamp(24px, 9vw, 160px);
   background: var(--editor-bg);
   display: flex;
   flex-direction: column;
 }
+.editor-download {
+  margin-top: auto;
+  margin-bottom: clamp(48px, 9vh, 88px);
+  align-self: flex-start;
+  color: var(--editor-dim);
+  font-size: 14px;
+}
+.editor-download:hover { color: var(--caret); }
 .editor-header {
   display: flex;
   justify-content: space-between;
@@ -192,40 +237,51 @@ main { padding: 0; }
 }
 
 /* ---------- features: snippet on the left, words on the right ---------- */
-.features { padding: 16vh 16px 0; }
+.features { padding: 18vh 16px 0; }
 .row {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   align-items: center;
   gap: clamp(32px, 5vw, 80px);
   max-width: 1280px;
-  margin: 0 auto 16px;
+  margin: 0 auto 18vh;
 }
+/* every snippet is the same 16:10 panel; phones stand centred at full height */
 .snippet {
-  padding: clamp(24px, 4vw, 56px);
+  aspect-ratio: 16 / 10;
+  padding: clamp(20px, 3.5vw, 48px);
   border-radius: 28px;
   background: var(--panel);
   display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   place-items: center;
+  overflow: hidden;
 }
 .snippet video {
   display: block;
-  width: 100%;
-  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   border-radius: 12px;
   background: #0f120f;
   box-shadow: 0 24px 60px var(--video-shadow);
 }
+/* the panel's inside is wider than 16:10, so both fit by height */
+.snippet video { height: 100%; width: auto; }
 .snippet.mac video { aspect-ratio: 16 / 10; }
-.snippet.phone video { max-width: 300px; aspect-ratio: 590 / 1282; border-radius: 34px; }
+.snippet.phone video { aspect-ratio: 590 / 1282; border-radius: 28px; }
 .copy h2 { margin: 0 0 12px; font-weight: 400; font-size: 18px; color: var(--strong); }
 .copy p { margin: 0; color: var(--text); max-width: 36ch; }
 
 @media (max-width: 760px) {
   .editor-hero { padding: 0 20px; }
   .features { padding: 10vh 12px 0; }
-  .row { grid-template-columns: minmax(0, 1fr); gap: 20px; margin-bottom: 56px; }
-  .snippet { border-radius: 20px; padding: 20px; }
-  .snippet.phone video { max-width: 240px; border-radius: 28px; }
+  .row { grid-template-columns: minmax(0, 1fr); gap: 20px; margin-bottom: 12vh; }
+  .snippet { border-radius: 20px; padding: 16px; }
+  .snippet.phone video { border-radius: 18px; }
   .copy { padding: 0 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage { height: auto; }
+  .stage-sticky { position: static; height: 100vh; }
 }

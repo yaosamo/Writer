@@ -28,18 +28,25 @@
       <button class="theme-toggle" type="button" aria-label="Switch to light mode" title="Light / dark">
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg>
       </button>
-      <a class="store-link" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">App Store</a>
     </nav>
   </header>
 
   <main>
-    <!-- Opens like the app: a full-screen page, a header, and the caret typing -->
-    <section class="editor-hero" aria-label="Nothing">
-      <div class="editor-header">
-        <span>Title</span>
-        <span class="editor-date" id="today"></span>
+    <!-- Opens like the app full screen; scrolling shrinks it into a window on a Mac desktop -->
+    <section class="stage" aria-label="Nothing">
+      <div class="stage-sticky">
+        <div class="window">
+          <div class="window-buttons" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="editor-hero">
+            <div class="editor-header">
+              <span>Title</span>
+              <span class="editor-date" id="today"></span>
+            </div>
+            <h1 class="editor-text"><span id="typed">Ascetic writer for your Mac and iPhone</span><span class="caret" aria-hidden="true"></span></h1>
+            <a class="editor-download" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">Download on App Store</a>
+          </div>
+        </div>
       </div>
-      <h1 class="editor-text"><span id="typed">Ascetic writer for your Mac and iPhone</span><span class="caret" aria-hidden="true"></span></h1>
     </section>
 
     <div class="features" id="features">
@@ -130,6 +137,25 @@
   </footer>
 
   <script src="theme.js"></script>
+  <script>
+    // Scroll progress through the opening stage, 0 → 1, drives the window shrinking
+    (function () {
+      var stage = document.querySelector(".stage");
+      if (!stage || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var ticking = false;
+      function update() {
+        var range = stage.offsetHeight - window.innerHeight;
+        var p = range > 0 ? Math.min(Math.max(window.scrollY / range, 0), 1) : 0;
+        stage.style.setProperty("--p", p.toFixed(4));
+        ticking = false;
+      }
+      window.addEventListener("scroll", function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }, { passive: true });
+      window.addEventListener("resize", update);
+      update();
+    })();
+  </script>
   <script>
     // The hero types its line like the editor does; static for reduced motion
     (function () {
