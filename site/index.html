@@ -33,99 +33,89 @@
   </header>
 
   <main>
-    <section class="hero">
-      <h1>Ascetic writer for your Mac and iPhone<span class="caret" aria-hidden="true"></span></h1>
-    </section>
-
-    <section class="feature">
-      <div class="card">
-        <p class="caption">No bold. No bullets. No noise. Just the page and an orange caret.</p>
-        <figure class="shot mac">
-          <video src="media/mac-write.mp4" poster="media/mac-write.jpg" muted loop playsinline preload="metadata" aria-label="Typing a new note in Nothing on Mac"></video>
-        </figure>
+    <!-- Opens like the app: a full-screen page, a header, and the caret typing -->
+    <section class="editor-hero" aria-label="Nothing">
+      <div class="editor-header">
+        <span>Title</span>
+        <span class="editor-date" id="today"></span>
       </div>
+      <h1 class="editor-text"><span id="typed">Ascetic writer for your Mac and iPhone</span><span class="caret" aria-hidden="true"></span></h1>
     </section>
 
-    <section class="feature">
-      <div class="card">
-        <p class="caption">Type a dash for a list, two brackets for a task. Click to tick it off.</p>
-        <figure class="shot mac">
+    <div class="features" id="features">
+      <section class="row">
+        <div class="snippet mac">
           <video src="media/mac-lists.mp4" poster="media/mac-lists.jpg" muted loop playsinline preload="metadata" aria-label="A list and two tasks, one ticked off"></video>
-        </figure>
-      </div>
-    </section>
-
-    <section class="feature">
-      <div class="card">
-        <p class="caption">Paste a photo or a screenshot. Tap to see it full size.</p>
-        <figure class="shot phone">
+        </div>
+        <div class="copy">
+          <h2>Lists and tasks</h2>
+          <p>Type a dash for a list, two brackets for a task. Return keeps the list going; click a box to tick it off.</p>
+        </div>
+      </section>
+      <section class="row">
+        <div class="snippet phone">
           <video src="media/ios-images.mp4" poster="media/ios-images.jpg" muted loop playsinline preload="metadata" aria-label="Pasting a photo into a note on iPhone"></video>
-        </figure>
-      </div>
-    </section>
-
-    <section class="feature">
-      <div class="card">
-        <p class="caption">Links stay quiet. Hold ⌘ and click to open.</p>
-        <figure class="shot mac">
+        </div>
+        <div class="copy">
+          <h2>Images</h2>
+          <p>Paste a photo or a screenshot. It fits the page, and opens full size with a tap.</p>
+        </div>
+      </section>
+      <section class="row">
+        <div class="snippet mac">
           <video src="media/mac-links.mp4" poster="media/mac-links.jpg" muted loop playsinline preload="metadata" aria-label="A link dims on hover"></video>
-        </figure>
-      </div>
-    </section>
-
-    <section class="feature">
-      <div class="card">
-        <p class="caption">Folders, when you need them.</p>
-        <figure class="shot mac">
-          <video src="media/mac-folders.mp4" poster="media/mac-folders.jpg" muted loop playsinline preload="metadata" aria-label="Creating a folder and opening a note inside it"></video>
-        </figure>
-      </div>
-    </section>
-
-    <section class="feature">
-      <div class="card">
-        <p class="caption">Move a note into a new folder in one step.</p>
-        <figure class="shot phone">
+        </div>
+        <div class="copy">
+          <h2>Links</h2>
+          <p>Links look like the words around them. Hold ⌘ and click to open one.</p>
+        </div>
+      </section>
+      <section class="row">
+        <div class="snippet mac">
+          <video src="media/snip-folders.mp4" poster="media/snip-folders.jpg" muted loop playsinline preload="metadata" aria-label="Folders in the note list"></video>
+        </div>
+        <div class="copy">
+          <h2>Folders</h2>
+          <p>Group notes when you need to. Name a folder right in the list.</p>
+        </div>
+      </section>
+      <section class="row">
+        <div class="snippet phone">
           <video src="media/ios-folders.mp4" poster="media/ios-folders.jpg" muted loop playsinline preload="metadata" aria-label="Moving a note into a new folder on iPhone"></video>
-        </figure>
-      </div>
-    </section>
-
-    <section class="feature">
-      <div class="card">
-        <p class="caption">Hide everything but the page.</p>
-        <figure class="shot mac">
+        </div>
+        <div class="copy">
+          <h2>Move to a new folder</h2>
+          <p>Hold a note and file it into a new folder in one step.</p>
+        </div>
+      </section>
+      <section class="row">
+        <div class="snippet mac">
           <video src="media/mac-sidebar.mp4" poster="media/mac-sidebar.jpg" muted loop playsinline preload="metadata" aria-label="The note list sliding away and back"></video>
-        </figure>
-      </div>
-    </section>
-
-    <section class="feature">
-      <div class="card">
-        <p class="caption">Dark by default. Dark Sepia, Midnight and Light.</p>
-        <figure class="shot mac">
-          <video src="media/mac-themes.mp4" poster="media/mac-themes.jpg" muted loop playsinline preload="metadata" aria-label="Switching between the four themes"></video>
-        </figure>
-      </div>
-    </section>
-
-    <section class="feature">
-      <div class="card">
-        <p class="caption">In your pocket. Synced through your iCloud.</p>
-        <figure class="shot phone">
+        </div>
+        <div class="copy">
+          <h2>Just the page</h2>
+          <p>One click, or ⌃⌘S, and the list slides away. Only the writing is left.</p>
+        </div>
+      </section>
+      <section class="row">
+        <div class="snippet mac">
+          <video src="media/snip-themes.mp4" poster="media/snip-themes.jpg" muted loop playsinline preload="metadata" aria-label="Switching between themes"></video>
+        </div>
+        <div class="copy">
+          <h2>Themes</h2>
+          <p>Dark by default. Dark Sepia, Midnight and Light when you want them.</p>
+        </div>
+      </section>
+      <section class="row">
+        <div class="snippet phone">
           <video src="media/ios-write.mp4" poster="media/ios-write.jpg" muted loop playsinline preload="metadata" aria-label="Writing a note on iPhone"></video>
-        </figure>
-      </div>
-    </section>
-
-    <section class="feature">
-      <div class="card">
-        <p class="caption">The same quiet page, in any light.</p>
-        <figure class="shot phone">
-          <video src="media/ios-themes.mp4" poster="media/ios-themes.jpg" muted loop playsinline preload="metadata" aria-label="Switching themes on iPhone"></video>
-        </figure>
-      </div>
-    </section>
+        </div>
+        <div class="copy">
+          <h2>On iPhone and iPad</h2>
+          <p>The same quiet page everywhere, synced through your own iCloud.</p>
+        </div>
+      </section>
+    </div>
 
     <section class="price">
       <p>Free to write.<br>Pro is one purchase, yours for good.</p>
@@ -140,6 +130,24 @@
   </footer>
 
   <script src="theme.js"></script>
+  <script>
+    // The hero types its line like the editor does; static for reduced motion
+    (function () {
+      var date = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+      document.getElementById("today").textContent = date;
+      var el = document.getElementById("typed");
+      var text = el.textContent;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      el.textContent = "";
+      var i = 0;
+      (function next() {
+        if (i > text.length) return;
+        el.textContent = text.slice(0, i++);
+        var ch = text.charAt(i - 1);
+        setTimeout(next, i === 1 ? 700 : ch === " " ? 110 : 45 + Math.random() * 70);
+      })();
+    })();
+  </script>
   <script>
     // Play each video only while it is on screen; respect reduced motion
     (function () {
