@@ -93,6 +93,32 @@ class iOSnothingUITests: XCTestCase {
         attachScreenshot(app, "Dark Sepia")
     }
 
+    // Smart lists and tasks while typing
+    func testListsAndTasks() throws {
+        let app = XCUIApplication()
+        app.launch()
+        app.buttons["New"].tap()
+        app.buttons["New Note"].tap()
+        app.buttons["Untitled"].firstMatch.tap()
+        let editor = app.textViews.firstMatch
+        XCTAssertTrue(editor.waitForExistence(timeout: 5))
+        editor.tap()
+
+        // Return continues the list; Return on an empty item ends it
+        editor.typeText("- milk\nbread\n\nAfter\n")
+        // "[] " becomes a task, which continues on Return
+        editor.typeText("[] call mom\nwater plants")
+        attachScreenshot(app, "Lists and tasks")
+
+        XCTAssertEqual(editor.value as? String, "- milk\n- bread\nAfter\n[ ] call mom\n[ ] water plants")
+
+        // Tapping the first task's box completes it
+        app.buttons["Hide keyboard"].tap()
+        app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: 42, dy: 365)).tap()
+        attachScreenshot(app, "Task done")
+        XCTAssertEqual(editor.value as? String, "- milk\n- bread\nAfter\n[x] call mom\n[ ] water plants")
+    }
+
     private func attachScreenshot(_ app: XCUIApplication, _ name: String) {
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name

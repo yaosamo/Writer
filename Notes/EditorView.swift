@@ -109,7 +109,12 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
         textView.placeholder = emptyNotePlaceholder
         textView.focusOnAppear = focusOnAppear
         textView.string = text
-        apply(palette, to: textView)
+        textView.textStorage?.delegate = context.coordinator
+        textView.onClick = { [weak textView, coordinator = context.coordinator] index in
+            guard let textView else { return false }
+            return coordinator.toggleTask(at: index, in: textView)
+        }
+        apply(palette, to: textView, coordinator: context.coordinator)
         context.coordinator.appliedColors = [palette.text, palette.caret, palette.secondaryText]
 
         let headerView = NSHostingView(rootView: header())
@@ -133,13 +138,13 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
         // Re-color only when the theme changes, not on every keystroke
         let colors = [palette.text, palette.caret, palette.secondaryText]
         if colors != context.coordinator.appliedColors {
-            apply(palette, to: textView)
+            apply(palette, to: textView, coordinator: context.coordinator)
             context.coordinator.appliedColors = colors
         }
         (context.coordinator.headerView as? NSHostingView<Header>)?.rootView = header()
     }
 
-    private func apply(_ palette: Palette, to textView: PlaceholderTextView) {
+    private func apply(_ palette: Palette, to textView: PlaceholderTextView, coordinator: Coordinator) {
         let paragraph = NSMutableParagraphStyle()
         paragraph.lineSpacing = 5
         let textColor = NSColor(palette.text)
@@ -151,18 +156,22 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
             .foregroundColor: textColor,
             .paragraphStyle: paragraph,
         ]
+        coordinator.styler = ListStyler(text: textColor, dim: NSColor(palette.secondaryText))
         if let storage = textView.textStorage, storage.length > 0 {
-            storage.addAttributes([.foregroundColor: textColor, .paragraphStyle: paragraph],
-                                  range: NSRange(location: 0, length: storage.length))
+            let all = NSRange(location: 0, length: storage.length)
+            storage.addAttribute(.paragraphStyle, value: paragraph, range: all)
+            coordinator.styler.apply(to: storage, range: all)
         }
         textView.placeholderColor = NSColor(palette.secondaryText)
         textView.needsDisplay = true
     }
 
-    final class Coordinator: NSObject, NSTextViewDelegate {
+    final class Coordinator: NSObject, NSTextViewDelegate, NSTextStorageDelegate {
         var text: Binding<String>
         var headerView: NSView?
         var appliedColors: [Color] = []
+        var styler = ListStyler(text: .textColor, dim: .secondaryLabelColor)
+        private var isApplyingEdit = false
 
         init(text: Binding<String>) {
             self.text = text
@@ -172,6 +181,38 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
             guard let textView = notification.object as? NSTextView else { return }
             text.wrappedValue = textView.string
         }
+
+        // Smart lists: Return continues a list, Backspace removes a marker, "[] " makes a task
+        func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString string: String?) -> Bool {
+            guard !isApplyingEdit, let string,
+                  let edit = ListEditing.edit(in: textView.string as NSString, range: range, replacement: string) else { return true }
+            apply(edit, to: textView, select: true)
+            return false
+        }
+
+        // Clicking a task's box toggles it
+        func toggleTask(at index: Int, in textView: NSTextView) -> Bool {
+            guard let edit = ListEditing.toggleTask(in: textView.string as NSString, at: index) else { return false }
+            apply(edit, to: textView, select: false)
+            return true
+        }
+
+        // Goes through shouldChangeText / didChangeText so undo and the binding keep working
+        private func apply(_ edit: ListEditing.Edit, to textView: NSTextView, select: Bool) {
+            isApplyingEdit = true
+            defer { isApplyingEdit = false }
+            let selection = textView.selectedRange()
+            guard textView.shouldChangeText(in: edit.range, replacementString: edit.replacement) else { return }
+            textView.textStorage?.replaceCharacters(in: edit.range, with: edit.replacement)
+            textView.didChangeText()
+            textView.setSelectedRange(select ? edit.selection : selection)
+        }
+
+        // Restyle the edited lines (attributes only)
+        func textStorage(_ textStorage: NSTextStorage, didProcessEditing editedMask: NSTextStorageEditActions, range editedRange: NSRange, changeInLength delta: Int) {
+            guard editedMask.contains(.editedCharacters) else { return }
+            styler.apply(to: textStorage, range: editedRange)
+        }
     }
 }
 
@@ -179,6 +220,16 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
 final class PlaceholderTextView: NSTextView {
     var placeholder = ""
     var placeholderColor = NSColor.secondaryLabelColor
+    // Called with the character under a click; return true to swallow the click (task toggles)
+    var onClick: ((Int) -> Bool)?
+
+    override func mouseDown(with event: NSEvent) {
+        if event.clickCount == 1, let onClick {
+            let index = characterIndex(for: NSEvent.mouseLocation)
+            if index != NSNotFound, index < (string as NSString).length, onClick(index) { return }
+        }
+        super.mouseDown(with: event)
+    }
 
     var headerView: NSView? {
         didSet {
