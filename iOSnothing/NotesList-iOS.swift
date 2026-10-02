@@ -27,6 +27,10 @@ struct NotesList: View {
                   animation: .default)
     private var folders: FetchedResults<Folder>
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    // Wide layout (iPad, unfolded foldable): selected note and list visibility
+    @State private var selection: NSManagedObjectID?
+    @State private var listVisible = true
     @State private var collapsedFolders: Set<NSManagedObjectID> = []
     @State private var renamingFolderID: NSManagedObjectID?
 
@@ -38,9 +42,79 @@ struct NotesList: View {
         items.filter { $0.folder == folder }
     }
 
-    var body: some View {
+    private var isWide: Bool { sizeClass == .regular }
 
-        NavigationView {
+    private var selectedItem: Item? {
+        items.first { $0.objectID == selection }
+    }
+
+    var body: some View {
+        Group {
+            if isWide {
+                wideLayout
+            } else {
+                NavigationView { noteList }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .newNoteRequested)) { _ in
+            withAnimation {
+                Item.create(in: viewContext, undoManager: undoManager)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .newFolderRequested)) { _ in
+            if store.requirePro() {
+                withAnimation {
+                    Folder.create(in: viewContext)
+                }
+            }
+        }
+        // New folders appear in the list ready to be named
+        .onReceive(NotificationCenter.default.publisher(for: .folderCreated)) { notification in
+            renamingFolderID = notification.object as? NSManagedObjectID
+        }
+        // Wide layout: open new notes, and keep a valid selection
+        .onReceive(NotificationCenter.default.publisher(for: .noteCreated)) { notification in
+            selection = notification.object as? NSManagedObjectID
+        }
+        .onChange(of: items.count) {
+            if selectedItem == nil { selection = items.first?.objectID }
+        }
+        .onAppear {
+            if selection == nil { selection = items.first?.objectID }
+        }
+    }
+
+    // Editor on the left, notes on the right, like the Mac
+    private var wideLayout: some View {
+        HStack(spacing: 0) {
+            Group {
+                if let item = selectedItem {
+                    EditorView(item: item, showsBack: false)
+                        .id(item.objectID)
+                } else {
+                    EmptyStateView()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay(alignment: .topTrailing) {
+                CircleIconButton(systemName: "sidebar.right", label: "Show or hide notes", iconsize: 16) {
+                    withAnimation(.smooth(duration: 0.3)) { listVisible.toggle() }
+                }
+                .padding(.trailing, 16)
+                .padding(.top, 8)
+            }
+
+            if listVisible {
+                noteList
+                    .frame(width: 340)
+                    .background(palette.buttonBackground.opacity(0.6))
+                    .transition(.move(edge: .trailing))
+            }
+        }
+        .background(palette.background)
+    }
+
+    private var noteList: some View {
             ZStack(alignment: .bottom) {
                 List {
                     //Empty text works as padding above list
@@ -112,45 +186,52 @@ struct NotesList: View {
                         .padding([.trailing], 8)
                 }
             } //ztack new
-            .background(palette.background)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .newNoteRequested)) { _ in
-            withAnimation {
-                Item.create(in: viewContext, undoManager: undoManager)
+            .background(isWide ? Color.clear : palette.background)
+    }
+
+    @ViewBuilder
+    private func noteRowLink(_ item: Item) -> some View {
+        if isWide {
+            // Wide layout: rows select the note shown in the editor beside the list
+            Button {
+                selection = item.objectID
+            } label: {
+                Text(item.displayTitle)
+                    .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
+                    .foregroundColor(palette.text)
+                    .lineLimit(1)
+                    .padding([.top, .bottom], 8)
+                    .padding(.horizontal, 8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(item.objectID == selection ? palette.buttonHover : Color.clear,
+                                in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .contentShape(Rectangle())
             }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .newFolderRequested)) { _ in
-            if store.requirePro() {
-                withAnimation {
-                    Folder.create(in: viewContext)
+            .buttonStyle(.plain)
+        } else {
+            ZStack {
+                NavigationLink(destination: EditorView(item: item)) {
+                    Text(item.displayTitle)
+                        .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
+                        .foregroundColor(palette.text)
+                        .padding([.top, .bottom], 8)
                 }
-            }
-        }
-        // New folders appear in the list ready to be named
-        .onReceive(NotificationCenter.default.publisher(for: .folderCreated)) { notification in
-            renamingFolderID = notification.object as? NSManagedObjectID
+                .navigationBarHidden(true)
+
+                // Covers the row's disclosure chevron
+                HStack {
+                    Spacer()
+                    Text(" ")
+                        .frame(width: 48, height: 48)
+                        .background(palette.background)
+                        .offset(x: 8, y: 0)
+                }
+            } //z
         }
     }
 
     private func noteRow(_ item: Item) -> some View {
-        ZStack {
-            NavigationLink(destination: EditorView(item: item)) {
-                Text(item.displayTitle)
-                    .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
-                    .foregroundColor(palette.text)
-                    .padding([.top, .bottom], 8)
-            }
-            .navigationBarHidden(true)
-
-            // Covers the row's disclosure chevron
-            HStack {
-                Spacer()
-                Text(" ")
-                    .frame(width: 48, height: 48)
-                    .background(palette.background)
-                    .offset(x: 8, y: 0)
-            }
-        } //z
+        noteRowLink(item)
         .contextMenu {
             Menu("Move to") {
                 // Creates a folder, moves the note into it, then the folder name is edited inline

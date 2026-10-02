@@ -71,6 +71,55 @@ final class DemoRecording: XCTestCase {
         }
     }
 
+    func testLists() {
+        launch()
+        app.buttons["New"].tap(); pause(0.6)
+        app.buttons["New Note"].tap(); pause(0.8)
+        app.buttons["Untitled"].firstMatch.tap(); pause(0.8)
+        let editor = app.textViews.firstMatch
+        editor.tap(); pause(0.4)
+        type("Groceries\n- milk\nbread\napples\n\n", into: editor)
+        type("[] call mom\nwater the plants", into: editor)
+        pause(0.8)
+        app.buttons["Hide keyboard"].tap(); pause(0.8)
+        // tick the first task
+        let frame = editor.frame
+        app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: frame.minX + 18, dy: frame.minY + 150)).tap()
+        pause(2.5)
+    }
+
+    func testImages() {
+        launch()
+        app.buttons["New"].tap(); pause(0.6)
+        app.buttons["New Note"].tap(); pause(0.8)
+        app.buttons["Untitled"].firstMatch.tap(); pause(0.8)
+        let editor = app.textViews.firstMatch
+        editor.tap(); pause(0.4)
+        type("Lisbon, day one\n", into: editor)
+        if let path = ProcessInfo.processInfo.environment["DEMO_IMAGE"], let image = UIImage(contentsOfFile: path) {
+            UIPasteboard.general.image = image
+        }
+        editor.typeKey("v", modifierFlags: .command); pause(2.0)
+        type("Warm light, slow afternoon.", into: editor)
+        pause(0.8)
+        app.buttons["Hide keyboard"].tap(); pause(0.8)
+        let frame = editor.frame
+        app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: frame.midX, dy: frame.minY + 130)).tap()
+        pause(2.5)
+        app.images["Image"].tap(); pause(1.2)
+    }
+
+    func testMoveToFolder() {
+        launch()
+        app.buttons["Reading list"].firstMatch.press(forDuration: 1.0); pause(0.6)
+        app.buttons["Move to"].tap(); pause(0.6)
+        app.buttons["New Folder"].tap(); pause(0.6)
+        let name = app.textFields["Folder name"]
+        name.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 12))
+        type("Books", into: name); name.typeText("\n")
+        pause(2.5)
+    }
+
     func testPro() {
         launch(pro: false)
         app.buttons["New"].tap(); pause(0.6)

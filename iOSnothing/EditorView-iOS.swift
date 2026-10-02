@@ -43,8 +43,12 @@ struct EditorView: View {
     // Shown from here: the app-level paywall sheet can't present over a pushed note
     @State private var showPaywall = false
 
-    init(item: Item) {
+    // No back button when the note list sits beside the editor (iPad, unfolded)
+    var showsBack = true
+
+    init(item: Item, showsBack: Bool = true) {
         self.item = item
+        self.showsBack = showsBack
         let context = item.managedObjectContext ?? PersistenceController.shared.container.viewContext
         _images = State(initialValue: ImageAttachmentController(item: item, context: context,
                                                                 placeholderColor: CGColor(gray: 0.5, alpha: 0.12)))
@@ -91,8 +95,10 @@ struct EditorView: View {
                             }
                         }
                 } // vstack
-                .padding([.trailing, .leading], 24)
+                // Roomier margins when the note list sits beside the editor
+                .padding([.trailing, .leading], showsBack ? 24 : 56)
             // back button
+            if showsBack {
             Button(action: { dismiss() }) {
                 Image(systemName: "chevron.backward")
                     .foregroundColor(palette.buttonForeground)
@@ -102,6 +108,7 @@ struct EditorView: View {
                     .clipShape(Circle())
             }
             .accessibilityLabel("Back")
+            }
         } // z-stack
         .background(palette.background)
         .toolbar {

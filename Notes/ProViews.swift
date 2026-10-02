@@ -11,10 +11,40 @@ import CoreData
 private let privacyURL = URL(string: "https://github.com/yaosamo/Writer/blob/main/PrivacyPolicy.md")!
 private let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
 
+// Pro features shown in the paywall, each with a short close-up clip
+private enum ProFeature: CaseIterable {
+    case folders, themes, images
+
+    var title: String {
+        switch self {
+        case .folders: "Folders"
+        case .themes: "Themes"
+        case .images: "Images"
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .folders: "Group notes, keep the page quiet"
+        case .themes: "Dark Sepia, Midnight and Light"
+        case .images: "Paste photos and screenshots into notes"
+        }
+    }
+
+    var clip: String { "Pro-\(self)" }
+
+    var next: ProFeature {
+        let all = Self.allCases
+        return all[(all.firstIndex(of: self)! + 1) % all.count]
+    }
+}
+
 struct PaywallView: View {
     @Environment(Store.self) private var store
     @Environment(\.palette) private var palette
     @Environment(\.dismiss) private var dismiss
+
+    @State private var feature: ProFeature = .folders
 
     var body: some View {
         VStack(alignment: .leading, spacing: 28) {
@@ -26,17 +56,24 @@ struct PaywallView: View {
                 Button {
                     dismiss()
                 } label: {
+                    // Small glyph, large target: the whole 44pt square closes the sheet
                     Image(systemName: "xmark")
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(palette.secondaryText)
-                        .frame(width: 32, height: 32)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .padding(.trailing, -14)
+                .padding(.vertical, -12)
                 .keyboardShortcut(.cancelAction)
                 .accessibilityLabel("Close")
             }
 
-            // Folders and themes in motion
-            LoopingVideo(resource: "ProVideo")
+            // The selected feature in motion; cycles on its own, tap a feature to pick it
+            LoopingVideo(resource: feature.clip)
+                .id(feature)
+                .transition(.opacity)
                 .aspectRatio(proVideoAspect, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -44,9 +81,24 @@ struct PaywallView: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 16) {
-                feature("Folders", "Group notes, keep the page quiet")
-                feature("Themes", "Dark Sepia, Midnight and Light")
-                feature("What comes next", "Future Pro features included")
+                ForEach(ProFeature.allCases, id: \.self) { item in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) { feature = item }
+                    } label: {
+                        featureRow(item.title, item.detail)
+                            .opacity(item == feature ? 1 : 0.45)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+                featureRow("What comes next", "Future Pro features included")
+                    .opacity(0.45)
+            }
+            .task(id: feature) {
+                try? await Task.sleep(for: .seconds(7))
+                guard !Task.isCancelled else { return }
+                withAnimation(.easeInOut(duration: 0.3)) { feature = feature.next }
             }
 
             if store.isPro {
@@ -103,7 +155,7 @@ struct PaywallView: View {
         }
     }
 
-    // Mac clip is a window (16:10), iPhone clip a crop of the note list (4:3)
+    // Close-ups: 16:10 on Mac, 4:3 on iPhone
     private var proVideoAspect: CGFloat {
         #if os(macOS)
         16.0 / 10.0
@@ -133,7 +185,7 @@ struct PaywallView: View {
         return "Unlock for \(product.displayPrice), once"
     }
 
-    private func feature(_ title: String, _ detail: String) -> some View {
+    private func featureRow(_ title: String, _ detail: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .foregroundColor(palette.text)
