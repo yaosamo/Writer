@@ -46,40 +46,91 @@ struct PaywallView: View {
 
     @State private var feature: ProFeature = .folders
 
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    #endif
+
+    // Mac, iPad and unfolded: video on the left, everything else on the right
+    private var isWide: Bool {
+        #if os(macOS)
+        true
+        #else
+        sizeClass == .regular
+        #endif
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 28) {
-            HStack {
-                Text("Nothing Pro")
-                    .font(.system(size: 20, weight: .regular, design: .monospaced))
-                    .foregroundColor(palette.text)
-                Spacer()
-                Button {
-                    dismiss()
-                } label: {
-                    // Small glyph, large target: the whole 44pt square closes the sheet
-                    Image(systemName: "xmark")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(palette.secondaryText)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
+        Group {
+            if isWide {
+                HStack(alignment: .center, spacing: 40) {
+                    video
+                        .frame(width: 560)
+                    VStack(alignment: .leading, spacing: 28) {
+                        header
+                        details
+                    }
+                    .frame(width: 320)
                 }
-                .buttonStyle(.plain)
-                .padding(.trailing, -14)
-                .padding(.vertical, -12)
-                .keyboardShortcut(.cancelAction)
-                .accessibilityLabel("Close")
+            } else {
+                VStack(alignment: .leading, spacing: 28) {
+                    header
+                    video
+                    details
+                }
             }
+        }
+        .padding(32)
+        #if os(macOS)
+        .background(palette.background)
+        #else
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .presentationDetents([.large])
+        .presentationBackground(palette.background)
+        #endif
+        .preferredColorScheme(palette.colorScheme)
+        .onChange(of: store.isPro) { _, unlocked in
+            if unlocked { dismiss() }
+        }
+    }
 
-            // The selected feature in motion; cycles on its own, tap a feature to pick it
-            LoopingVideo(resource: feature.clip)
-                .id(feature)
-                .transition(.opacity)
-                .aspectRatio(proVideoAspect, contentMode: .fit)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(palette.secondaryText.opacity(0.2), lineWidth: 1))
-                .accessibilityHidden(true)
+    private var header: some View {
+        HStack {
+            Text("Nothing Pro")
+                .font(.system(size: 20, weight: .regular, design: .monospaced))
+                .foregroundColor(palette.text)
+            Spacer()
+            Button {
+                dismiss()
+            } label: {
+                // Small glyph, large target: the whole 44pt square closes the sheet
+                Image(systemName: "xmark")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(palette.secondaryText)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .padding(.trailing, -14)
+            .padding(.vertical, -12)
+            .keyboardShortcut(.cancelAction)
+            .accessibilityLabel("Close")
+        }
+    }
 
+    // The selected feature in motion; cycles on its own, tap a feature to pick it
+    private var video: some View {
+        LoopingVideo(resource: feature.clip)
+            .id(feature)
+            .transition(.opacity)
+            .aspectRatio(proVideoAspect, contentMode: .fit)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(palette.secondaryText.opacity(0.2), lineWidth: 1))
+            .accessibilityHidden(true)
+    }
+
+    private var details: some View {
+        VStack(alignment: .leading, spacing: 28) {
             VStack(alignment: .leading, spacing: 16) {
                 ForEach(ProFeature.allCases, id: \.self) { item in
                     Button {
@@ -139,19 +190,6 @@ struct PaywallView: View {
             .buttonStyle(.plain)
             .font(.system(size: 11, design: .monospaced))
             .foregroundColor(palette.secondaryText)
-        }
-        .padding(32)
-        #if os(macOS)
-        .frame(width: 400)
-        .background(palette.background)
-        #else
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .presentationDetents([.large])
-        .presentationBackground(palette.background)
-        #endif
-        .preferredColorScheme(palette.colorScheme)
-        .onChange(of: store.isPro) { _, unlocked in
-            if unlocked { dismiss() }
         }
     }
 
