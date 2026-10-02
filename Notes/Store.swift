@@ -2,7 +2,7 @@
 //  Store.swift
 //  Notes
 //
-//  Nothing Pro (StoreKit 2): a one-time lifetime purchase, or a monthly subscription.
+//  Nothing Pro (StoreKit 2): a one-time lifetime purchase, or a yearly subscription.
 //  Either one unlocks Pro. Mac and iOS share the bundle ID, so one purchase unlocks both.
 //
 
@@ -18,13 +18,13 @@ extension Notification.Name {
 @Observable
 final class Store {
     static let lifetimeID = "com.yaosamo.NothingWriter.pro"
-    static let monthlyID = "com.yaosamo.NothingWriter.pro.monthly"
+    static let yearlyID = "com.yaosamo.NothingWriter.pro.yearly"
 
     // One store for every window: the App struct can be created more than once (window restoration)
     static let shared = Store()
 
     private(set) var lifetime: Product?
-    private(set) var monthly: Product?
+    private(set) var yearly: Product?
     private(set) var isPro = false
     // Pro through the subscription (shows "Manage subscription")
     private(set) var isSubscribed = false
@@ -108,9 +108,9 @@ final class Store {
 
     private func loadProducts() async {
         do {
-            let products = try await Product.products(for: [Self.lifetimeID, Self.monthlyID])
+            let products = try await Product.products(for: [Self.lifetimeID, Self.yearlyID])
             lifetime = products.first { $0.id == Self.lifetimeID }
-            monthly = products.first { $0.id == Self.monthlyID }
+            yearly = products.first { $0.id == Self.yearlyID }
         } catch {
             message = error.localizedDescription
         }
@@ -125,7 +125,7 @@ final class Store {
             guard case .verified(let transaction) = result, transaction.revocationDate == nil else { continue }
             switch transaction.productID {
             case Self.lifetimeID: lifetimeOwned = true
-            case Self.monthlyID: subscribed = true
+            case Self.yearlyID: subscribed = true
             default: break
             }
         }

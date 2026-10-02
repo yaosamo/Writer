@@ -21,7 +21,7 @@ final class DemoRecording: XCTestCase {
     // Pinned to Dark unless the scene changes themes itself
     private func launch(pro: Bool = true, theme: String? = "dark") {
         app = XCUIApplication()
-        app.launchArguments += ["-demoContent", "YES", "-demoPrice", "$29.99", "-demoMonthlyPrice", "$0.99"]
+        app.launchArguments += ["-demoContent", "YES", "-demoPrice", "$29.99", "-demoYearlyPrice", "$11.99"]
         if let theme { app.launchArguments += ["-theme", theme] }
         if pro { app.launchArguments += ["-debugProUnlocked", "YES"] }
         app.launch()

@@ -10,8 +10,8 @@ import CoreData
 import StoreKit
 import AVFoundation
 
-private let privacyURL = URL(string: "https://github.com/yaosamo/Writer/blob/main/PrivacyPolicy.md")!
-private let termsURL = URL(string: "https://github.com/yaosamo/Writer/blob/main/Terms.md")!
+private let privacyURL = URL(string: "https://nothing.yaosamo.com/privacy")!
+private let termsURL = URL(string: "https://nothing.yaosamo.com/terms")!
 
 // Every line in the paywall has a short clip showing it; the list plays through them in turn
 private enum ProFeature: String, CaseIterable {
@@ -44,7 +44,7 @@ private enum ProFeature: String, CaseIterable {
     }
 }
 
-private enum Plan { case lifetime, monthly }
+private enum Plan { case lifetime, yearly }
 
 struct PaywallView: View {
     @Environment(Store.self) private var store
@@ -255,20 +255,20 @@ struct PaywallView: View {
     @ViewBuilder
     private var planPicker: some View {
         let lifetime = price(store.lifetime, demo: "demoPrice")
-        let monthly = price(store.monthly, demo: "demoMonthlyPrice").map { "\($0) / month" }
+        let yearly = price(store.yearly, demo: "demoYearlyPrice").map { "\($0) / year" }
         if isWide {
             planRow(.lifetime, title: "Lifetime", price: lifetime)
-            planRow(.monthly, title: "Monthly", price: monthly)
+            planRow(.yearly, title: "Yearly", price: yearly)
         } else {
             HStack(spacing: 10) {
                 planRow(.lifetime, title: "Lifetime", price: lifetime)
-                planRow(.monthly, title: "Monthly", price: monthly)
+                planRow(.yearly, title: "Yearly", price: yearly)
             }
         }
     }
 
     private var selectedProduct: Product? {
-        plan == .lifetime ? store.lifetime : store.monthly
+        plan == .lifetime ? store.lifetime : store.yearly
     }
 
     // The outline and the filled dot mark the selected plan
@@ -338,7 +338,7 @@ struct PaywallView: View {
     private func price(_ product: Product?, demo key: String) -> String? {
         if let product { return product.displayPrice }
         #if DEBUG
-        // Demo recordings: -demoPrice '$29.99' -demoMonthlyPrice '$0.99'
+        // Demo recordings: -demoPrice '$29.99' -demoYearlyPrice '$11.99'
         if let value = UserDefaults.standard.string(forKey: key) { return value }
         #endif
         return nil

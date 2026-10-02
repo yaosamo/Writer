@@ -1,5 +1,5 @@
 ## Privacy Policy
-v1.2 / October 2, 2026.
+v1.3 / October 2, 2026.
 
 Nothing / Ascetic Writer is an app for writing ideas down in an ascetic way, without distractions.
 
@@ -16,7 +16,7 @@ Links in your notes are only opened when you open them. The app does not fetch p
 None. There is no account, no analytics SDK and no trackers of any kind.
 
 #### Purchases
-Nothing Pro is bought through the App Store, as a one-time purchase or a monthly subscription. Apple processes the payment and tells the app only whether Pro is unlocked. We never receive your name, Apple ID or payment details.
+Nothing Pro is bought through the App Store, as a one-time purchase or a yearly subscription. Apple processes the payment and tells the app only whether Pro is unlocked. We never receive your name, Apple ID or payment details.
 
 #### Analytics
 We only see the aggregate statistics App Store Connect provides, such as downloads, product page views and crash reports from people who choose to share them with developers.
