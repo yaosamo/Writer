@@ -39,45 +39,43 @@ struct EditorView: View {
 
         // Wrap editor and add button into zstack so add button is sticky
         ZStack(alignment: Alignment(horizontal: .leading, vertical: .top))  {
-                ScrollView(showsIndicators: false) {
-                    VStack {
-                        HStack {
-                            TextField("Title", text: $item.titleText)
-                                .textFieldStyle(PlainTextFieldStyle())
-                                .focused($focusedField, equals: .title)
-                            Spacer()
-                            Text("\(item.date ?? Date(), formatter: itemFormatter)")
+                // TextEditor scrolls itself and avoids the keyboard; wrapping it in another
+                // ScrollView hid the text behind the keyboard while typing
+                VStack(spacing: 0) {
+                    HStack {
+                        TextField("Title", text: $item.titleText)
+                            .textFieldStyle(PlainTextFieldStyle())
+                            .focused($focusedField, equals: .title)
+                        Spacer()
+                        Text("\(item.date ?? Date(), formatter: itemFormatter)")
 
-                        }
-                        .padding(.top, 88)
-                        .padding(.bottom, 56)
-                        .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
-                        .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
+                    }
+                    .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
+                    .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
+                    // Paddings top and bottom for Date and Title
+                    .padding(.top, 108)
+                    .padding(.bottom, 76)
 
-                        // Paddings top and bottom for Date and Title
-                            .padding([.bottom, .top], 20.0)
-                        TextEditor(text: $item.noteText)
-                            .focused($focusedField, equals: .note)
-                            .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
-                            .disableAutocorrection(true)
-                            .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
-                            .lineSpacing(5.0)
-                            .overlay(alignment: .topLeading) {
-                                if item.noteText.isEmpty {
-                                    Text(emptyNotePlaceholder)
-                                        .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
-                                        .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
-                                        .padding(.top, 8) // UITextView text container inset
-                                        .padding(.leading, 5) // line fragment padding
-                                        .allowsHitTesting(false)
-                                }
+                    TextEditor(text: $item.noteText)
+                        .focused($focusedField, equals: .note)
+                        .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
+                        .disableAutocorrection(true)
+                        .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
+                        .lineSpacing(5.0)
+                        .scrollIndicators(.hidden)
+                        .scrollDismissesKeyboard(.interactively)
+                        .overlay(alignment: .topLeading) {
+                            if item.noteText.isEmpty {
+                                Text(emptyNotePlaceholder)
+                                    .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
+                                    .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
+                                    .padding(.top, 8) // UITextView text container inset
+                                    .padding(.leading, 5) // line fragment padding
+                                    .allowsHitTesting(false)
                             }
-                            .frame(idealHeight: 800*2, alignment: .top)
-                    } // vstack
-                }  // scrollview
-                .scrollDismissesKeyboard(.interactively)
+                        }
+                } // vstack
                 .padding([.trailing, .leading], 24)
-                .frame(alignment: .bottom)
             // back button
             Button(action: { dismiss() }) {
                 Image(systemName: "chevron.backward")

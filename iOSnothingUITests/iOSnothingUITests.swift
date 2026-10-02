@@ -10,33 +10,44 @@ import XCTest
 class iOSnothingUITests: XCTestCase {
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    // Create a note, type into it, go back and confirm the list shows its first line
+    func testCreateNoteTypeAndReturn() throws {
         let app = XCUIApplication()
         app.launch()
+        attachScreenshot(app, "1 List")
 
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        app.buttons["New note"].tap()
+        let newRow = app.buttons["Untitled"].firstMatch
+        XCTAssertTrue(newRow.waitForExistence(timeout: 5))
+        newRow.tap()
+
+        let editor = app.textViews.firstMatch
+        XCTAssertTrue(editor.waitForExistence(timeout: 5))
+        attachScreenshot(app, "2 Empty editor")
+
+        editor.tap()
+        editor.typeText("Groceries\n- milk\n- bread")
+        attachScreenshot(app, "3 Typing")
+
+        // Tapping inside the text again (to move the caret) must keep the keyboard up
+        editor.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.01)).tap()
+        XCTAssertTrue(app.keyboards.firstMatch.exists, "Tapping the editor dismissed the keyboard")
+
+        app.buttons["Hide keyboard"].tap()
+        XCTAssertFalse(app.keyboards.firstMatch.waitForExistence(timeout: 2))
+
+        app.buttons["Back"].tap()
+        XCTAssertTrue(app.buttons["Groceries"].firstMatch.waitForExistence(timeout: 5))
+        attachScreenshot(app, "4 List after edit")
     }
 
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
+    private func attachScreenshot(_ app: XCUIApplication, _ name: String) {
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
 }
