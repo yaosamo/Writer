@@ -15,15 +15,39 @@ struct EditorView: View {
     @Environment(\.managedObjectContext) var viewContext
     @Environment(\.palette) private var palette
 
+    @Environment(Store.self) private var store
+
     // Observed directly so edits synced from other devices show up and aren't overwritten
     @ObservedObject var item: Item
     // New notes start with the caret in the text
     var focusOnAppear = false
 
+    @State private var images: ImageAttachmentController
+    @State private var previewImage: UUID?
+
+    init(item: Item, focusOnAppear: Bool = false) {
+        self.item = item
+        self.focusOnAppear = focusOnAppear
+        let context = item.managedObjectContext ?? PersistenceController.shared.container.viewContext
+        _images = State(initialValue: ImageAttachmentController(item: item, context: context,
+                                                                placeholderColor: CGColor(gray: 0.5, alpha: 0.12)))
+    }
+
     var body: some View {
-        NoteTextView(text: $item.noteText, palette: palette, focusOnAppear: focusOnAppear) {
+        NoteTextView(text: $item.noteText, palette: palette, focusOnAppear: focusOnAppear,
+                     images: images,
+                     canAddImages: { store.requirePro() },
+                     openImage: { previewImage = $0 }) {
             EditorHeader(item: item, palette: palette)
         }
+        // Full-size image, over the editor
+        .overlay {
+            if let id = previewImage {
+                ImagePreview(id: id, controller: images) { previewImage = nil }
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.15), value: previewImage)
         // Debounced save: restarts on every change, saves after a pause in typing
         .task(id: [item.title, item.note]) {
             try? await Task.sleep(for: .seconds(1))
@@ -31,6 +55,7 @@ struct EditorView: View {
             viewContext.saveIfNeeded()
         }
         .onDisappear {
+            item.removeUnusedAttachments(in: viewContext)
             viewContext.saveIfNeeded()
         }
     }
@@ -73,10 +98,14 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
     @Binding var text: String
     let palette: Palette
     var focusOnAppear = false
+    let images: ImageAttachmentController
+    // Pro check before an image is added (opens the paywall when locked)
+    let canAddImages: () -> Bool
+    let openImage: (UUID) -> Void
     @ViewBuilder let header: () -> Header
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(text: $text)
+        Coordinator(text: $text, images: images, canAddImages: canAddImages)
     }
 
     func makeNSView(context: Context) -> NSScrollView {
@@ -108,11 +137,35 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
         textView.textContainer?.widthTracksTextView = true
         textView.placeholder = emptyNotePlaceholder
         textView.focusOnAppear = focusOnAppear
-        textView.string = text
+        let font = textView.font ?? NSFont.monospacedSystemFont(ofSize: 16, weight: .thin)
+        textView.textStorage?.setAttributedString(
+            ImageText.attributed(text, attributes: [.font: font, .foregroundColor: NSColor(palette.text)],
+                                 attachment: images.attachment(for:)))
+        context.coordinator.lastText = text
         textView.textStorage?.delegate = context.coordinator
-        textView.onClick = { [weak textView, coordinator = context.coordinator] index in
+        textView.onRestyle = { [weak textView, coordinator = context.coordinator] range in
+            guard let storage = textView?.textStorage else { return }
+            coordinator.styler.apply(to: storage, range: range)
+        }
+        textView.onClick = { [weak textView, coordinator = context.coordinator, openImage] index in
             guard let textView else { return false }
+            if let id = coordinator.image(at: index, in: textView) {
+                openImage(id)
+                return true
+            }
             return coordinator.toggleTask(at: index, in: textView)
+        }
+        textView.onPasteImage = { [weak textView, coordinator = context.coordinator] data in
+            guard let textView else { return }
+            coordinator.insertImage(data, in: textView)
+        }
+        textView.onWidthChange = { [weak textView, images] in
+            guard let textView, let container = textView.textContainer else { return }
+            images.refit(maxWidth: container.size.width - 2 * container.lineFragmentPadding)
+        }
+        images.onChange = { [weak textView, coordinator = context.coordinator] attachment in
+            guard let textView else { return }
+            coordinator.redraw(attachment, in: textView)
         }
         apply(palette, to: textView, coordinator: context.coordinator)
         context.coordinator.appliedColors = [palette.text, palette.caret, palette.secondaryText]
@@ -129,10 +182,14 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
         guard let textView = scrollView.documentView as? PlaceholderTextView else { return }
         context.coordinator.text = $text
         // Only replace the text when it changed elsewhere (iCloud), keeping the caret in place
-        if textView.string != text {
+        if context.coordinator.lastText != text {
             let selection = textView.selectedRange()
-            textView.string = text
-            let length = (text as NSString).length
+            let font = textView.font ?? NSFont.monospacedSystemFont(ofSize: 16, weight: .thin)
+            textView.textStorage?.setAttributedString(
+                ImageText.attributed(text, attributes: [.font: font, .foregroundColor: NSColor(palette.text)],
+                                     attachment: images.attachment(for:)))
+            context.coordinator.lastText = text
+            let length = textView.textStorage?.length ?? 0
             textView.setSelectedRange(NSRange(location: min(selection.location, length), length: 0))
         }
         // Re-color only when the theme changes, not on every keystroke
@@ -156,7 +213,7 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
             .foregroundColor: textColor,
             .paragraphStyle: paragraph,
         ]
-        coordinator.styler = ListStyler(text: textColor, dim: NSColor(palette.secondaryText))
+        coordinator.styler = ListStyler(text: textColor, dim: NSColor(palette.secondaryText), paragraph: paragraph)
         if let storage = textView.textStorage, storage.length > 0 {
             let all = NSRange(location: 0, length: storage.length)
             storage.addAttribute(.paragraphStyle, value: paragraph, range: all)
@@ -171,15 +228,72 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
         var headerView: NSView?
         var appliedColors: [Color] = []
         var styler = ListStyler(text: .textColor, dim: .secondaryLabelColor)
+        // The stored text (with image tokens) the editor currently shows
+        var lastText = ""
+        let images: ImageAttachmentController
+        let canAddImages: () -> Bool
         private var isApplyingEdit = false
 
-        init(text: Binding<String>) {
+        init(text: Binding<String>, images: ImageAttachmentController, canAddImages: @escaping () -> Bool) {
             self.text = text
+            self.images = images
+            self.canAddImages = canAddImages
         }
 
         func textDidChange(_ notification: Notification) {
-            guard let textView = notification.object as? NSTextView else { return }
-            text.wrappedValue = textView.string
+            guard let textView = notification.object as? NSTextView, let storage = textView.textStorage else { return }
+            lastText = ImageText.plain(from: storage)
+            text.wrappedValue = lastText
+        }
+
+        func image(at index: Int, in textView: NSTextView) -> UUID? {
+            guard let storage = textView.textStorage, index < storage.length else { return nil }
+            return (storage.attribute(.attachment, at: index, effectiveRange: nil) as? ImageAttachment)?.imageID
+        }
+
+        // Pasted or dropped image: processed and stored, then placed on its own line at the caret
+        func insertImage(_ data: Data, in textView: NSTextView) {
+            guard canAddImages() else { return }
+            Task { @MainActor in
+                guard let id = await images.add(data), let storage = textView.textStorage else {
+                    NSSound.beep()
+                    return
+                }
+                let attachment = images.attachment(for: id)
+                if let container = textView.textContainer {
+                    images.refit(maxWidth: container.size.width - 2 * container.lineFragmentPadding)
+                    attachment.fit(maxWidth: images.maxWidth)
+                }
+                let range = textView.selectedRange()
+                let ns = storage.string as NSString
+                let attributes = textView.typingAttributes
+                let piece = NSMutableAttributedString()
+                if range.location > 0, ns.character(at: range.location - 1) != 10 {
+                    piece.append(NSAttributedString(string: "\n", attributes: attributes))
+                }
+                let image = NSMutableAttributedString(attachment: attachment)
+                image.addAttributes(attributes, range: NSRange(location: 0, length: image.length))
+                piece.append(image)
+                let end = NSMaxRange(range)
+                if end >= ns.length || ns.character(at: end) != 10 {
+                    piece.append(NSAttributedString(string: "\n", attributes: attributes))
+                }
+                guard textView.shouldChangeText(in: range, replacementString: piece.string) else { return }
+                storage.replaceCharacters(in: range, with: piece)
+                textView.didChangeText()
+                textView.setSelectedRange(NSRange(location: range.location + piece.length, length: 0))
+            }
+        }
+
+        // An attachment's image or size changed: re-lay out its character
+        func redraw(_ attachment: ImageAttachment, in textView: NSTextView) {
+            guard let storage = textView.textStorage else { return }
+            storage.enumerateAttribute(.attachment, in: NSRange(location: 0, length: storage.length)) { value, range, stop in
+                if value as AnyObject === attachment {
+                    storage.edited(.editedAttributes, range: range, changeInLength: 0)
+                    stop.pointee = true
+                }
+            }
         }
 
         // Smart lists: Return continues a list, Backspace removes a marker, "[] " makes a task
@@ -222,13 +336,133 @@ final class PlaceholderTextView: NSTextView {
     var placeholderColor = NSColor.secondaryLabelColor
     // Called with the character under a click; return true to swallow the click (task toggles)
     var onClick: ((Int) -> Bool)?
+    var onPasteImage: ((Data) -> Void)?
+    var onWidthChange: (() -> Void)?
+
+    private static let imageTypes: [NSPasteboard.PasteboardType] = [
+        .png, .tiff, NSPasteboard.PasteboardType("public.jpeg"), NSPasteboard.PasteboardType("public.heic"),
+    ]
+
+    // An image file, or image data when there's no text (text wins for mixed web clippings)
+    private func imageData(from pasteboard: NSPasteboard) -> Data? {
+        if let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: [
+            .urlReadingFileURLsOnly: true,
+            .urlReadingContentsConformToTypes: ["public.image"],
+        ]) as? [URL], let url = urls.first {
+            return try? Data(contentsOf: url)
+        }
+        guard pasteboard.string(forType: .string) == nil else { return nil }
+        for type in Self.imageTypes {
+            if let data = pasteboard.data(forType: type) { return data }
+        }
+        return nil
+    }
+
+    // A plain-text view disables Paste when the clipboard holds only an image
+    override func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+        if item.action == #selector(paste(_:)), onPasteImage != nil, hasImage(on: .general) { return true }
+        return super.validateUserInterfaceItem(item)
+    }
+
+    private func hasImage(on pasteboard: NSPasteboard) -> Bool {
+        pasteboard.availableType(from: Self.imageTypes) != nil
+            || pasteboard.canReadObject(forClasses: [NSURL.self], options: [
+                .urlReadingFileURLsOnly: true, .urlReadingContentsConformToTypes: ["public.image"],
+            ])
+    }
+
+    override func paste(_ sender: Any?) {
+        if let onPasteImage, let data = imageData(from: .general) {
+            onPasteImage(data)
+            return
+        }
+        super.paste(sender)
+    }
+
+    override var acceptableDragTypes: [NSPasteboard.PasteboardType] {
+        super.acceptableDragTypes + Self.imageTypes + [.fileURL]
+    }
+
+    override func dragOperation(for dragInfo: NSDraggingInfo, type: NSPasteboard.PasteboardType) -> NSDragOperation {
+        if onPasteImage != nil, Self.imageTypes.contains(type) || type == .fileURL { return .copy }
+        return super.dragOperation(for: dragInfo, type: type)
+    }
+
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        if let onPasteImage, let data = imageData(from: sender.draggingPasteboard) {
+            let point = convert(sender.draggingLocation, from: nil)
+            setSelectedRange(NSRange(location: characterIndexForInsertion(at: point), length: 0))
+            onPasteImage(data)
+            return true
+        }
+        return super.performDragOperation(sender)
+    }
+
+    // Restyles a range (used to undo the link hover look)
+    var onRestyle: ((NSRange) -> Void)?
+    private var hoveredLink: NSRange?
 
     override func mouseDown(with event: NSEvent) {
-        if event.clickCount == 1, let onClick {
-            let index = characterIndex(for: NSEvent.mouseLocation)
-            if index != NSNotFound, index < (string as NSString).length, onClick(index) { return }
+        let index = characterIndex(for: NSEvent.mouseLocation)
+        let inText = index != NSNotFound && index < (string as NSString).length
+        // ⌘-click opens a link; a plain click edits it like any text
+        if inText, event.modifierFlags.contains(.command),
+           let url = textStorage?.attribute(.noteLink, at: index, effectiveRange: nil) as? URL {
+            NSWorkspace.shared.open(url)
+            return
         }
+        if event.clickCount == 1, inText, let onClick, onClick(index) { return }
         super.mouseDown(with: event)
+    }
+
+    // MARK: Link hover
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        for area in trackingAreas where area.owner === self && area.userInfo?["links"] != nil {
+            removeTrackingArea(area)
+        }
+        addTrackingArea(NSTrackingArea(rect: .zero, options: [.mouseMoved, .mouseEnteredAndExited, .activeInKeyWindow, .inVisibleRect],
+                                       owner: self, userInfo: ["links": true]))
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+        super.mouseMoved(with: event)
+        updateLinkHover(modifiers: event.modifierFlags)
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        super.mouseExited(with: event)
+        setHoveredLink(nil)
+    }
+
+    override func flagsChanged(with event: NSEvent) {
+        super.flagsChanged(with: event)
+        updateLinkHover(modifiers: event.modifierFlags)
+    }
+
+    private func updateLinkHover(modifiers: NSEvent.ModifierFlags) {
+        guard let storage = textStorage else { return }
+        let index = characterIndex(for: NSEvent.mouseLocation)
+        var range = NSRange(location: NSNotFound, length: 0)
+        let isLink = index != NSNotFound && index < storage.length
+            && storage.attribute(.noteLink, at: index, longestEffectiveRange: &range, in: NSRange(location: 0, length: storage.length)) != nil
+        setHoveredLink(isLink ? range : nil)
+        // The hand only while ⌘ is held: a plain click still places the caret
+        if isLink, modifiers.contains(.command) {
+            NSCursor.pointingHand.set()
+        }
+    }
+
+    private func setHoveredLink(_ range: NSRange?) {
+        guard range != hoveredLink, let storage = textStorage else { return }
+        if let old = hoveredLink, NSMaxRange(old) <= storage.length {
+            onRestyle?(old)
+        }
+        hoveredLink = range
+        if let range, let color = textColor {
+            storage.addAttribute(.foregroundColor, value: color.withAlphaComponent(0.55), range: range)
+        }
     }
 
     var headerView: NSView? {
@@ -243,8 +477,10 @@ final class PlaceholderTextView: NSTextView {
 
     // Keep the header as wide as the text view (autoresizing from a zero frame overshoots)
     override func setFrameSize(_ newSize: NSSize) {
+        let widthChanged = abs(newSize.width - frame.width) > 0.5
         super.setFrameSize(newSize)
         layoutHeader()
+        if widthChanged { onWidthChange?() }
     }
 
     var focusOnAppear = false

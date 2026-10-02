@@ -119,6 +119,85 @@ class iOSnothingUITests: XCTestCase {
         XCTAssertEqual(editor.value as? String, "- milk\n- bread\nAfter\n[x] call mom\n[ ] water plants")
     }
 
+    // Long-press a note → Move to → New Folder: the folder is created around the note
+    func testMoveToNewFolder() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-debugProUnlocked", "YES", "-demoContent", "YES"]
+        app.launch()
+        app.buttons["Reading list"].firstMatch.press(forDuration: 1.2)
+        app.buttons["Move to"].tap()
+        app.buttons["New Folder"].tap()
+        let name = app.textFields["Folder name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        name.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 12) + "Errands\n")
+        XCTAssertTrue(app.staticTexts["Errands"].waitForExistence(timeout: 5))
+        attachScreenshot(app, "Moved to new folder")
+        // The note now sits below its new folder
+        let folder = app.staticTexts["Errands"].frame
+        let note = app.buttons["Reading list"].firstMatch.frame
+        XCTAssertGreaterThan(note.minY, folder.minY)
+        XCTAssertGreaterThan(note.minX, folder.minX - 1)
+    }
+
+    private func samplePhoto() -> UIImage {
+        UIGraphicsImageRenderer(size: CGSize(width: 1600, height: 1000)).image { context in
+            let colors = [UIColor(red: 0.85, green: 0.42, blue: 0.16, alpha: 1).cgColor, UIColor(red: 0.12, green: 0.05, blue: 0.03, alpha: 1).cgColor]
+            let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors as CFArray, locations: [0, 1])!
+            context.cgContext.drawLinearGradient(gradient, start: .zero, end: CGPoint(x: 1600, y: 1000), options: [])
+        }
+    }
+
+    // Pasting an image (Pro): shows inline, tap opens it full size
+    func testPasteImage() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-debugProUnlocked", "YES"]
+        app.launch()
+        app.buttons["New"].tap()
+        app.buttons["New Note"].tap()
+        app.buttons["Untitled"].firstMatch.tap()
+        let editor = app.textViews.firstMatch
+        XCTAssertTrue(editor.waitForExistence(timeout: 5))
+        editor.tap()
+        editor.typeText("Trip\n")
+
+        UIPasteboard.general.image = samplePhoto()
+        editor.typeKey("v", modifierFlags: .command)
+        sleep(2)
+        editor.typeText("Below the photo")
+        attachScreenshot(app, "Pasted image")
+        let stored = editor.value as? String ?? ""
+        XCTAssertTrue(stored.hasPrefix("Trip\n"), "Text before the image stays: \(stored.debugDescription)")
+        XCTAssertTrue(stored.hasSuffix("\nBelow the photo"))
+
+        // The stored note keeps a token line, and the list title skips it
+        app.buttons["Hide keyboard"].tap()
+        let frame = editor.frame
+        app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: frame.midX, dy: frame.minY + 120)).tap()
+        XCTAssertTrue(app.images["Image"].waitForExistence(timeout: 5), "Tapping the image opens the full-size view")
+        sleep(1)
+        attachScreenshot(app, "Image preview")
+        app.images["Image"].tap()
+        XCTAssertFalse(app.images["Image"].waitForExistence(timeout: 2))
+    }
+
+    // Free users see the paywall instead of an image
+    func testPasteImageNeedsPro() throws {
+        let app = XCUIApplication()
+        app.launch()
+        app.buttons["New"].tap()
+        app.buttons["New Note"].tap()
+        app.buttons["Untitled"].firstMatch.tap()
+        let editor = app.textViews.firstMatch
+        XCTAssertTrue(editor.waitForExistence(timeout: 5))
+        editor.tap()
+        editor.typeText("Trip\n")
+        UIPasteboard.general.image = samplePhoto()
+        editor.typeKey("v", modifierFlags: .command)
+        sleep(2)
+        attachScreenshot(app, "Free paste")
+        XCTAssertTrue(app.staticTexts["Nothing Pro"].waitForExistence(timeout: 5))
+    }
+
     private func attachScreenshot(_ app: XCUIApplication, _ name: String) {
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name

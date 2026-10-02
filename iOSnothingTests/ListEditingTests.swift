@@ -71,6 +71,16 @@ final class ListEditingTests: XCTestCase {
         XCTAssertNil(ListEditing.toggleTask(in: text, at: 6), "Only the box toggles")
     }
 
+    func testLinksAreDetected() {
+        let storage = NSTextStorage(string: "see apple.com and https://lab01.dev today")
+        ListStyler(text: .black, dim: .gray).apply(to: storage, range: NSRange(location: 0, length: storage.length))
+        var links: [String] = []
+        storage.enumerateAttribute(.noteLink, in: NSRange(location: 0, length: storage.length)) { value, range, _ in
+            if value != nil { links.append((storage.string as NSString).substring(with: range)) }
+        }
+        XCTAssertEqual(links, ["apple.com", "https://lab01.dev"])
+    }
+
     func testStyles() {
         let text = "intro\n- a\n[x] done\n[ ] open" as NSString
         let styles = ListEditing.styles(in: text, range: NSRange(location: 0, length: text.length))

@@ -53,8 +53,8 @@ extension Item {
         }
         let firstLine = noteText
             .split(whereSeparator: \.isNewline)
-            .first
-            .map { $0.trimmingCharacters(in: .whitespaces) } ?? ""
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .first { !$0.isEmpty && !ImageToken.isTokenLine($0) } ?? ""
         return firstLine.isEmpty ? "Untitled" : firstLine
     }
 
@@ -125,6 +125,7 @@ extension Item {
     // Deletes the note and registers undo (and redo) with the given undo manager
     func delete(in context: NSManagedObjectContext, undoManager: UndoManager?) {
         let id = id, date = date, title = title, note = note, orderIndex = orderIndex, folder = folder
+        let images = attachmentList.map(\.snapshot)
         context.delete(self)
         context.saveIfNeeded()
 
@@ -136,6 +137,7 @@ extension Item {
             restored.note = note
             restored.orderIndex = orderIndex
             restored.folder = folder?.isDeleted == false ? folder : nil
+            images.forEach { Attachment.restore($0, for: restored, in: context) }
             context.saveIfNeeded()
             undoManager?.registerUndo(withTarget: restored) { $0.delete(in: context, undoManager: undoManager) }
         }

@@ -57,6 +57,11 @@
 		5DB1E00B2A00000000000022 /* ListStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00B2A00000000000021 /* ListStyler.swift */; };
 		5DB1E00B2A00000000000023 /* ListStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00B2A00000000000021 /* ListStyler.swift */; };
 		5DB1E00C2A00000000000012 /* ListEditingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00C2A00000000000011 /* ListEditingTests.swift */; };
+		5DB1E00E2A00000000000012 /* ImageProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00E2A00000000000011 /* ImageProcessing.swift */; };
+		5DB1E00E2A00000000000013 /* ImageProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00E2A00000000000011 /* ImageProcessing.swift */; };
+		5DB1E00E2A00000000000022 /* ImageAttachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00E2A00000000000021 /* ImageAttachments.swift */; };
+		5DB1E00E2A00000000000023 /* ImageAttachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00E2A00000000000021 /* ImageAttachments.swift */; };
+		5DB1E00F2A00000000000012 /* ImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00F2A00000000000011 /* ImageTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,6 +124,10 @@
 		5DB1E00B2A00000000000011 /* ListEditing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListEditing.swift; sourceTree = "<group>"; };
 		5DB1E00B2A00000000000021 /* ListStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListStyler.swift; sourceTree = "<group>"; };
 		5DB1E00C2A00000000000011 /* ListEditingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListEditingTests.swift; sourceTree = "<group>"; };
+		5DB1E00D2A00000000000001 /* Model 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 3.xcdatamodel"; sourceTree = "<group>"; };
+		5DB1E00E2A00000000000011 /* ImageProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessing.swift; sourceTree = "<group>"; };
+		5DB1E00E2A00000000000021 /* ImageAttachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageAttachments.swift; sourceTree = "<group>"; };
+		5DB1E00F2A00000000000011 /* ImageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				5D0FA707279BB60300ED6101 /* iOSnothingTests.swift */,
+				5DB1E00F2A00000000000011 /* ImageTests.swift */,
 				5DB1E00C2A00000000000011 /* ListEditingTests.swift */,
 			);
 			path = iOSnothingTests;
@@ -239,6 +249,8 @@
 				5DC043CC2774F3430093A613 /* AddNote.swift */,
 				5DF694A127685C0400782FE1 /* Persistence.swift */,
 				5DB1E0012A00000000000001 /* Item+Helpers.swift */,
+				5DB1E00E2A00000000000021 /* ImageAttachments.swift */,
+				5DB1E00E2A00000000000011 /* ImageProcessing.swift */,
 				5DB1E00B2A00000000000021 /* ListStyler.swift */,
 				5DB1E00B2A00000000000011 /* ListEditing.swift */,
 				5DB1E0092A00000000000011 /* LoopingVideo.swift */,
@@ -436,6 +448,8 @@
 				5DF90EA0279D0F17002B0828 /* NotesList-iOS.swift in Sources */,
 				5D0FA70E279BBAC000ED6101 /* Persistence.swift in Sources */,
 				5DB1E0012A00000000000003 /* Item+Helpers.swift in Sources */,
+				5DB1E00E2A00000000000023 /* ImageAttachments.swift in Sources */,
+				5DB1E00E2A00000000000013 /* ImageProcessing.swift in Sources */,
 				5DB1E00B2A00000000000023 /* ListStyler.swift in Sources */,
 				5DB1E00B2A00000000000013 /* ListEditing.swift in Sources */,
 				5DB1E0092A00000000000013 /* LoopingVideo.swift in Sources */,
@@ -455,6 +469,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D0FA708279BB60300ED6101 /* iOSnothingTests.swift in Sources */,
+				5DB1E00F2A00000000000012 /* ImageTests.swift in Sources */,
 				5DB1E00C2A00000000000012 /* ListEditingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -478,6 +493,8 @@
 				5DA29A2D2766475D006AE014 /* NotesApp.swift in Sources */,
 				5DF694A227685C0400782FE1 /* Persistence.swift in Sources */,
 				5DB1E0012A00000000000002 /* Item+Helpers.swift in Sources */,
+				5DB1E00E2A00000000000022 /* ImageAttachments.swift in Sources */,
+				5DB1E00E2A00000000000012 /* ImageProcessing.swift in Sources */,
 				5DB1E00B2A00000000000022 /* ListStyler.swift in Sources */,
 				5DB1E00B2A00000000000012 /* ListEditing.swift in Sources */,
 				5DB1E0092A00000000000012 /* LoopingVideo.swift in Sources */,
@@ -893,8 +910,9 @@
 			children = (
 				5DA29A5D27664DD8006AE014 /* Model.xcdatamodel */,
 				5DB1E0042A00000000000001 /* Model 2.xcdatamodel */,
+				5DB1E00D2A00000000000001 /* Model 3.xcdatamodel */,
 			);
-			currentVersion = 5DB1E0042A00000000000001 /* Model 2.xcdatamodel */;
+			currentVersion = 5DB1E00D2A00000000000001 /* Model 3.xcdatamodel */;
 			path = Model.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
