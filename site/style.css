@@ -168,6 +168,26 @@ footer {
 .top { position: absolute; top: 0; left: 0; right: 0; z-index: 2; }
 main { padding: 0; }
 .hero { height: 100vh; height: 100svh; }
+.hero-video { display: none; }
+/* Mac-size screens: the recorded app window under the header, as large as fits */
+@media (min-width: 761px) {
+  .top { position: static; }
+  .hero {
+    height: auto;
+    display: grid;
+    place-items: center;
+    padding: 0 16px;
+  }
+  .hero-video {
+    display: block;
+    width: min(100%, calc((100svh - 104px) * 1.6));
+    aspect-ratio: 16 / 10;
+    border-radius: 14px;
+    background: var(--editor-bg);
+    box-shadow: 0 24px 80px var(--video-shadow), 0 0 0 1px var(--line);
+  }
+  .hero .editor-hero { display: none; }
+}
 /* Stays on screen all the way down; dark on light, light on dark */
 .sticky-download {
   position: fixed;

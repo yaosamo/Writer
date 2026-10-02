@@ -36,6 +36,8 @@
   <main>
     <!-- Opens like the app, full screen -->
     <section class="hero" aria-label="Nothing">
+      <!-- The real app typing the line; phones get the typed text below instead -->
+      <video class="hero-video" muted playsinline preload="auto" aria-label="Nothing on a Mac, typing: Ascetic writer for your Mac and iPhone"></video>
       <div class="editor-hero">
         <div class="editor-header">
           <span>Title</span>
@@ -128,11 +130,36 @@
 
   <footer>
     <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
     <a href="https://github.com/yaosamo/Writer">Source</a>
     <span>© 2026 Yaroslav Samoylov</span>
   </footer>
 
   <script src="theme.js"></script>
+  <script>
+    // Hero video in the page's theme; plays once and rests on the typed line
+    (function () {
+      var video = document.querySelector(".hero-video");
+      if (!video || !window.matchMedia("(min-width: 761px)").matches) return;
+      var root = document.documentElement;
+      var media = window.matchMedia("(prefers-color-scheme: dark)");
+      var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function load() {
+        var theme = root.dataset.theme || (media.matches ? "dark" : "light");
+        var src = "media/hero-" + theme + ".mp4";
+        if (video.getAttribute("src") === src) return;
+        var replay = !video.getAttribute("src");
+        video.poster = "media/hero-" + theme + ".jpg";
+        video.src = src;
+        if (still) return;
+        if (replay) { video.play().catch(function () {}); }
+        else { video.addEventListener("loadeddata", function () { video.currentTime = video.duration || 0; }, { once: true }); }
+      }
+      new MutationObserver(load).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+      media.addEventListener("change", load);
+      load();
+    })();
+  </script>
   <script>
     // The hero types its line like the editor does; static for reduced motion
     (function () {
