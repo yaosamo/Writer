@@ -11,25 +11,18 @@ import CoreData
 
 
 struct NotesList: View {
-    
+
     // Managed Object from Coredata
     @Environment(\.managedObjectContext) var viewContext
+    @Environment(\.undoManager) private var undoManager
     @FetchRequest(sortDescriptors:
                     [NSSortDescriptor(key: "orderIndex", ascending: true)],
                   animation: .default)
-    
+
     var items: FetchedResults<Item>
-    @State var isEditing = false
-    @State var selection = Set<String>()
-    
-    //Text string
-    var emptyText = "Free your mind"
-    var emptyTitle = "Note"
-    @State var currentSelection: UUID?
-    @State private var selectedNote: Item? = nil
-    
+
     var body: some View {
-        
+
         NavigationView {
             ZStack(alignment: .bottom) {
                 List {
@@ -37,17 +30,13 @@ struct NotesList: View {
                     //Empty text works as padding above list
                     ForEach(items) { item in
                         ZStack {
-                            NavigationLink(
-                                destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
-                                tag: item.id ?? UUID(),
-                                selection: $currentSelection)
-                            {
-                                Text("\(item.title!)")
+                            NavigationLink(destination: EditorView(item: item)) {
+                                Text(item.displayTitle)
                                     .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
                                     .padding([.top, .bottom], 8)
                             }
                             .navigationBarHidden(true)
-                            
+
                             HStack {
                                 Spacer()
                                 Text(" ")
@@ -73,46 +62,14 @@ struct NotesList: View {
             } //ztack new
         }
     }
-    
-    private func move( from source: IndexSet, to destination: Int)
-    {
-        // Make an array of items from fetched results
-        var revisedItems: [ Item ] = items.map{ $0 }
-        
-        // change the order of the items in the array
-        revisedItems.move(fromOffsets: source, toOffset: destination )
-        // update the orderIndex attribute in revisedItems to
-        // persist the new order. This is done in reverse order
-        // to minimize changes to the indices.
-        for reverseIndex in stride( from: revisedItems.count - 1,
-                                    through: 0,
-                                    by: -1 )
-        {
-            revisedItems[ reverseIndex ].orderIndex =
-            Int16( reverseIndex )
-            
-            // checking if current item is selected and maintain it
-            if (currentSelection == revisedItems[ reverseIndex ].id) {
-                let newSpot = UUID()
-                revisedItems[ reverseIndex ].id = newSpot
-                currentSelection = newSpot
-            }
-        }
-        try? viewContext.save()
+
+    private func move(from source: IndexSet, to destination: Int) {
+        Item.reorder(Array(items), from: source, to: destination, in: viewContext)
     }
-    
+
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-            
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
+            offsets.map { items[$0] }.forEach { $0.delete(in: viewContext, undoManager: undoManager) }
         }
     }
 }

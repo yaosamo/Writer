@@ -1,25 +1,22 @@
 //
-//  EditorBody.swift
+//  AddNote.swift
 //  Notes
 //
 //  Created by Yaroslav Samoylov on 12/23/21.
 //
 
 import SwiftUI
+import CoreData
 
 
 struct AddNote: View {
-    
-    // Managed Object from Coredata
-     @Environment(\.managedObjectContext) var viewContext
-    
-    @State private var overText = false
-    @State var iconsize : CGFloat
 
-    //Text string
-    var emptyText = "Free your mind"
-    var emptyTitle = "Note"
-    
+    // Managed Object from Coredata
+    @Environment(\.managedObjectContext) var viewContext
+
+    @State private var isHovering = false
+    let iconsize: CGFloat
+
     var body: some View {
         Button(action: addNote) {
             Image(systemName: "plus")
@@ -29,33 +26,26 @@ struct AddNote: View {
             #if os(iOS)
                 .background(Color(red: 0.08, green: 0.08, blue: 0.08))
             #endif
-              
-        } .buttonStyle(.borderless)
-            .background(overText ? Color(red: 0.1, green: 0.1, blue: 0.12) :  Color(.clear))
-            .clipShape(Circle())
-            .onHover { over in
-                            overText = over
-                        }
-        #if os(macOS)
-            .onHover { inside in
-                if inside {
-                    NSCursor.pointingHand.push()
-                           } else {
-                               NSCursor.pop()
-                           }
+        }
+        .buttonStyle(.borderless)
+        .background(isHovering ? Color(red: 0.1, green: 0.1, blue: 0.12) : Color(.clear))
+        .clipShape(Circle())
+        .accessibilityLabel("New note")
+        .onHover { hovering in
+            isHovering = hovering
+            #if os(macOS)
+            if hovering {
+                NSCursor.pointingHand.push()
+            } else {
+                NSCursor.pop()
             }
-        #endif
+            #endif
+        }
     }
 
     private func addNote() {
         withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.date = Date()
-            newItem.note = emptyText
-            newItem.title = emptyTitle
-            newItem.id = UUID()
-            try? viewContext.save()
-            let _ = print("new created")
+            Item.create(in: viewContext)
         }
     }
 }
@@ -64,5 +54,5 @@ struct AddNote: View {
 struct AddNote_Previews: PreviewProvider {
     static var previews: some View {
         AddNote(iconsize: 24)
-        }
     }
+}

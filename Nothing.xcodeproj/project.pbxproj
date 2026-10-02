@@ -31,6 +31,8 @@
 		5DF694A427686A2900782FE1 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF694A327686A2900782FE1 /* EditorView.swift */; };
 		5DF90E9E279D0F11002B0828 /* NotesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CA2774F1A10093A613 /* NotesList.swift */; };
 		5DF90EA0279D0F17002B0828 /* NotesList-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF90E9F279D0F17002B0828 /* NotesList-iOS.swift */; };
+		5DB1E0012A00000000000002 /* Item+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0012A00000000000001 /* Item+Helpers.swift */; };
+		5DB1E0012A00000000000003 /* Item+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0012A00000000000001 /* Item+Helpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +78,7 @@
 		5DF694A127685C0400782FE1 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		5DF694A327686A2900782FE1 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; usesTabs = 1; };
 		5DF90E9F279D0F17002B0828 /* NotesList-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotesList-iOS.swift"; sourceTree = "<group>"; };
+		5DB1E0012A00000000000001 /* Item+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Item+Helpers.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +194,7 @@
 				5DF694A327686A2900782FE1 /* EditorView.swift */,
 				5DC043CC2774F3430093A613 /* AddNote.swift */,
 				5DF694A127685C0400782FE1 /* Persistence.swift */,
+				5DB1E0012A00000000000001 /* Item+Helpers.swift */,
 				5DA29A302766475D006AE014 /* Assets.xcassets */,
 				5DA29A352766475D006AE014 /* Notes.entitlements */,
 				5DA29A5C27664DD8006AE014 /* Model.xcdatamodeld */,
@@ -374,6 +378,7 @@
 				5D0FA767279BC9D600ED6101 /* NotesApp.swift in Sources */,
 				5DF90EA0279D0F17002B0828 /* NotesList-iOS.swift in Sources */,
 				5D0FA70E279BBAC000ED6101 /* Persistence.swift in Sources */,
+				5DB1E0012A00000000000003 /* Item+Helpers.swift in Sources */,
 				5DF3AFDF279BFD78009BD6B5 /* EditorView-iOS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -403,6 +408,7 @@
 				5DA29A2F2766475D006AE014 /* ContentView.swift in Sources */,
 				5DA29A2D2766475D006AE014 /* NotesApp.swift in Sources */,
 				5DF694A227685C0400782FE1 /* Persistence.swift in Sources */,
+				5DB1E0012A00000000000002 /* Item+Helpers.swift in Sources */,
 				5DA29A5E27664DD8006AE014 /* Model.xcdatamodeld in Sources */,
 				5DF694A427686A2900782FE1 /* EditorView.swift in Sources */,
 				5DF90E9E279D0F11002B0828 /* NotesList.swift in Sources */,

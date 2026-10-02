@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 extension UINavigationController: UIGestureRecognizerDelegate {
     open override func viewDidLoad() {
@@ -19,70 +20,66 @@ extension UINavigationController: UIGestureRecognizerDelegate {
 }
 
 struct EditorView: View {
-    
+
     // Coredata for saving / updating viewContext
     @Environment(\.managedObjectContext) var viewContext
-    
-    //Text string
-    var emptyText = "Free your mind"
-    var emptyTitle = "Note"
-    
-    private enum Field: Int {
-         case yourTextEdit
-     }
+    @Environment(\.dismiss) private var dismiss
+
+    private enum Field: Hashable {
+        case title
+        case note
+    }
     @FocusState private var focusedField: Field?
 
-    //Item var for which we perform an upd  ate
-    @State var item: Item
-    @State var note: String
-    @State var date: Date
-    @State var title: String
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    // Observed directly so edits synced from other devices show up and aren't overwritten
+    @ObservedObject var item: Item
+
     var body: some View {
-        
-        
+
+
         // Wrap editor and add button into zstack so add button is sticky
         ZStack(alignment: Alignment(horizontal: .leading, vertical: .top))  {
                 ScrollView(showsIndicators: false) {
                     VStack {
                         HStack {
-                            TextField("Title", text: $title)
+                            TextField("Title", text: $item.titleText)
                                 .textFieldStyle(PlainTextFieldStyle())
-                                .onChange(of: title) { newValue in
-                                    updateItem(item: item)
-                                }
+                                .focused($focusedField, equals: .title)
                             Spacer()
                             Text("\(item.date ?? Date(), formatter: itemFormatter)")
-                            
+
                         }
                         .padding(.top, 88)
                         .padding(.bottom, 56)
                         .font(.system(size: 16, weight: Font.Weight.thin, design: .monospaced))
                         .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
-                        
+
                         // Paddings top and bottom for Date and Title
                             .padding([.bottom, .top], 20.0)
-                        TextEditor(text: $note)
-                            .focused($focusedField, equals: .yourTextEdit)
+                        TextEditor(text: $item.noteText)
+                            .focused($focusedField, equals: .note)
                             .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
                             .disableAutocorrection(true)
                             .foregroundColor(Color(red: 0.72, green: 0.72, blue: 0.73))
                             .lineSpacing(5.0)
-                            .onChange(of: note) { newValue in
-                                updateItem(item: item)
-                            }
-                            .onTapGesture {
-                                        if (focusedField != nil) {
-                                            focusedField = nil
-                                        }
+                            .overlay(alignment: .topLeading) {
+                                if item.noteText.isEmpty {
+                                    Text(emptyNotePlaceholder)
+                                        .font(.system(size: 18, weight: Font.Weight.thin, design: .monospaced))
+                                        .foregroundColor(Color(red: 0.47, green: 0.47, blue: 0.52))
+                                        .padding(.top, 8) // UITextView text container inset
+                                        .padding(.leading, 5) // line fragment padding
+                                        .allowsHitTesting(false)
+                                }
                             }
                             .frame(idealHeight: 800*2, alignment: .top)
                     } // vstack
                 }  // scrollview
+                .scrollDismissesKeyboard(.interactively)
                 .padding([.trailing, .leading], 24)
                 .frame(alignment: .bottom)
             // back button
-            Button(action: goback) {
+            Button(action: { dismiss() }) {
                 Image(systemName: "chevron.backward")
                     .foregroundColor(.white)
                     .font(.system(size: 16, weight: Font.Weight.regular, design: .rounded))
@@ -90,24 +87,30 @@ struct EditorView: View {
                     .background(.black)
                     .clipShape(Circle())
             }
+            .accessibilityLabel("Back")
         } // z-stack
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button {
+                    focusedField = nil
+                } label: {
+                    Image(systemName: "keyboard.chevron.compact.down")
+                }
+                .accessibilityLabel("Hide keyboard")
+            }
+        }
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
-    }
-    
-    // Updating item funcion
-    private func updateItem(item: Item) {
-        let note = note
-        let title = title
-        viewContext.performAndWait {
-            item.note = note
-            item.title = title
-            try? viewContext.save()
+        // Debounced save: restarts on every change, saves after a pause in typing
+        .task(id: [item.title, item.note]) {
+            try? await Task.sleep(for: .seconds(1))
+            guard !Task.isCancelled else { return }
+            viewContext.saveIfNeeded()
         }
-    }
-    
-    private func goback() {
-        self.presentationMode.wrappedValue.dismiss()
+        .onDisappear {
+            viewContext.saveIfNeeded()
+        }
     }
 }
 

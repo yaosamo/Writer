@@ -10,27 +10,21 @@ import CoreData
 
 
 struct NotesList: View {
-    
+
     // Managed Object from Coredata
     @Environment(\.managedObjectContext) var viewContext
+    @Environment(\.undoManager) private var undoManager
     @FetchRequest(sortDescriptors:
                     [NSSortDescriptor(key: "orderIndex", ascending: true)],
                   animation: .default)
-    
+
     var items: FetchedResults<Item>
-    
-    let bgcolor = Color(red: 0.08, green: 0.14, blue: 0.13)
-    let selectedColor = Color(red: 0.06, green: 0.10, blue: 0.09)
-    
-    
-    //Text string
-    var emptyText = "Free your mind"
-    var emptyTitle = "Note"
-    @State var currentSelection: UUID?
-    @State private var selectedNote: Item? = nil
-    
+
+    // objectID is stable once saved, so selection never requires mutating the note
+    @State private var currentSelection: NSManagedObjectID?
+
     var body: some View {
-        
+
         NavigationView {
             List {
                 //Empty text works as padding above list
@@ -38,38 +32,38 @@ struct NotesList: View {
                     .padding(.bottom, 32.0)
                 ForEach(items) { item in
                     NavigationLink(
-                        destination: EditorView(item: item, note: item.note ?? emptyText, date: item.date!, title: item.title ?? emptyTitle),
-                        tag: item.id ?? UUID(),
+                        destination: EditorView(item: item),
+                        tag: item.objectID,
                         selection: $currentSelection)
                     {
-                        Text("\(item.title!)")
+                        Text(item.displayTitle)
                             .font(.system(size: 12, weight: Font.Weight.thin, design: .monospaced))
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing) // sidebar elements
-                    
+
                     // Deleting with right click
-                    .contextMenu(ContextMenu(menuItems: {
-                        Button(action: {viewContext.delete(item)
-                            do {
-                                try? viewContext.save()
-                            }
-                        }, label: {
-                            Text("Delete")
-                        })
-                    }))
+                    .contextMenu {
+                        Button("Delete") {
+                            delete(item)
+                        }
+                    }
                 }
                 // On move perform function called move
                 .onMove( perform: move )
             }
             .onDeleteCommand {
-                let _ = print("delete")
+                if let item = items.first(where: { $0.objectID == currentSelection }) {
+                    delete(item)
+                }
             }
-            // on change of items count set current selection in the list to firts item
-            .onChange(of: items.count) { newValue in
-                if (items.count >= 1) {
-                    let newSpot = UUID()
-                    items.first?.id = newSpot
-                    currentSelection = newSpot
+            // Select newly created notes
+            .onReceive(NotificationCenter.default.publisher(for: .noteCreated)) { notification in
+                currentSelection = notification.object as? NSManagedObjectID
+            }
+            // Keep a valid selection when notes are deleted here or on another device
+            .onChange(of: items.count) {
+                if !items.contains(where: { $0.objectID == currentSelection }) {
+                    currentSelection = items.first?.objectID
                 }
             }
             .ignoresSafeArea()
@@ -79,38 +73,19 @@ struct NotesList: View {
         .ignoresSafeArea()
         .background(Color(red: 0.06, green: 0.07, blue: 0.06))
         .environment(\.layoutDirection, .rightToLeft) //navigation view ends
-        .onAppear(perform: first)
-    }
-    
-    private func first() {
-        currentSelection = items.first?.id
-    }
-    
-    private func move( from source: IndexSet, to destination: Int)
-    {
-        // Make an array of items from fetched results
-        var revisedItems: [ Item ] = items.map{ $0 }
-        
-        // change the order of the items in the array
-        revisedItems.move(fromOffsets: source, toOffset: destination )
-        // update the orderIndex attribute in revisedItems to
-        // persist the new order. This is done in reverse order
-        // to minimize changes to the indices.
-        for reverseIndex in stride( from: revisedItems.count - 1,
-                                    through: 0,
-                                    by: -1 )
-        {
-            revisedItems[ reverseIndex ].orderIndex =
-            Int16( reverseIndex )
-            
-            // checking if current item is selected and maintain it
-            if (currentSelection == revisedItems[ reverseIndex ].id) {
-                let newSpot = UUID()
-                revisedItems[ reverseIndex ].id = newSpot
-                currentSelection = newSpot
-            }
+        .onAppear {
+            currentSelection = items.first?.objectID
         }
-        try? viewContext.save()
+    }
+
+    private func delete(_ item: Item) {
+        withAnimation {
+            item.delete(in: viewContext, undoManager: undoManager)
+        }
+    }
+
+    private func move(from source: IndexSet, to destination: Int) {
+        Item.reorder(Array(items), from: source, to: destination, in: viewContext)
     }
 }
 
