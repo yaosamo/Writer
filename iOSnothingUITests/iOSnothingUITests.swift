@@ -56,11 +56,12 @@ class iOSnothingUITests: XCTestCase {
         app.buttons["New Folder · Pro"].tap()
 
         XCTAssertTrue(app.staticTexts["Nothing Pro"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["Restore purchase"].exists)
+        XCTAssertTrue(app.buttons["Restore"].exists)
         attachScreenshot(app, "Paywall")
 
-        app.buttons["Close"].tap()
-        XCTAssertFalse(app.staticTexts["Nothing Pro"].waitForExistence(timeout: 2))
+        // No close button: the sheet is dismissed by swiping down
+        app.swipeDown(velocity: .fast)
+        XCTAssertFalse(app.staticTexts["Nothing Pro"].waitForExistence(timeout: 3))
     }
 
     // Pro: create a folder, file a note into it, switch theme

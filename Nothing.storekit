@@ -1,33 +1,58 @@
 {
-  "identifier" : "4E7C1B2A",
-  "nonRenewingSubscriptions" : [
-
-  ],
-  "products" : [
+  "identifier": "4E7C1B2A",
+  "nonRenewingSubscriptions": [],
+  "products": [
     {
-      "displayPrice" : "9.99",
-      "familyShareable" : true,
-      "internalID" : "6740000001",
-      "localizations" : [
+      "displayPrice": "29.99",
+      "familyShareable": true,
+      "internalID": "6740000001",
+      "localizations": [
         {
-          "description" : "Folders, themes and future Pro features. One-time purchase.",
-          "displayName" : "Nothing Pro",
-          "locale" : "en_US"
+          "description": "Folders, themes and future Pro features. One-time purchase.",
+          "displayName": "Nothing Pro Lifetime",
+          "locale": "en_US"
         }
       ],
-      "productID" : "com.yaosamo.NothingWriter.pro",
-      "referenceName" : "Nothing Pro",
-      "type" : "NonConsumable"
+      "productID": "com.yaosamo.NothingWriter.pro",
+      "referenceName": "Nothing Pro",
+      "type": "NonConsumable"
     }
   ],
-  "settings" : {
-    "_failTransactionsEnabled" : false
+  "settings": {
+    "_failTransactionsEnabled": false
   },
-  "subscriptionGroups" : [
-
+  "subscriptionGroups": [
+    {
+      "id": "21000001",
+      "localizations": [],
+      "name": "Nothing Pro",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "0.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6740000002",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "All Pro features, billed monthly.",
+              "displayName": "Nothing Pro Monthly",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.yaosamo.NothingWriter.pro.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Nothing Pro Monthly",
+          "subscriptionGroupID": "21000001",
+          "type": "RecurringSubscription"
+        }
+      ]
+    }
   ],
-  "version" : {
-    "major" : 4,
-    "minor" : 0
+  "version": {
+    "major": 4,
+    "minor": 0
   }
 }

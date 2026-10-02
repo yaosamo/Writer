@@ -2,8 +2,8 @@
 //  Store.swift
 //  Notes
 //
-//  Nothing Pro: a one-time, lifetime non-consumable purchase (StoreKit 2).
-//  Mac and iOS share the bundle ID, so one purchase unlocks both.
+//  Nothing Pro (StoreKit 2): a one-time lifetime purchase, or a monthly subscription.
+//  Either one unlocks Pro. Mac and iOS share the bundle ID, so one purchase unlocks both.
 //
 
 import Foundation
@@ -17,16 +17,20 @@ extension Notification.Name {
 @MainActor
 @Observable
 final class Store {
-    static let proProductID = "com.yaosamo.NothingWriter.pro"
+    static let lifetimeID = "com.yaosamo.NothingWriter.pro"
+    static let monthlyID = "com.yaosamo.NothingWriter.pro.monthly"
 
-    private(set) var product: Product?
+    private(set) var lifetime: Product?
+    private(set) var monthly: Product?
     private(set) var isPro = false
+    // Pro through the subscription (shows "Manage subscription")
+    private(set) var isSubscribed = false
     private(set) var isPurchasing = false
-    private(set) var didLoadProduct = false
+    private(set) var didLoadProducts = false
     private(set) var message: String?
 
     init() {
-        // Purchases made on another device, Ask to Buy approvals and refunds arrive here
+        // Purchases made on another device, Ask to Buy approvals, renewals and refunds arrive here
         Task { [weak self] in
             for await result in Transaction.updates {
                 if case .verified(let transaction) = result {
@@ -36,7 +40,7 @@ final class Store {
             }
         }
         Task {
-            await loadProduct()
+            await loadProducts()
             await refreshEntitlement()
         }
     }
@@ -49,8 +53,7 @@ final class Store {
         return isPro
     }
 
-    func purchase() async {
-        guard let product else { return }
+    func purchase(_ product: Product) async {
         isPurchasing = true
         message = nil
         defer { isPurchasing = false }
@@ -58,7 +61,7 @@ final class Store {
             switch try await product.purchase() {
             case .success(.verified(let transaction)):
                 await transaction.finish()
-                isPro = true
+                await refreshEntitlement()
             case .success(.unverified):
                 message = "The App Store couldn't verify this purchase"
             case .pending:
@@ -86,29 +89,35 @@ final class Store {
         }
     }
 
-    private func loadProduct() async {
+    private func loadProducts() async {
         do {
-            product = try await Product.products(for: [Self.proProductID]).first
+            let products = try await Product.products(for: [Self.lifetimeID, Self.monthlyID])
+            lifetime = products.first { $0.id == Self.lifetimeID }
+            monthly = products.first { $0.id == Self.monthlyID }
         } catch {
             message = error.localizedDescription
         }
-        didLoadProduct = true
+        didLoadProducts = true
     }
 
-    // currentEntitlements is cached by StoreKit, so this works offline
+    // currentEntitlements is cached by StoreKit (works offline) and only lists active subscriptions
     private func refreshEntitlement() async {
-        var unlocked = false
+        var lifetimeOwned = false
+        var subscribed = false
         for await result in Transaction.currentEntitlements {
-            if case .verified(let transaction) = result,
-               transaction.productID == Self.proProductID,
-               transaction.revocationDate == nil {
-                unlocked = true
+            guard case .verified(let transaction) = result, transaction.revocationDate == nil else { continue }
+            switch transaction.productID {
+            case Self.lifetimeID: lifetimeOwned = true
+            case Self.monthlyID: subscribed = true
+            default: break
             }
         }
+        var unlocked = lifetimeOwned || subscribed
         #if DEBUG
         // Launch with -debugProUnlocked YES to test Pro features without a purchase
         unlocked = unlocked || UserDefaults.standard.bool(forKey: "debugProUnlocked")
         #endif
         isPro = unlocked
+        isSubscribed = subscribed && !lifetimeOwned
     }
 }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import StoreKit
 
 private let privacyURL = URL(string: "https://github.com/yaosamo/Writer/blob/main/PrivacyPolicy.md")!
 private let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
@@ -20,14 +21,6 @@ private enum ProFeature: CaseIterable {
         case .folders: "Folders"
         case .themes: "Themes"
         case .images: "Images"
-        }
-    }
-
-    var detail: String {
-        switch self {
-        case .folders: "Group notes, keep the page quiet"
-        case .themes: "Dark Sepia, Midnight and Light"
-        case .images: "Paste photos and screenshots into notes"
         }
     }
 
@@ -62,41 +55,35 @@ struct PaywallView: View {
     var body: some View {
         Group {
             if isWide {
-                // Video fills the left side edge to edge; the right column spans top to bottom
                 HStack(spacing: 0) {
-                    LoopingVideo(resource: feature.clip)
-                        .id(feature)
-                        .transition(.opacity)
+                    // Inset 8pt from the window edges; corners follow the window's (minus the inset)
+                    clip(cornerRadius: 10)
                         .frame(width: 640)
                         .frame(maxHeight: .infinity)
-                        .clipped()
-                        .accessibilityHidden(true)
-                    VStack(alignment: .leading, spacing: 0) {
-                        header
-                        Spacer(minLength: 32)
-                        featureList
-                        Spacer(minLength: 32)
-                        purchase
-                    }
-                    .padding(40)
-                    .frame(width: 400)
+                        .padding([.leading, .top, .bottom], 8)
+                    side
+                        .padding(.horizontal, 44)
+                        .padding(.vertical, 48)
+                        .frame(width: 400)
                 }
                 .frame(height: 580)
+                .ignoresSafeArea()
             } else {
                 VStack(alignment: .leading, spacing: 28) {
-                    header
-                    video
-                    featureList
-                    purchase
+                    clip(cornerRadius: 14)
+                        .aspectRatio(4.0 / 3.0, contentMode: .fit)
+                    side
                 }
-                .padding(32)
+                .padding(20)
             }
         }
         #if os(macOS)
         .background(palette.background)
+        .onExitCommand { dismiss() }
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .presentationDetents([.large])
+        .presentationDragIndicator(.visible)
         .presentationBackground(palette.background)
         #endif
         .preferredColorScheme(palette.colorScheme)
@@ -105,57 +92,43 @@ struct PaywallView: View {
         }
     }
 
-    private var header: some View {
-        HStack {
-            Text("Nothing Pro")
-                .font(.system(size: 20, weight: .regular, design: .monospaced))
-                .foregroundColor(palette.text)
-            Spacer()
-            Button {
-                dismiss()
-            } label: {
-                // Small glyph, large target: the whole 44pt square closes the sheet
-                Image(systemName: "xmark")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(palette.secondaryText)
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .padding(.trailing, -14)
-            .padding(.vertical, -12)
-            .keyboardShortcut(.cancelAction)
-            .accessibilityLabel("Close")
-        }
-    }
-
     // The selected feature in motion; cycles on its own, tap a feature to pick it
-    private var video: some View {
+    private func clip(cornerRadius: CGFloat) -> some View {
         LoopingVideo(resource: feature.clip)
             .id(feature)
             .transition(.opacity)
-            .aspectRatio(proVideoAspect, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(palette.secondaryText.opacity(0.2), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             .accessibilityHidden(true)
     }
 
+    private var side: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Nothing Pro")
+                .font(.system(size: 20, weight: .regular, design: .monospaced))
+                .foregroundColor(palette.text)
+            Spacer(minLength: 32)
+            featureList
+            Spacer(minLength: 32)
+            purchase
+        }
+    }
+
     private var featureList: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 14) {
             ForEach(ProFeature.allCases, id: \.self) { item in
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) { feature = item }
                 } label: {
-                    featureRow(item.title, item.detail)
-                        .opacity(item == feature ? 1 : 0.45)
+                    Text(item.title)
+                        .foregroundColor(palette.text)
+                        .opacity(item == feature ? 1 : 0.4)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
-            featureRow("What comes next", "Future Pro features included")
-                .opacity(0.45)
+            Text("and what comes next")
+                .foregroundColor(palette.secondaryText)
         }
         .task(id: feature) {
             try? await Task.sleep(for: .seconds(7))
@@ -165,36 +138,37 @@ struct PaywallView: View {
     }
 
     private var purchase: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 12) {
             if store.isPro {
                 Text("Unlocked. Thank you.")
-                    .foregroundColor(palette.caret)
-            } else {
-                Button {
-                    Task { await store.purchase() }
-                } label: {
-                    // White on dark themes (the text colour, so it stays visible on Light)
-                    Text(buttonTitle)
-                        .font(.system(size: 15, weight: .medium, design: .monospaced))
-                        .foregroundColor(palette.background)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(palette.colorScheme == .dark ? Color.white : palette.text)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .foregroundColor(palette.text)
+                if store.isSubscribed {
+                    Link("Manage subscription", destination: URL(string: "https://apps.apple.com/account/subscriptions")!)
+                        .buttonStyle(.plain)
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundColor(palette.secondaryText)
                 }
-                .buttonStyle(.plain)
-                .disabled(!canPurchase)
+            } else {
+                option("Lifetime", price: price(store.lifetime, demo: "demoPrice"), primary: true) {
+                    if let product = store.lifetime { Task { await store.purchase(product) } }
+                }
+                option("Monthly", price: price(store.monthly, demo: "demoMonthlyPrice").map { "\($0) / month" }, primary: false) {
+                    if let product = store.monthly { Task { await store.purchase(product) } }
+                }
+                Text("Monthly renews until you cancel it in Settings.")
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(palette.secondaryText)
             }
 
             if let message = store.message {
                 Text(message)
-                    .font(.system(size: 12, design: .monospaced))
+                    .font(.system(size: 11, design: .monospaced))
                     .foregroundColor(palette.secondaryText)
             }
 
             HStack(spacing: 16) {
                 if !store.isPro {
-                    Button("Restore purchase") {
+                    Button("Restore") {
                         Task { await store.restore() }
                     }
                 }
@@ -205,47 +179,39 @@ struct PaywallView: View {
             .buttonStyle(.plain)
             .font(.system(size: 11, design: .monospaced))
             .foregroundColor(palette.secondaryText)
+            .padding(.top, 8)
         }
     }
 
-    // Close-ups: 16:10 on Mac, 4:3 on iPhone
-    private var proVideoAspect: CGFloat {
-        #if os(macOS)
-        16.0 / 10.0
-        #else
-        4.0 / 3.0
-        #endif
-    }
-
-    private var canPurchase: Bool {
-        #if DEBUG
-        if UserDefaults.standard.string(forKey: "demoPrice") != nil { return true }
-        #endif
-        return store.product != nil && !store.isPurchasing
-    }
-
-    private var buttonTitle: String {
-        if store.isPurchasing { return "Purchasing" }
-        guard let product = store.product else {
-            #if DEBUG
-            // Demo recordings: -demoPrice '$9.99' when no StoreKit configuration is loaded
-            if let price = UserDefaults.standard.string(forKey: "demoPrice") {
-                return "Unlock for \(price), once"
+    // Lifetime: white (the text colour on Light); monthly: outlined
+    private func option(_ title: String, price: String?, primary: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack {
+                Text(title)
+                Spacer()
+                Text(price ?? (store.didLoadProducts ? "Unavailable" : "…"))
             }
-            #endif
-            return store.didLoadProduct ? "App Store unavailable" : "Loading"
+            .font(.system(size: 14, weight: .medium, design: .monospaced))
+            .foregroundColor(primary ? palette.background : palette.text)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 13)
+            .background(primary ? (palette.colorScheme == .dark ? Color.white : palette.text) : Color.clear)
+            .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(primary ? Color.clear : palette.secondaryText.opacity(0.5), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .contentShape(Rectangle())
         }
-        return "Unlock for \(product.displayPrice), once"
+        .buttonStyle(.plain)
+        .disabled(price == nil || store.isPurchasing)
     }
 
-    private func featureRow(_ title: String, _ detail: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .foregroundColor(palette.text)
-            Text(detail)
-                .font(.system(size: 12, design: .monospaced))
-                .foregroundColor(palette.secondaryText)
-        }
+    private func price(_ product: Product?, demo key: String) -> String? {
+        if let product { return product.displayPrice }
+        #if DEBUG
+        // Demo recordings: -demoPrice '$29.99' -demoMonthlyPrice '$0.99'
+        if let value = UserDefaults.standard.string(forKey: key) { return value }
+        #endif
+        return nil
     }
 }
 
