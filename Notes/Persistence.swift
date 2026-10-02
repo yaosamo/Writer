@@ -9,7 +9,16 @@ import CoreData
 import os
 
 struct PersistenceController {
-    static let shared = PersistenceController()
+    static let shared: PersistenceController = {
+        #if DEBUG
+        if DemoContent.isEnabled {
+            let controller = PersistenceController(inMemory: true)
+            DemoContent.seed(controller.container.viewContext)
+            return controller
+        }
+        #endif
+        return PersistenceController()
+    }()
 
     static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)

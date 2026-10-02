@@ -17,6 +17,7 @@ struct NotesList: View {
     @Environment(\.managedObjectContext) var viewContext
     @Environment(\.undoManager) private var undoManager
     @Environment(\.palette) private var palette
+    @Environment(Store.self) private var store
     @FetchRequest(sortDescriptors:
                     [NSSortDescriptor(key: "orderIndex", ascending: true)],
                   animation: .default)
@@ -53,8 +54,8 @@ struct NotesList: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(alignment: .topTrailing) {
                     HStack(spacing: 0) {
-                        // New notes go into the folder of the note being edited
-                        AddNote(iconsize: 16, folder: selectedItem?.folder)
+                        NewItemMenu(iconsize: 16)
+                        MoreMenu()
                         CircleIconButton(systemName: "sidebar.right",
                                          label: sidebarVisible ? "Hide notes" : "Show notes",
                                          iconsize: 15,
@@ -79,6 +80,19 @@ struct NotesList: View {
         .animation(.smooth(duration: 0.3), value: sidebarVisible)
         .ignoresSafeArea()
         .background(palette.background)
+        // New notes go into the folder of the note being edited
+        .onReceive(NotificationCenter.default.publisher(for: .newNoteRequested)) { _ in
+            withAnimation {
+                Item.create(in: viewContext, folder: selectedItem?.folder, undoManager: undoManager)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .newFolderRequested)) { _ in
+            if store.requirePro() {
+                withAnimation {
+                    Folder.create(in: viewContext)
+                }
+            }
+        }
         // Select newly created notes
         .onReceive(NotificationCenter.default.publisher(for: .noteCreated)) { notification in
             selection = notification.object as? NSManagedObjectID
@@ -157,14 +171,9 @@ struct NotesList: View {
                 }
             }
 
-            HStack(spacing: 0) {
-                SyncStatusView()
-                Spacer(minLength: 8)
-                MoreMenu()
-            }
-            .padding(.leading, 20)
-            .padding(.trailing, 8)
-            .padding(.bottom, 8)
+            SyncStatusView()
+                .padding(.horizontal, 20)
+                .padding(.bottom, 16)
         }
         .padding(.top, 40)
         .background(SidebarMaterial())

@@ -138,27 +138,29 @@ struct ThemeMenuItems: View {
     }
 }
 
-// "…" menu: new folder, theme, Pro
+// "…" menu: Nothing Pro and theme
 struct MoreMenu: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(Store.self) private var store
     @Environment(\.palette) private var palette
 
     var body: some View {
         Menu {
-            Button {
-                if store.requirePro() {
-                    Folder.create(in: viewContext)
+            if !store.isPro {
+                Button {
+                    NotificationCenter.default.post(name: .showPaywall, object: nil)
+                } label: {
+                    Label("Unlock Nothing Pro…", systemImage: "sparkle")
                 }
-            } label: {
-                Label("New Folder", systemImage: store.isPro ? "folder.badge.plus" : "lock")
+                Divider()
             }
             Menu("Theme") {
                 ThemeMenuItems()
             }
-            Divider()
-            Button(store.isPro ? "Nothing Pro: unlocked" : "Nothing Pro…") {
-                NotificationCenter.default.post(name: .showPaywall, object: nil)
+            if store.isPro {
+                Divider()
+                Button("Nothing Pro: unlocked") {
+                    NotificationCenter.default.post(name: .showPaywall, object: nil)
+                }
             }
         } label: {
             Image(systemName: "ellipsis")
@@ -176,5 +178,22 @@ struct MoreMenu: View {
         .fixedSize()
         #endif
         .accessibilityLabel("More")
+        .help("Theme and Nothing Pro")
+    }
+}
+
+// File menu: New Note / New Folder
+struct NoteCommands: Commands {
+    var body: some Commands {
+        CommandGroup(replacing: .newItem) {
+            Button("New Note") {
+                NotificationCenter.default.post(name: .newNoteRequested, object: nil)
+            }
+            .keyboardShortcut("n", modifiers: .command)
+            Button("New Folder") {
+                NotificationCenter.default.post(name: .newFolderRequested, object: nil)
+            }
+            .keyboardShortcut("n", modifiers: [.command, .shift])
+        }
     }
 }

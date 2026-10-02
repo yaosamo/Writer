@@ -1,5 +1,5 @@
 //
-//  AddNote.swift
+//  AddNote.swift (new note / folder menu, shared buttons)
 //  Notes
 //
 //  Created by Yaroslav Samoylov on 12/23/21.
@@ -9,25 +9,49 @@ import SwiftUI
 import CoreData
 
 
-struct AddNote: View {
+extension Notification.Name {
+    // Handled by the note list, which knows the current folder and undo manager
+    static let newNoteRequested = Notification.Name("newNoteRequested")
+    static let newFolderRequested = Notification.Name("newFolderRequested")
+}
 
-    // Managed Object from Coredata
-    @Environment(\.managedObjectContext) var viewContext
-    @Environment(\.undoManager) private var undoManager
+// "+" menu: new note, or new folder (Pro). ⌘N / ⇧⌘N do the same from the File menu
+struct NewItemMenu: View {
+    @Environment(Store.self) private var store
+    @Environment(\.palette) private var palette
 
     let iconsize: CGFloat
-    // Folder for the new note; nil = unfiled
-    var folder: Folder? = nil
 
     var body: some View {
-        CircleIconButton(systemName: "plus", label: "New note", iconsize: iconsize, action: addNote)
-            .keyboardShortcut("n", modifiers: .command)
-    }
-
-    private func addNote() {
-        withAnimation {
-            Item.create(in: viewContext, folder: folder, undoManager: undoManager)
+        Menu {
+            Button {
+                NotificationCenter.default.post(name: .newNoteRequested, object: nil)
+            } label: {
+                Label("New Note", systemImage: "square.and.pencil")
+            }
+            Button {
+                NotificationCenter.default.post(name: .newFolderRequested, object: nil)
+            } label: {
+                Label(store.isPro ? "New Folder" : "New Folder · Pro",
+                      systemImage: store.isPro ? "folder.badge.plus" : "lock")
+            }
+        } label: {
+            Image(systemName: "plus")
+                .font(.system(size: iconsize, weight: Font.Weight.regular, design: .rounded))
+                .foregroundColor(palette.buttonForeground)
+                .frame(width: 48, height: 48)
+            #if os(iOS)
+                .background(palette.buttonBackground)
+                .clipShape(Circle())
+            #endif
         }
+        #if os(macOS)
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        #endif
+        .accessibilityLabel("New")
+        .help("New note or folder")
     }
 }
 
@@ -70,8 +94,9 @@ struct CircleIconButton: View {
 }
 
 
-struct AddNote_Previews: PreviewProvider {
+struct NewItemMenu_Previews: PreviewProvider {
     static var previews: some View {
-        AddNote(iconsize: 24)
+        NewItemMenu(iconsize: 24)
+            .environment(Store())
     }
 }

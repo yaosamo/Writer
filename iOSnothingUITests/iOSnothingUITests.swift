@@ -20,7 +20,8 @@ class iOSnothingUITests: XCTestCase {
         app.launch()
         attachScreenshot(app, "1 List")
 
-        app.buttons["New note"].tap()
+        app.buttons["New"].tap()
+        app.buttons["New Note"].tap()
         let newRow = app.buttons["Untitled"].firstMatch
         XCTAssertTrue(newRow.waitForExistence(timeout: 5))
         newRow.tap()
@@ -50,8 +51,9 @@ class iOSnothingUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        app.buttons["More"].tap()
-        app.buttons["New Folder"].tap()
+        // + offers New Folder, marked Pro for free users
+        app.buttons["New"].tap()
+        app.buttons["New Folder · Pro"].tap()
 
         XCTAssertTrue(app.staticTexts["Nothing Pro"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Restore purchase"].exists)
@@ -67,7 +69,7 @@ class iOSnothingUITests: XCTestCase {
         app.launchArguments += ["-debugProUnlocked", "YES"]
         app.launch()
 
-        app.buttons["More"].tap()
+        app.buttons["New"].tap()
         app.buttons["New Folder"].tap()
         // The new folder appears in the list with its name field focused
         let nameField = app.textFields["Folder name"]
@@ -76,7 +78,8 @@ class iOSnothingUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Ideas"].waitForExistence(timeout: 5))
         attachScreenshot(app, "Folder named inline")
 
-        app.buttons["New note"].tap()
+        app.buttons["New"].tap()
+        app.buttons["New Note"].tap()
         let note = app.buttons["Untitled"].firstMatch
         XCTAssertTrue(note.waitForExistence(timeout: 5))
         note.press(forDuration: 1.2)

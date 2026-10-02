@@ -16,6 +16,7 @@ struct NotesList: View {
     @Environment(\.managedObjectContext) var viewContext
     @Environment(\.undoManager) private var undoManager
     @Environment(\.palette) private var palette
+    @Environment(Store.self) private var store
     @FetchRequest(sortDescriptors:
                     [NSSortDescriptor(key: "orderIndex", ascending: true)],
                   animation: .default)
@@ -107,11 +108,23 @@ struct NotesList: View {
                         .padding(.leading, 32)
                     Spacer()
                     MoreMenu()
-                    AddNote(iconsize: 16)
+                    NewItemMenu(iconsize: 16)
                         .padding([.trailing], 8)
                 }
             } //ztack new
             .background(palette.background)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .newNoteRequested)) { _ in
+            withAnimation {
+                Item.create(in: viewContext, undoManager: undoManager)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .newFolderRequested)) { _ in
+            if store.requirePro() {
+                withAnimation {
+                    Folder.create(in: viewContext)
+                }
+            }
         }
         // New folders appear in the list ready to be named
         .onReceive(NotificationCenter.default.publisher(for: .folderCreated)) { notification in
