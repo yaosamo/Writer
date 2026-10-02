@@ -45,11 +45,7 @@ struct NewItemMenu: View {
                 .clipShape(Circle())
             #endif
         }
-        #if os(macOS)
-        .menuStyle(.borderlessButton)
-        .menuIndicator(.hidden)
-        .fixedSize()
-        #endif
+        .circleButtonChrome()
         .accessibilityLabel("New")
         .help("New note or folder")
     }
@@ -63,7 +59,6 @@ struct CircleIconButton: View {
     let action: () -> Void
 
     @Environment(\.palette) private var palette
-    @State private var isHovering = false
 
     var body: some View {
         Button(action: action) {
@@ -76,20 +71,52 @@ struct CircleIconButton: View {
             #endif
         }
         .buttonStyle(.borderless)
-        .background(isHovering ? palette.buttonHover : Color(.clear))
-        .clipShape(Circle())
+        .circleHover()
         .accessibilityLabel(label)
         .help(label)
-        .onHover { hovering in
-            isHovering = hovering
-            #if os(macOS)
-            if hovering {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pop()
+    }
+}
+
+extension View {
+    // Menus styled like CircleIconButton: borderless, no indicator, 48pt circle with hover
+    func circleButtonChrome() -> some View {
+        #if os(macOS)
+        // Button-style menus render the label as SwiftUI, so hover highlights work
+        self.menuStyle(.button)
+            .buttonStyle(.plain)
+            .menuIndicator(.hidden)
+            .circleHover()
+        #else
+        self
+        #endif
+    }
+
+    // Round hover highlight and pointing-hand cursor (macOS)
+    func circleHover() -> some View {
+        modifier(CircleHover())
+    }
+}
+
+private struct CircleHover: ViewModifier {
+    @Environment(\.palette) private var palette
+    @State private var isHovering = false
+
+    func body(content: Content) -> some View {
+        content
+            .frame(width: 48, height: 48)
+            .background(isHovering ? palette.buttonHover : Color.clear)
+            .clipShape(Circle())
+            .contentShape(Circle())
+            .onHover { hovering in
+                isHovering = hovering
+                #if os(macOS)
+                if hovering {
+                    NSCursor.pointingHand.push()
+                } else {
+                    NSCursor.pop()
+                }
+                #endif
             }
-            #endif
-        }
     }
 }
 

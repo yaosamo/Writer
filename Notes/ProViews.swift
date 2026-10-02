@@ -35,6 +35,14 @@ struct PaywallView: View {
                 .accessibilityLabel("Close")
             }
 
+            // Folders and themes in motion
+            LoopingVideo(resource: "ProVideo")
+                .aspectRatio(proVideoAspect, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(palette.secondaryText.opacity(0.2), lineWidth: 1))
+                .accessibilityHidden(true)
+
             VStack(alignment: .leading, spacing: 16) {
                 feature("Folders", "Group notes, keep the page quiet")
                 feature("Themes", "Dark Sepia, Midnight and Light")
@@ -57,7 +65,7 @@ struct PaywallView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .disabled(store.product == nil || store.isPurchasing)
+                .disabled(!canPurchase)
             }
 
             if let message = store.message {
@@ -86,7 +94,7 @@ struct PaywallView: View {
         .background(palette.background)
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .presentationDetents([.medium])
+        .presentationDetents([.large])
         .presentationBackground(palette.background)
         #endif
         .preferredColorScheme(palette.colorScheme)
@@ -95,9 +103,31 @@ struct PaywallView: View {
         }
     }
 
+    // Mac clip is a window (16:10), iPhone clip a crop of the note list (4:3)
+    private var proVideoAspect: CGFloat {
+        #if os(macOS)
+        16.0 / 10.0
+        #else
+        4.0 / 3.0
+        #endif
+    }
+
+    private var canPurchase: Bool {
+        #if DEBUG
+        if UserDefaults.standard.string(forKey: "demoPrice") != nil { return true }
+        #endif
+        return store.product != nil && !store.isPurchasing
+    }
+
     private var buttonTitle: String {
         if store.isPurchasing { return "Purchasing" }
         guard let product = store.product else {
+            #if DEBUG
+            // Demo recordings: -demoPrice '$9.99' when no StoreKit configuration is loaded
+            if let price = UserDefaults.standard.string(forKey: "demoPrice") {
+                return "Unlock for \(price), once"
+            }
+            #endif
             return store.didLoadProduct ? "App Store unavailable" : "Loading"
         }
         return "Unlock for \(product.displayPrice), once"
@@ -172,11 +202,7 @@ struct MoreMenu: View {
                 .clipShape(Circle())
             #endif
         }
-        #if os(macOS)
-        .menuStyle(.borderlessButton)
-        .menuIndicator(.hidden)
-        .fixedSize()
-        #endif
+        .circleButtonChrome()
         .accessibilityLabel("More")
         .help("Theme and Nothing Pro")
     }

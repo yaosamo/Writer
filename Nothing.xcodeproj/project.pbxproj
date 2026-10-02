@@ -47,6 +47,11 @@
 		5DB1E0052A00000000000013 /* FolderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0052A00000000000011 /* FolderRow.swift */; };
 		5DB1E0072A00000000000012 /* DemoContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0072A00000000000011 /* DemoContent.swift */; };
 		5DB1E0072A00000000000013 /* DemoContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0072A00000000000011 /* DemoContent.swift */; };
+		5DB1E0082A00000000000012 /* DemoRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0082A00000000000011 /* DemoRecording.swift */; };
+		5DB1E0092A00000000000012 /* LoopingVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0092A00000000000011 /* LoopingVideo.swift */; };
+		5DB1E0092A00000000000013 /* LoopingVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0092A00000000000011 /* LoopingVideo.swift */; };
+		5DB1E00A2A00000000000012 /* ProVideo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E00A2A00000000000011 /* ProVideo.mp4 */; };
+		5DB1E00A2A00000000000022 /* ProVideo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E00A2A00000000000021 /* ProVideo.mp4 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +107,10 @@
 		5DB1E0052A00000000000011 /* FolderRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderRow.swift; sourceTree = "<group>"; };
 		5DB1E0062A00000000000001 /* Nothing.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Nothing.storekit; sourceTree = "<group>"; };
 		5DB1E0072A00000000000011 /* DemoContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoContent.swift; sourceTree = "<group>"; };
+		5DB1E0082A00000000000011 /* DemoRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoRecording.swift; sourceTree = "<group>"; };
+		5DB1E0092A00000000000011 /* LoopingVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopingVideo.swift; sourceTree = "<group>"; };
+		5DB1E00A2A00000000000011 /* ProVideo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProVideo.mp4; sourceTree = "<group>"; };
+		5DB1E00A2A00000000000021 /* ProVideo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ProVideo.mp4; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +155,7 @@
 				5DF90E9F279D0F17002B0828 /* NotesList-iOS.swift */,
 				5DF3AFDE279BFD78009BD6B5 /* EditorView-iOS.swift */,
 				5D0FA6DE279BB58200ED6101 /* Assets.xcassets */,
+				5DB1E00A2A00000000000021 /* ProVideo.mp4 */,
 				5D0FA6E0279BB58200ED6101 /* Preview Content */,
 			);
 			path = iOSnothing;
@@ -172,6 +182,7 @@
 			children = (
 				5D0FA70B279BB61900ED6101 /* iOSnothingUITestsLaunchTests.swift */,
 				5D0FA709279BB61100ED6101 /* iOSnothingUITests.swift */,
+				5DB1E0082A00000000000011 /* DemoRecording.swift */,
 			);
 			path = iOSnothingUITests;
 			sourceTree = "<group>";
@@ -219,6 +230,7 @@
 				5DC043CC2774F3430093A613 /* AddNote.swift */,
 				5DF694A127685C0400782FE1 /* Persistence.swift */,
 				5DB1E0012A00000000000001 /* Item+Helpers.swift */,
+				5DB1E0092A00000000000011 /* LoopingVideo.swift */,
 				5DB1E0072A00000000000011 /* DemoContent.swift */,
 				5DB1E0052A00000000000011 /* FolderRow.swift */,
 				5DB1E0032A00000000000021 /* ProViews.swift */,
@@ -227,6 +239,7 @@
 				5DB1E0022A00000000000021 /* SyncMonitor.swift */,
 				5DB1E0022A00000000000011 /* Theme.swift */,
 				5DA29A302766475D006AE014 /* Assets.xcassets */,
+				5DB1E00A2A00000000000011 /* ProVideo.mp4 */,
 				5DA29A352766475D006AE014 /* Notes.entitlements */,
 				5DA29A5C27664DD8006AE014 /* Model.xcdatamodeld */,
 				5DA29A322766475D006AE014 /* Preview Content */,
@@ -369,6 +382,7 @@
 			files = (
 				5DAC67B2279F522500ECC629 /* Launch Screen.storyboard in Resources */,
 				5D0FA718279BBB7E00ED6101 /* Assets.xcassets in Resources */,
+				5DB1E00A2A00000000000022 /* ProVideo.mp4 in Resources */,
 				5D0FA6E2279BB58200ED6101 /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -392,6 +406,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D0FA716279BBB2600ED6101 /* Assets.xcassets in Resources */,
+				5DB1E00A2A00000000000012 /* ProVideo.mp4 in Resources */,
 				5DA29A342766475D006AE014 /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -410,6 +425,7 @@
 				5DF90EA0279D0F17002B0828 /* NotesList-iOS.swift in Sources */,
 				5D0FA70E279BBAC000ED6101 /* Persistence.swift in Sources */,
 				5DB1E0012A00000000000003 /* Item+Helpers.swift in Sources */,
+				5DB1E0092A00000000000013 /* LoopingVideo.swift in Sources */,
 				5DB1E0072A00000000000013 /* DemoContent.swift in Sources */,
 				5DB1E0052A00000000000013 /* FolderRow.swift in Sources */,
 				5DB1E0032A00000000000023 /* ProViews.swift in Sources */,
@@ -434,6 +450,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D0FA70A279BB61100ED6101 /* iOSnothingUITests.swift in Sources */,
+				5DB1E0082A00000000000012 /* DemoRecording.swift in Sources */,
 				5D0FA70C279BB61900ED6101 /* iOSnothingUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -447,6 +464,7 @@
 				5DA29A2D2766475D006AE014 /* NotesApp.swift in Sources */,
 				5DF694A227685C0400782FE1 /* Persistence.swift in Sources */,
 				5DB1E0012A00000000000002 /* Item+Helpers.swift in Sources */,
+				5DB1E0092A00000000000012 /* LoopingVideo.swift in Sources */,
 				5DB1E0072A00000000000012 /* DemoContent.swift in Sources */,
 				5DB1E0052A00000000000012 /* FolderRow.swift in Sources */,
 				5DB1E0032A00000000000022 /* ProViews.swift in Sources */,

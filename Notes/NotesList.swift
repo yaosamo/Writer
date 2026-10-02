@@ -30,6 +30,8 @@ struct NotesList: View {
 
     // objectID is stable once saved, so selection never requires mutating the note
     @State private var selection: NSManagedObjectID?
+    // A note just created with + / ⌘N: its editor takes keyboard focus
+    @State private var focusNoteID: NSManagedObjectID?
     @AppStorage("sidebarVisible") private var sidebarVisible = true
     @AppStorage("sidebarWidth") private var sidebarWidth: Double = 240
     @State private var dragStartWidth: Double?
@@ -53,7 +55,7 @@ struct NotesList: View {
             detail
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(alignment: .topTrailing) {
-                    HStack(spacing: 0) {
+                    HStack(spacing: 6) {
                         NewItemMenu(iconsize: 16)
                         MoreMenu()
                         CircleIconButton(systemName: "sidebar.right",
@@ -96,6 +98,7 @@ struct NotesList: View {
         // Select newly created notes
         .onReceive(NotificationCenter.default.publisher(for: .noteCreated)) { notification in
             selection = notification.object as? NSManagedObjectID
+            focusNoteID = selection
         }
         // New folders appear in the list ready to be named
         .onReceive(NotificationCenter.default.publisher(for: .folderCreated)) { notification in
@@ -120,7 +123,7 @@ struct NotesList: View {
     @ViewBuilder
     private var detail: some View {
         if let item = selectedItem {
-            EditorView(item: item)
+            EditorView(item: item, focusOnAppear: item.objectID == focusNoteID)
                 .id(item.objectID)
         } else {
             EmptyStateView()
@@ -165,6 +168,8 @@ struct NotesList: View {
             }
             .listStyle(.sidebar)
             .scrollContentBackground(.hidden)
+            // Rows scroll all the way to the window's top edge; the gap is a content margin
+            .safeAreaPadding(.top, 40)
             .onDeleteCommand {
                 if let item = selectedItem {
                     delete(item)
@@ -175,7 +180,6 @@ struct NotesList: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 16)
         }
-        .padding(.top, 40)
         .background(SidebarMaterial())
     }
 

@@ -17,9 +17,11 @@ struct EditorView: View {
 
     // Observed directly so edits synced from other devices show up and aren't overwritten
     @ObservedObject var item: Item
+    // New notes start with the caret in the text
+    var focusOnAppear = false
 
     var body: some View {
-        NoteTextView(text: $item.noteText, palette: palette) {
+        NoteTextView(text: $item.noteText, palette: palette, focusOnAppear: focusOnAppear) {
             EditorHeader(item: item, palette: palette)
         }
         // Debounced save: restarts on every change, saves after a pause in typing
@@ -65,6 +67,7 @@ enum NoteTextViewMetrics {
 struct NoteTextView<Header: View>: NSViewRepresentable {
     @Binding var text: String
     let palette: Palette
+    var focusOnAppear = false
     @ViewBuilder let header: () -> Header
 
     func makeCoordinator() -> Coordinator {
@@ -99,6 +102,7 @@ struct NoteTextView<Header: View>: NSViewRepresentable {
         textView.autoresizingMask = [.width]
         textView.textContainer?.widthTracksTextView = true
         textView.placeholder = emptyNotePlaceholder
+        textView.focusOnAppear = focusOnAppear
         textView.string = text
         apply(palette, to: textView)
         context.coordinator.appliedColors = [palette.text, palette.caret, palette.secondaryText]
@@ -187,6 +191,8 @@ final class PlaceholderTextView: NSTextView {
         layoutHeader()
     }
 
+    var focusOnAppear = false
+
     // Open long notes at their end, where writing continues. Waits until the view is in a
     // window with a real width, then lays the whole text out so the end position is right
     private var needsScrollToEnd = true
@@ -210,6 +216,9 @@ final class PlaceholderTextView: NSTextView {
         let end = (string as NSString).length
         setSelectedRange(NSRange(location: end, length: 0))
         scrollToEndOfDocument(nil)
+        if focusOnAppear {
+            window?.makeFirstResponder(self)
+        }
     }
 
     private func layoutHeader() {
