@@ -107,7 +107,7 @@
     </div>
 
     <section class="price">
-      <p>Free to write.<br>Pro is one purchase, yours for good.</p>
+      <p>Free to write.<br>Pro once and for good, or by the month.</p>
       <a class="download" href="https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952">Download on the App Store</a>
     </section>
   </main>
@@ -178,6 +178,17 @@
         });
       }, { threshold: 0.35 });
       videos.forEach(function (v) { io.observe(v); });
+    })();
+  </script>
+  <script>
+    // The sticky button steps aside when the closing one comes into view
+    (function () {
+      var sticky = document.querySelector(".sticky-download");
+      var end = document.querySelector(".price");
+      if (!sticky || !end || !("IntersectionObserver" in window)) return;
+      new IntersectionObserver(function (entries) {
+        sticky.classList.toggle("gone", entries[0].isIntersecting);
+      }, { rootMargin: "0px 0px -10% 0px" }).observe(end);
     })();
   </script>
 </body>
