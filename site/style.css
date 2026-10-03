@@ -126,11 +126,9 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--caret); outline
 @keyframes blink { 50% { opacity: 0; } }
 
 .price { text-align: center; padding: 4vh 0 14vh; color: var(--text); }
-.price p { margin: 0; }
 
 .download {
   display: inline-block;
-  margin-top: 40px;
   padding: 14px 26px;
   border-radius: 999px;
   background: var(--strong);
