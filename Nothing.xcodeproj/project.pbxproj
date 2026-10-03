@@ -25,12 +25,6 @@
 		5DA29A342766475D006AE014 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DA29A332766475D006AE014 /* Preview Assets.xcassets */; };
 		5DA29A5E27664DD8006AE014 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5DA29A5C27664DD8006AE014 /* Model.xcdatamodeld */; };
 		5DAC67B2279F522500ECC629 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DAC67B1279F522500ECC629 /* Launch Screen.storyboard */; };
-		5DC043CD2774F3430093A613 /* AddNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CC2774F3430093A613 /* AddNote.swift */; };
-		5DF3AFDF279BFD78009BD6B5 /* EditorView-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF3AFDE279BFD78009BD6B5 /* EditorView-iOS.swift */; };
-		5DF694A227685C0400782FE1 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF694A127685C0400782FE1 /* Persistence.swift */; };
-		5DF694A427686A2900782FE1 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF694A327686A2900782FE1 /* EditorView.swift */; };
-		5DF90E9E279D0F11002B0828 /* NotesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CA2774F1A10093A613 /* NotesList.swift */; };
-		5DF90EA0279D0F17002B0828 /* NotesList-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF90E9F279D0F17002B0828 /* NotesList-iOS.swift */; };
 		5DB1E0012A00000000000002 /* Item+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0012A00000000000001 /* Item+Helpers.swift */; };
 		5DB1E0012A00000000000003 /* Item+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0012A00000000000001 /* Item+Helpers.swift */; };
 		5DB1E0022A00000000000012 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E0022A00000000000011 /* Theme.swift */; };
@@ -61,21 +55,27 @@
 		5DB1E00E2A00000000000023 /* ImageAttachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00E2A00000000000021 /* ImageAttachments.swift */; };
 		5DB1E00F2A00000000000012 /* ImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1E00F2A00000000000011 /* ImageTests.swift */; };
 		5DB1E0102A00000000000102 /* Pro-folders.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102A00000000000101 /* Pro-folders.mp4 */; };
-		5DB1E0102D00000000000002 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102D00000000000001 /* PrivacyInfo.xcprivacy */; };
-		5DB1E0102C00000000000004 /* Pro-next.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000004 /* Pro-next.mp4 */; };
-		5DB1E0102C00000000000003 /* Pro-sync.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000003 /* Pro-sync.mp4 */; };
-		5DB1E0102C00000000000002 /* Pro-lists.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000002 /* Pro-lists.mp4 */; };
-		5DB1E0102C00000000000001 /* Pro-notes.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000001 /* Pro-notes.mp4 */; };
 		5DB1E0102A00000000000202 /* Pro-themes.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102A00000000000201 /* Pro-themes.mp4 */; };
 		5DB1E0102A00000000000302 /* Pro-images.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102A00000000000301 /* Pro-images.mp4 */; };
 		5DB1E0102A00000000000402 /* Pro-folders.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102A00000000000401 /* Pro-folders.mp4 */; };
-		5DB1E0102D00000000000003 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102D00000000000001 /* PrivacyInfo.xcprivacy */; };
-		5DB1E0102C00000000000008 /* Pro-next.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000008 /* Pro-next.mp4 */; };
-		5DB1E0102C00000000000007 /* Pro-sync.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000007 /* Pro-sync.mp4 */; };
-		5DB1E0102C00000000000006 /* Pro-lists.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000006 /* Pro-lists.mp4 */; };
-		5DB1E0102C00000000000005 /* Pro-notes.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000005 /* Pro-notes.mp4 */; };
 		5DB1E0102A00000000000502 /* Pro-themes.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102A00000000000501 /* Pro-themes.mp4 */; };
 		5DB1E0102A00000000000602 /* Pro-images.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102A00000000000601 /* Pro-images.mp4 */; };
+		5DB1E0102C00000000000001 /* Pro-notes.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000001 /* Pro-notes.mp4 */; };
+		5DB1E0102C00000000000002 /* Pro-lists.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000002 /* Pro-lists.mp4 */; };
+		5DB1E0102C00000000000003 /* Pro-sync.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000003 /* Pro-sync.mp4 */; };
+		5DB1E0102C00000000000004 /* Pro-next.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000004 /* Pro-next.mp4 */; };
+		5DB1E0102C00000000000005 /* Pro-notes.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000005 /* Pro-notes.mp4 */; };
+		5DB1E0102C00000000000006 /* Pro-lists.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000006 /* Pro-lists.mp4 */; };
+		5DB1E0102C00000000000007 /* Pro-sync.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000007 /* Pro-sync.mp4 */; };
+		5DB1E0102C00000000000008 /* Pro-next.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102B00000000000008 /* Pro-next.mp4 */; };
+		5DB1E0102D00000000000002 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102D00000000000001 /* PrivacyInfo.xcprivacy */; };
+		5DB1E0102D00000000000003 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5DB1E0102D00000000000001 /* PrivacyInfo.xcprivacy */; };
+		5DC043CD2774F3430093A613 /* AddNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CC2774F3430093A613 /* AddNote.swift */; };
+		5DF3AFDF279BFD78009BD6B5 /* EditorView-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF3AFDE279BFD78009BD6B5 /* EditorView-iOS.swift */; };
+		5DF694A227685C0400782FE1 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF694A127685C0400782FE1 /* Persistence.swift */; };
+		5DF694A427686A2900782FE1 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF694A327686A2900782FE1 /* EditorView.swift */; };
+		5DF90E9E279D0F11002B0828 /* NotesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC043CA2774F1A10093A613 /* NotesList.swift */; };
+		5DF90EA0279D0F17002B0828 /* NotesList-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF90E9F279D0F17002B0828 /* NotesList-iOS.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,12 +115,6 @@
 		5DA29A352766475D006AE014 /* Notes.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Notes.entitlements; sourceTree = "<group>"; };
 		5DA29A5D27664DD8006AE014 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		5DAC67B1279F522500ECC629 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
-		5DC043CA2774F1A10093A613 /* NotesList.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = NotesList.swift; sourceTree = "<group>"; usesTabs = 0; wrapsLines = 1; };
-		5DC043CC2774F3430093A613 /* AddNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNote.swift; sourceTree = "<group>"; };
-		5DF3AFDE279BFD78009BD6B5 /* EditorView-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorView-iOS.swift"; sourceTree = "<group>"; };
-		5DF694A127685C0400782FE1 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
-		5DF694A327686A2900782FE1 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; usesTabs = 1; };
-		5DF90E9F279D0F17002B0828 /* NotesList-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotesList-iOS.swift"; sourceTree = "<group>"; };
 		5DB1E0012A00000000000001 /* Item+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Item+Helpers.swift"; sourceTree = "<group>"; };
 		5DB1E0022A00000000000011 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		5DB1E0022A00000000000021 /* SyncMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMonitor.swift; sourceTree = "<group>"; };
@@ -141,20 +135,26 @@
 		5DB1E00E2A00000000000021 /* ImageAttachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageAttachments.swift; sourceTree = "<group>"; };
 		5DB1E00F2A00000000000011 /* ImageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTests.swift; sourceTree = "<group>"; };
 		5DB1E0102A00000000000101 /* Pro-folders.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-folders.mp4"; sourceTree = "<group>"; };
-		5DB1E0102D00000000000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		5DB1E0102B00000000000004 /* Pro-next.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-next.mp4"; sourceTree = "<group>"; };
-		5DB1E0102B00000000000003 /* Pro-sync.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-sync.mp4"; sourceTree = "<group>"; };
-		5DB1E0102B00000000000002 /* Pro-lists.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-lists.mp4"; sourceTree = "<group>"; };
-		5DB1E0102B00000000000001 /* Pro-notes.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-notes.mp4"; sourceTree = "<group>"; };
 		5DB1E0102A00000000000201 /* Pro-themes.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-themes.mp4"; sourceTree = "<group>"; };
 		5DB1E0102A00000000000301 /* Pro-images.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-images.mp4"; sourceTree = "<group>"; };
 		5DB1E0102A00000000000401 /* Pro-folders.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-folders.mp4"; sourceTree = "<group>"; };
-		5DB1E0102B00000000000008 /* Pro-next.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-next.mp4"; sourceTree = "<group>"; };
-		5DB1E0102B00000000000007 /* Pro-sync.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-sync.mp4"; sourceTree = "<group>"; };
-		5DB1E0102B00000000000006 /* Pro-lists.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-lists.mp4"; sourceTree = "<group>"; };
-		5DB1E0102B00000000000005 /* Pro-notes.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-notes.mp4"; sourceTree = "<group>"; };
 		5DB1E0102A00000000000501 /* Pro-themes.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-themes.mp4"; sourceTree = "<group>"; };
 		5DB1E0102A00000000000601 /* Pro-images.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-images.mp4"; sourceTree = "<group>"; };
+		5DB1E0102B00000000000001 /* Pro-notes.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-notes.mp4"; sourceTree = "<group>"; };
+		5DB1E0102B00000000000002 /* Pro-lists.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-lists.mp4"; sourceTree = "<group>"; };
+		5DB1E0102B00000000000003 /* Pro-sync.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-sync.mp4"; sourceTree = "<group>"; };
+		5DB1E0102B00000000000004 /* Pro-next.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-next.mp4"; sourceTree = "<group>"; };
+		5DB1E0102B00000000000005 /* Pro-notes.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-notes.mp4"; sourceTree = "<group>"; };
+		5DB1E0102B00000000000006 /* Pro-lists.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-lists.mp4"; sourceTree = "<group>"; };
+		5DB1E0102B00000000000007 /* Pro-sync.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-sync.mp4"; sourceTree = "<group>"; };
+		5DB1E0102B00000000000008 /* Pro-next.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pro-next.mp4"; sourceTree = "<group>"; };
+		5DB1E0102D00000000000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		5DC043CA2774F1A10093A613 /* NotesList.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = NotesList.swift; sourceTree = "<group>"; usesTabs = 0; wrapsLines = 1; };
+		5DC043CC2774F3430093A613 /* AddNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNote.swift; sourceTree = "<group>"; };
+		5DF3AFDE279BFD78009BD6B5 /* EditorView-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorView-iOS.swift"; sourceTree = "<group>"; };
+		5DF694A127685C0400782FE1 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		5DF694A327686A2900782FE1 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; usesTabs = 1; };
+		5DF90E9F279D0F17002B0828 /* NotesList-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotesList-iOS.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -588,7 +588,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iOSnothing/iOSnothing.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"iOSnothing/Preview Content\"";
 				DEVELOPMENT_TEAM = 6J57A4298A;
 				ENABLE_PREVIEWS = YES;
@@ -604,7 +604,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
 				PRODUCT_NAME = Nothing;
 				SDKROOT = iphoneos;
@@ -621,7 +621,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iOSnothing/iOSnothing.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"iOSnothing/Preview Content\"";
 				DEVELOPMENT_TEAM = 6J57A4298A;
 				ENABLE_PREVIEWS = YES;
@@ -637,7 +637,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
 				PRODUCT_NAME = Nothing;
 				SDKROOT = iphoneos;
@@ -856,7 +856,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Notes/Preview Content\"";
 				DEVELOPMENT_TEAM = 6J57A4298A;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -869,7 +869,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -887,7 +887,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Notes/Preview Content\"";
 				DEVELOPMENT_TEAM = 6J57A4298A;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -900,7 +900,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yaosamo.NothingWriter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
