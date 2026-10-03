@@ -21,6 +21,9 @@ Nothing Pro is bought through the App Store, as a one-time purchase or a yearly 
 #### Analytics
 We only see the aggregate statistics App Store Connect provides, such as downloads, product page views and crash reports from people who choose to share them with developers.
 
+#### This website
+nothing.yaosamo.com counts page views with Vercel Web Analytics. It uses no cookies and does not identify or follow you across sites; we only see totals such as visits per page, referring sites and countries. The app itself contains no analytics.
+
 #### Children
 Nothing collects no personal data from anyone, including children.
 

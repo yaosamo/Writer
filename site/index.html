@@ -17,6 +17,9 @@
     // Apply a saved light/dark choice before first paint; otherwise follow the system
     try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
+  <!-- Vercel Web Analytics: anonymous page views, no cookies -->
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
   <header class="top">
