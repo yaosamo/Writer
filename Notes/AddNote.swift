@@ -13,6 +13,8 @@ extension Notification.Name {
     // Handled by the note list, which knows the current folder and undo manager
     static let newNoteRequested = Notification.Name("newNoteRequested")
     static let newFolderRequested = Notification.Name("newFolderRequested")
+    // Focuses the sidebar's search field (⌘F)
+    static let searchRequested = Notification.Name("searchRequested")
 }
 
 // "+" menu: new note, or new folder (Pro). ⌘N / ⇧⌘N do the same from the File menu

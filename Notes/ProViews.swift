@@ -467,5 +467,11 @@ struct NoteCommands: Commands {
             }
             .keyboardShortcut("n", modifiers: [.command, .shift])
         }
+        CommandGroup(after: .textEditing) {
+            Button("Search Notes") {
+                NotificationCenter.default.post(name: .searchRequested, object: nil)
+            }
+            .keyboardShortcut("f", modifiers: .command)
+        }
     }
 }
