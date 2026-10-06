@@ -158,7 +158,69 @@ struct NotesList: View {
             selection = items.first?.objectID
             sidebarVisible = storedSidebarVisible
         }
+        #if DEBUG
+        .task { await runDemo() }
+        #endif
     }
+
+    #if DEBUG
+    // Screenshot and preview scenes, from launch arguments; demo content only (see DemoContent)
+    private func runDemo() async {
+        guard DemoContent.isEnabled else { return }
+        let defaults = UserDefaults.standard
+        try? await Task.sleep(for: .milliseconds(200))
+        DemoContent.sizeWindow()
+        if let title = defaults.string(forKey: "demoSelect") {
+            let id = items.first { $0.displayTitle == title }?.objectID
+            // -demoCaret YES: the note opens with the caret in its text
+            if defaults.bool(forKey: "demoCaret") { focusNoteID = id }
+            selection = id
+        }
+        if let search = defaults.string(forKey: "demoSearch") {
+            try? await Task.sleep(for: .milliseconds(300))
+            searchText = search
+            searchFocused = true
+            try? await Task.sleep(for: .milliseconds(300))
+            matchIndex = defaults.integer(forKey: "demoMatch")
+        }
+        if defaults.string(forKey: "demoScript") == "search" {
+            await searchScript()
+        }
+    }
+
+    // About 20 seconds: type a search, step through matches, open other results, clear
+    private func searchScript() async {
+        func pause(_ seconds: Double) async { try? await Task.sleep(for: .seconds(seconds)) }
+        await pause(2.5)
+        searchFocused = true
+        await pause(0.8)
+        for character in "garden" {
+            searchText.append(character)
+            await pause(0.18)
+        }
+        await pause(1.6)
+        for _ in 0..<2 {
+            stepMatch(1)
+            await pause(1.4)
+        }
+        for title in ["Morning pages", "Groceries", "Small things"] {
+            if let item = searchResults.first(where: { $0.displayTitle == title }) {
+                withAnimation { selection = item.objectID }
+            }
+            await pause(1.8)
+        }
+        if let chapter = searchResults.first(where: { $0.displayTitle == "Chapter one" }) {
+            selection = chapter.objectID
+        }
+        await pause(1.4)
+        while !searchText.isEmpty {
+            searchText.removeLast()
+            await pause(0.08)
+        }
+        searchFocused = false
+        await pause(3)
+    }
+    #endif
 
     @ViewBuilder
     private var detail: some View {
