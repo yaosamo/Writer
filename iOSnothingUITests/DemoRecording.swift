@@ -180,14 +180,38 @@ final class DemoRecording: XCTestCase {
         try? data.write(to: URL(fileURLWithPath: dir).appendingPathComponent("\(name).png"))
     }
 
-    private func newNote(_ text: String) -> XCUIElement {
-        app.buttons["New"].tap(); pause(0.5)
-        app.buttons["New Note"].tap(); pause(0.6)
-        app.buttons["Untitled"].firstMatch.tap(); pause(0.6)
+    // iPad opens a new note beside the list; iPhone adds an Untitled row to open
+    private var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
+
+    // The + menu doesn't open under automation on iPad, so use its ⌘N / ⇧⌘N shortcuts there
+    private func openNewNote() -> XCUIElement {
+        if isPad {
+            // Right after launch the first keystroke can be dropped
+            let untitled = app.buttons["Untitled"].firstMatch
+            for _ in 0..<5 where !untitled.exists {
+                app.typeKey("n", modifierFlags: .command)
+                _ = untitled.waitForExistence(timeout: 1.5)
+            }
+            pause(0.6)
+        } else {
+            app.buttons["New"].tap(); pause(0.5)
+            app.buttons["New Note"].tap(); pause(0.6)
+            app.buttons["Untitled"].firstMatch.tap(); pause(0.6)
+        }
         let editor = app.textViews.firstMatch
         editor.tap(); pause(0.3)
+        return editor
+    }
+
+    private func hideKeyboard() {
+        let hide = app.buttons["Hide keyboard"].firstMatch
+        if hide.waitForExistence(timeout: 1) { hide.tap() }
+    }
+
+    private func newNote(_ text: String) -> XCUIElement {
+        let editor = openNewNote()
         editor.typeText(text)
-        app.buttons["Hide keyboard"].tap(); pause(0.8)
+        hideKeyboard(); pause(0.8)
         return editor
     }
 
@@ -207,11 +231,7 @@ final class DemoRecording: XCTestCase {
 
         // 3. An image in a note
         launch()
-        app.buttons["New"].tap(); pause(0.5)
-        app.buttons["New Note"].tap(); pause(0.6)
-        app.buttons["Untitled"].firstMatch.tap(); pause(0.6)
-        let note = app.textViews.firstMatch
-        note.tap(); pause(0.3)
+        let note = openNewNote()
         note.typeText("Colour study\n")
         if let path = ProcessInfo.processInfo.environment["DEMO_IMAGE"], let image = UIImage(contentsOfFile: path) {
             UIPasteboard.general.image = image
@@ -221,7 +241,7 @@ final class DemoRecording: XCTestCase {
         if paste.waitForExistence(timeout: 2) { paste.tap() }
         pause(2)
         note.typeText("Warm light, slow afternoon.")
-        app.buttons["Hide keyboard"].tap(); pause(1)
+        hideKeyboard(); pause(1)
         shot("3-images")
 
         // 4. Folders in the list
@@ -241,8 +261,17 @@ final class DemoRecording: XCTestCase {
 
         // 7. Nothing Pro
         launch(pro: false)
-        app.buttons["New"].tap(); pause(0.5)
-        app.buttons["New Folder · Pro"].tap(); pause(2.5)
+        if isPad {
+            let paywall = app.staticTexts["Nothing Pro"]
+            for _ in 0..<5 where !paywall.exists {
+                app.typeKey("n", modifierFlags: [.command, .shift])
+                _ = paywall.waitForExistence(timeout: 1.5)
+            }
+        } else {
+            app.buttons["New"].tap(); pause(0.5)
+            app.buttons["New Folder · Pro"].tap()
+        }
+        pause(2.5)
         shot("7-pro")
     }
 }
