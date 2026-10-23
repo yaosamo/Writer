@@ -152,6 +152,8 @@ footer {
 .more-apps ul { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
 .more-apps a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; color: var(--text); text-decoration: none; transition: background 0.15s; }
 .more-apps a:hover { background: var(--line); }
+.more-apps h2 a { display: inline; padding: 0; border-radius: 0; color: inherit; text-decoration: underline; text-underline-offset: 2px; background: none; }
+.more-apps h2 a:hover { color: var(--strong); background: none; }
 .more-apps img { width: 48px; height: 48px; flex: none; }
 .more-apps b { display: block; font-weight: 400; color: var(--strong); }
 .more-apps small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--dim); }
