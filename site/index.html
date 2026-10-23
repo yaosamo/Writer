@@ -3,16 +3,98 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Nothing — Ascetic Writer</title>
-  <meta name="description" content="A quiet place to write. Nothing is an ascetic, dark writing app for Mac and iPhone.">
+  <title>Nothing — Ascetic writing app for Mac and iPhone</title>
+  <meta name="description" content="Nothing is a free, ascetic writing app for Mac, iPhone and iPad. Dark by default, with lists, tasks, images and folders, synced through your own iCloud.">
+  <link rel="canonical" href="https://nothing.yaosamo.com/">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Yaroslav Samoylov">
   <meta name="theme-color" content="#09090a" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta property="og:title" content="Nothing — Ascetic Writer">
-  <meta property="og:description" content="A quiet place to write. For Mac and iPhone.">
-  <meta property="og:image" content="media/mac-write.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Nothing">
+  <meta property="og:url" content="https://nothing.yaosamo.com/">
+  <meta property="og:title" content="Nothing — Ascetic writing app for Mac and iPhone">
+  <meta property="og:description" content="A quiet place to write. Free on the App Store for Mac, iPhone and iPad.">
+  <meta property="og:image" content="https://nothing.yaosamo.com/media/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Nothing app icon and the line: Ascetic writer for your Mac and iPhone">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@yaosamo">
+  <meta name="twitter:creator" content="@yaosamo">
+  <meta name="twitter:title" content="Nothing — Ascetic writing app for Mac and iPhone">
+  <meta name="twitter:description" content="A quiet place to write. Free on the App Store for Mac, iPhone and iPad.">
+  <meta name="twitter:image" content="https://nothing.yaosamo.com/media/og.png">
+  <meta name="twitter:image:alt" content="Nothing app icon and the line: Ascetic writer for your Mac and iPhone">
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="media/icon-256.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://nothing.yaosamo.com/#website",
+        "url": "https://nothing.yaosamo.com/",
+        "name": "Nothing",
+        "alternateName": "Nothing — Ascetic Writer",
+        "inLanguage": "en",
+        "publisher": { "@id": "https://yaosamo.com/#person" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://nothing.yaosamo.com/#app",
+        "name": "Nothing",
+        "alternateName": "Nothing / Ascetic Writer",
+        "description": "A free, ascetic writing app for Mac, iPhone and iPad. Dark by default, with lists, tasks, images and folders, synced through your own iCloud.",
+        "url": "https://nothing.yaosamo.com/",
+        "operatingSystem": "macOS 14.0 or later, iOS 17.0 or later, iPadOS 17.0 or later",
+        "applicationCategory": "UtilitiesApplication",
+        "applicationSubCategory": "Productivity",
+        "datePublished": "2022-01-12",
+        "contentRating": "4+",
+        "image": "https://nothing.yaosamo.com/media/icon-256.png",
+        "screenshot": "https://nothing.yaosamo.com/media/mac-write.jpg",
+        "installUrl": "https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952",
+        "downloadUrl": "https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952",
+        "sameAs": ["https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952"],
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "url": "https://apps.apple.com/us/app/nothing-ascetic-writer/id1604460952"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "3.5",
+          "ratingCount": "2",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
+        "author": { "@id": "https://yaosamo.com/#person" }
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "name": "Nothing source code",
+        "codeRepository": "https://github.com/yaosamo/Writer",
+        "programmingLanguage": "Swift",
+        "targetProduct": { "@id": "https://nothing.yaosamo.com/#app" },
+        "author": { "@id": "https://yaosamo.com/#person" }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://yaosamo.com/#person",
+        "name": "Yaroslav Samoylov",
+        "alternateName": "Yaosamo",
+        "url": "https://yaosamo.com",
+        "sameAs": ["https://x.com/yaosamo", "https://github.com/yaosamo"]
+      }
+    ]
+  }
+  </script>
   <script>
     // Apply a saved light/dark choice before first paint; otherwise follow the system
     try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -124,8 +206,8 @@
   </section>
 
   <footer>
-    <a href="privacy.html">Privacy</a>
-    <a href="terms.html">Terms</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
     <a href="https://github.com/yaosamo/Writer">Source</a>
     <span>© 2026 Yaroslav Samoylov</span>
   </footer>
