@@ -146,6 +146,17 @@ footer {
   font-size: 12px;
 }
 
+/* my other apps, above the footer */
+.more-apps { max-width: 760px; margin: 0 auto; padding: 72px 24px 0; }
+.more-apps h2 { margin: 0 0 16px; font-weight: 300; font-size: 12px; color: var(--dim); text-align: center; }
+.more-apps ul { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.more-apps a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; color: var(--text); text-decoration: none; transition: background 0.15s; }
+.more-apps a:hover { background: var(--line); }
+.more-apps img { width: 48px; height: 48px; flex: none; }
+.more-apps b { display: block; font-weight: 400; color: var(--strong); }
+.more-apps small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--dim); }
+@media (max-width: 760px) { .more-apps ul { grid-template-columns: 1fr; } }
+
 /* privacy page */
 .doc { max-width: 640px; margin: 0 auto; padding: 8vh 0 12vh; }
 .doc h1 { font-weight: 300; font-size: 28px; color: var(--strong); margin: 0 0 4px; }
